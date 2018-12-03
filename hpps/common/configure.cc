@@ -1,6 +1,6 @@
 /*!
  * \file configure.cc
- * \desc The configure implementation
+ * \brief The configure implementation
  */
 #include "hpps/common/configure.h"
 

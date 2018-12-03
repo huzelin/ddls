@@ -1,14 +1,17 @@
-#ifndef MULTIVERSO_MESSAGE_H_
-#define MULTIVERSO_MESSAGE_H_
+/*!
+ * \file message.h
+ * \brief The message
+ */
+#pragma once
 
 #include <functional>
 #include <memory>
 #include <string>
 #include <vector>
 
-#include "multiverso/blob.h"
+#include "hpps/common/blob.h"
 
-namespace multiverso {
+namespace hpps {
 
 enum MsgType {
   Request_Get = 1,
@@ -24,7 +27,7 @@ enum MsgType {
 };
 
 class Message {
-public:
+ public:
   MsgType type() const { return static_cast<MsgType>(header_[2]); }
   inline int src() const { return header_[0]; }
   inline int dst() const { return header_[1]; }
@@ -60,13 +63,11 @@ public:
 
   inline void Push(const Blob& blob) { data_.push_back(blob); }
 
-private:
+ private:
   int header_[8];
   std::vector<Blob> data_;
 };
 
 typedef std::unique_ptr<Message> MessagePtr;
 
-}  // namespace multiverso
-
-#endif  // MULTIVERSO_MESSAGE_H_
+}  // namespace hpps

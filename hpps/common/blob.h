@@ -1,6 +1,6 @@
 /*!
  * \file blob.h
- * \desc The blob data structure
+ * \brief The blob data structure
  */
 #pragma once
 

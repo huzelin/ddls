@@ -1,6 +1,6 @@
 /*!
  * \file allocator.h
- * \desc The memory allocator
+ * \brief The memory allocator
  */
 #pragma once
 

@@ -1,6 +1,6 @@
 /*!
  * \file dashboard.h
- * \desc The dashboard of hpps
+ * \brief The dashboard of hpps
  */
 #pragma once
 

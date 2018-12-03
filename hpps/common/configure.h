@@ -1,6 +1,6 @@
 /*!
  * \file configure.h
- * \desc The configure of hpps
+ * \brief The configure of hpps
  */
 #pragma once
 

@@ -1,6 +1,6 @@
 /*!
  * \file timer.cc
- * \desc The timer implementation
+ * \brief The timer implementation
  */
 #include "hpps/common/timer.h"
 

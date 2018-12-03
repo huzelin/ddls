@@ -1,6 +1,6 @@
 /*!
  * \file dashboard.h
- * \desc The dashboard implementation
+ * \brief The dashboard implementation
  */
 #include "hpps/common/dashboard.h"
 

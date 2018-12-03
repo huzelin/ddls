@@ -1,6 +1,6 @@
 /*!
  * \file allocator.cc
- * \desc The allocator implementation
+ * \brief The allocator implementation
  */
 #include "hpps/common/allocator.h"
 

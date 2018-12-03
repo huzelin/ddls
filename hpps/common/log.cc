@@ -1,6 +1,6 @@
 /*!
  * \file log.cc
- * \desc The log implementation
+ * \brief The log implementation
  */
 #include "hpps/common/log.h"
 

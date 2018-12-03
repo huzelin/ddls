@@ -1,6 +1,6 @@
 /*!
  * \file blob.cc
- * \desc The blob implementation
+ * \brief The blob implementation
  */
 #include "hpps/common/blob.h"
 

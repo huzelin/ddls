@@ -34,3 +34,4 @@ include_directories(
 
 add_subdirectory(thirdparty)
 add_subdirectory(hpps)
+add_subdirectory(tests)

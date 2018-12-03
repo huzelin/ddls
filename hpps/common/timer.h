@@ -1,6 +1,6 @@
 /*!
  * \file timer.h
- * \desc The timer in hpps
+ * \brief The timer in hpps
  */
 #pragma once
 

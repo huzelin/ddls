@@ -1,6 +1,6 @@
 /*!
  * \file log.h
- * \desc The log in hpps
+ * \brief The log in hpps
  */
 #pragma once
 
