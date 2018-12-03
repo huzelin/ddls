@@ -1,0 +1,14 @@
+sudo: true
+language: cpp
+
+os: linux
+stage: test
+compiler: gcc
+script:
+    - set -e
+    - mkdir build
+    - cd build
+    - cmake ../
+    - make -j 2
+jobs:
+    - make test
