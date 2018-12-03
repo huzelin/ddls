@@ -2,6 +2,7 @@ file(GLOB_RECURSE SOURCE
     "common/*.cc"
     "net/*.cc"
     "updater/*.cc"
+    "table/*.cc"
     "frame/*.cc"
 )
 add_library(hpps SHARED ${SOURCE})
