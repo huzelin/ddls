@@ -1,6 +1,8 @@
 file(GLOB_RECURSE SOURCE
     "common/*.cc"
     "net/*.cc"
+    "updater/*.cc"
+    "frame/*.cc"
 )
 add_library(hpps SHARED ${SOURCE})
 target_link_libraries(hpps zeromq)

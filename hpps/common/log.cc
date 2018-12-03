@@ -12,7 +12,7 @@
 
 namespace hpps {
 
-MV_DEFINE_bool(logtostderr, false, "whether output log to stderr");
+HPPS_DEFINE_bool(logtostderr, false, "whether output log to stderr");
 
 // Creates a Logger instance writing messages into STDOUT.
 Logger::Logger(LogLevel level) {
@@ -91,7 +91,7 @@ inline void Logger::WriteImpl(LogLevel level,
     va_list val_copy;
     va_copy(val_copy, *val);
     // write to STDOUT
-    if (MV_CONFIG_logtostderr) {
+    if (HPPS_CONFIG_logtostderr) {
       fprintf(stderr, "[%s] [%s] ", level_str.c_str(), time_str.c_str());
       vfprintf(stderr, format, *val);
     } else {

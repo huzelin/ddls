@@ -11,14 +11,14 @@
 
 namespace hpps {
 
-MV_DEFINE_int(allocator_alignment, 16, "alignment for align malloc");
+HPPS_DEFINE_int(allocator_alignment, 16, "alignment for align malloc");
 
 inline char* AlignMalloc(size_t size) {
 #ifdef _MSC_VER 
-  return (char*)_aligned_malloc(size, MV_CONFIG_allocator_alignment);
+  return (char*)_aligned_malloc(size, HPPS_CONFIG_allocator_alignment);
 #else
   void *data;
-  CHECK(posix_memalign(&data, MV_CONFIG_allocator_alignment, size) == 0);
+  CHECK(posix_memalign(&data, HPPS_CONFIG_allocator_alignment, size) == 0);
   return (char*)data;
 #endif
 }
@@ -152,10 +152,10 @@ void Allocator::Refer(char* data) {
   ++(**(std::atomic<int>**)(data - header_size_));
 }
 
-MV_DEFINE_string(allocator_type, "smart", "use smart allocator by default");
+HPPS_DEFINE_string(allocator_type, "smart", "use smart allocator by default");
 
 Allocator* Allocator::Get() {
-  if (MV_CONFIG_allocator_type == "smart") {
+  if (HPPS_CONFIG_allocator_type == "smart") {
     static SmartAllocator allocator_;
     return &allocator_;
   }

@@ -18,16 +18,16 @@
 
 namespace hpps {
 
-MV_DEFINE_string(machine_file, "", "path of machine file");
-MV_DEFINE_int(port, 55555 , "port used to communication");
+HPPS_DEFINE_string(machine_file, "", "path of machine file");
+HPPS_DEFINE_int(port, 55555 , "port used to communication");
 
 class ZMQNetWrapper : public NetInterface {
  public:
   void Init(int* argc, char** argv) override {
     // get machine file 
     if (active_) return;
-    ParseMachineFile(MV_CONFIG_machine_file, &machine_lists_);
-    int port = MV_CONFIG_port; 
+    ParseMachineFile(HPPS_CONFIG_machine_file, &machine_lists_);
+    int port = HPPS_CONFIG_port; 
 
     size_ = static_cast<int>(machine_lists_.size());
     CHECK(size_ > 0);

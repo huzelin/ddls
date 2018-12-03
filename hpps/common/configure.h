@@ -65,12 +65,12 @@ class FlagRegisterHelper {
   }
 };
 
-// declare the variable as MV_CONFIG_##name
+// declare the variable as HPPS_CONFIG_##name
 #define DECLARE_CONFIGURE(type, name)                                       \
-  static const type& MV_CONFIG_##name = configure::FlagRegister<type>       \
+  static const type& HPPS_CONFIG_##name = configure::FlagRegister<type>       \
   ::Get()->GetValue(#name);
 
-// register a flag, use MV_CONFIG_##name to use
+// register a flag, use HPPS_CONFIG_##name to use
 // \param type variable type
 // \param name variable name
 // \param default_vale
@@ -91,28 +91,28 @@ void SetCMDFlag(const std::string& name, const T& value) {
   CHECK(configure::FlagRegister<T>::Get()->SetFlagIfFound(name, value));
 }
 
-#define MV_DEFINE_int(name, default_value, text) \
+#define HPPS_DEFINE_int(name, default_value, text) \
   DEFINE_CONFIGURE(int, name, default_value, text)
 
-#define MV_DECLARE_int(name)  \
+#define HPPS_DECLARE_int(name)  \
   DECLARE_CONFIGURE(int, name)
 
-#define MV_DEFINE_string(name, default_value, text) \
+#define HPPS_DEFINE_string(name, default_value, text) \
   DEFINE_CONFIGURE(std::string, name, default_value, text)
 
-#define MV_DECLARE_string(name)  \
+#define HPPS_DECLARE_string(name)  \
   DECLARE_CONFIGURE(std::string, name)
 
-#define MV_DEFINE_bool(name, default_value, text) \
+#define HPPS_DEFINE_bool(name, default_value, text) \
   DEFINE_CONFIGURE(bool, name, default_value, text)
 
-#define MV_DECLARE_bool(name)  \
+#define HPPS_DECLARE_bool(name)  \
   DECLARE_CONFIGURE(bool, name)
  
-#define MV_DEFINE_double(name, default_value, text) \
+#define HPPS_DEFINE_double(name, default_value, text) \
   DEFINE_CONFIGURE(double, name, default_value, text)
 
-#define MV_DECLARE_double(name)  \
+#define HPPS_DECLARE_double(name)  \
   DECLARE_CONFIGURE(double, name)
 
 }  // namespace hpps

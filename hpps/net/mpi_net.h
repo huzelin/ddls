@@ -29,7 +29,7 @@
 
 namespace hpps {
 
-#define MV_MPI_CALL(mpi_return) CHECK((mpi_return) == MPI_SUCCESS)
+#define HPPS_MPI_CALL(mpi_return) CHECK((mpi_return) == MPI_SUCCESS)
 
 namespace {
 
@@ -79,7 +79,7 @@ class MPINetWrapper : public NetInterface {
       // CHECK_NOTNULL(msg_.get());
       int count = static_cast<int>(handles_.size());
       MPI_Status* status = new MPI_Status[count];
-      MV_MPI_CALL(MPI_Waitall(count, handles_.data(), status));
+      HPPS_MPI_CALL(MPI_Waitall(count, handles_.data(), status));
       delete[] status;
     }
 
@@ -88,7 +88,7 @@ class MPINetWrapper : public NetInterface {
       int count = static_cast<int>(handles_.size());
       MPI_Status* status = new MPI_Status[count];
       int flag;
-      MV_MPI_CALL(MPI_Testall(count, handles_.data(), &flag, status));
+      HPPS_MPI_CALL(MPI_Testall(count, handles_.data(), &flag, status));
       delete[] status;
       return flag;
     }
@@ -101,20 +101,20 @@ class MPINetWrapper : public NetInterface {
   
   void Init(int* argc, char** argv) override {
     // MPI_Init(argc, &argv);
-    MV_MPI_CALL(MPI_Initialized(&inited_));
+    HPPS_MPI_CALL(MPI_Initialized(&inited_));
     if (!inited_) {
       // NOTICE: Preload libmpi with the right mode. Otherwise python will load it in 
       // a private which will cause errors
       dlopen_libmpi();
       if (argc && *argc == 0) {
         // When using multithread, giving MPI_Init_thread argv with zero length will cause errors.
-        MV_MPI_CALL(MPI_Init_thread(NULL, NULL, MPI_THREAD_SERIALIZED, &thread_provided_));
+        HPPS_MPI_CALL(MPI_Init_thread(NULL, NULL, MPI_THREAD_SERIALIZED, &thread_provided_));
       } else {
-        MV_MPI_CALL(MPI_Init_thread(argc, &argv, MPI_THREAD_SERIALIZED, &thread_provided_));
+        HPPS_MPI_CALL(MPI_Init_thread(argc, &argv, MPI_THREAD_SERIALIZED, &thread_provided_));
       }
-      MV_MPI_CALL(MPI_Initialized(&inited_));
+      HPPS_MPI_CALL(MPI_Initialized(&inited_));
     }
-    MV_MPI_CALL(MPI_Query_thread(&thread_provided_));
+    HPPS_MPI_CALL(MPI_Query_thread(&thread_provided_));
     if (thread_provided_ < MPI_THREAD_SERIALIZED) {
       Log::Fatal("At least MPI_THREAD_SERIALIZED supported is needed by hpps.\n");
     }
@@ -181,10 +181,10 @@ class MPINetWrapper : public NetInterface {
     MPI_Status status;
     int flag;
     // non-blocking probe whether message comes
-    MV_MPI_CALL(MPI_Iprobe(MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &flag, &status));
+    HPPS_MPI_CALL(MPI_Iprobe(MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &flag, &status));
     if (!flag) return 0;
     int count;
-    MV_MPI_CALL(MPI_Get_count(&status, MPI_BYTE, &count));
+    HPPS_MPI_CALL(MPI_Get_count(&status, MPI_BYTE, &count));
     if (count > recv_size_) {
       recv_buffer_ = (char*)realloc(recv_buffer_, count);
       recv_size_ = count;
@@ -199,19 +199,19 @@ class MPINetWrapper : public NetInterface {
     }
     MPI_Request send_request;
     MPI_Status status;
-    MV_MPI_CALL(MPI_Isend(buf, len, MPI_BYTE, rank, 0, 
+    HPPS_MPI_CALL(MPI_Isend(buf, len, MPI_BYTE, rank, 0, 
                           MPI_COMM_WORLD, &send_request));
-    MV_MPI_CALL(MPI_Wait(&send_request, &status));
+    HPPS_MPI_CALL(MPI_Wait(&send_request, &status));
   }
 
   void RecvFrom(int rank, char* buf, int len) const override {
     MPI_Status status;
     int read_cnt = 0;
     while (read_cnt < len) {
-      MV_MPI_CALL(MPI_Recv(buf + read_cnt, len - read_cnt, MPI_BYTE, 
+      HPPS_MPI_CALL(MPI_Recv(buf + read_cnt, len - read_cnt, MPI_BYTE, 
                            rank, 0, MPI_COMM_WORLD, &status));
       int cur_cnt;
-      MV_MPI_CALL(MPI_Get_count(&status, MPI_BYTE, &cur_cnt));
+      HPPS_MPI_CALL(MPI_Get_count(&status, MPI_BYTE, &cur_cnt));
       read_cnt += cur_cnt;
     }
   }
@@ -220,20 +220,20 @@ class MPINetWrapper : public NetInterface {
     int recv_rank, char* recv_data, int recv_len) const {
     MPI_Request send_request;
     // send first, non-blocking
-    MV_MPI_CALL(MPI_Isend(send_data, send_len, MPI_BYTE, send_rank, 
+    HPPS_MPI_CALL(MPI_Isend(send_data, send_len, MPI_BYTE, send_rank, 
                           0, MPI_COMM_WORLD, &send_request));
     // then receive, blocking
     MPI_Status status;
     int read_cnt = 0;
     while (read_cnt < recv_len) {
-      MV_MPI_CALL(MPI_Recv(recv_data + read_cnt, recv_len - read_cnt, MPI_BYTE,
+      HPPS_MPI_CALL(MPI_Recv(recv_data + read_cnt, recv_len - read_cnt, MPI_BYTE,
                            recv_rank, 0, MPI_COMM_WORLD, &status));
       int cur_cnt;
-      MV_MPI_CALL(MPI_Get_count(&status, MPI_BYTE, &cur_cnt));
+      HPPS_MPI_CALL(MPI_Get_count(&status, MPI_BYTE, &cur_cnt));
       read_cnt += cur_cnt;
     }
     // wait for send complete
-    MV_MPI_CALL(MPI_Wait(&send_request, &status));
+    HPPS_MPI_CALL(MPI_Wait(&send_request, &status));
   }
 
   int SerializeAndSend(MessagePtr& msg, MPIMsgHandle* msg_handle) {
@@ -260,7 +260,7 @@ class MPINetWrapper : public NetInterface {
     MONITOR_END(MPI_NET_SEND_SERIALIZE);
 
     MPI_Request handle;
-    MV_MPI_CALL(MPI_Isend(send_buffer_, static_cast<int>(size), MPI_BYTE, msg->dst(), 0, MPI_COMM_WORLD, &handle));
+    HPPS_MPI_CALL(MPI_Isend(send_buffer_, static_cast<int>(size), MPI_BYTE, msg->dst(), 0, MPI_COMM_WORLD, &handle));
     msg_handle->add_handle(handle);
     return size;
   }
@@ -270,7 +270,7 @@ class MPINetWrapper : public NetInterface {
     MessagePtr& msg = *msg_ptr;
     msg->data().clear();
     MPI_Status status;
-    MV_MPI_CALL(MPI_Recv(recv_buffer_, count,
+    HPPS_MPI_CALL(MPI_Recv(recv_buffer_, count,
       MPI_BYTE, src, 0, MPI_COMM_WORLD, &status));
 
     MONITOR_BEGIN(MPI_NET_RECV_DESERIALIZE)
