@@ -11,7 +11,7 @@ set(CMAKE_VERBOSE_MAKEFILE on)
 include(${PROJECT_SOURCE_DIR}/cmake/Utils.cmake)
 
 #########################################################
-hpps_option(USE_MPI "USE_MPI" ON)
+hpps_option(USE_MPI "USE_MPI" OFF)
 
 message(STATUS "USE_MPI=${USE_MPI}")
 
