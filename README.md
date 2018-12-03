@@ -2,7 +2,6 @@
 
 [![Build Status](https://travis-ci.org/huzelin/hpps.svg?branch=master)](https://travis-ci.org/huzelin/hpps)
 
-
 ## Introduction
 hpps is a high performance parameter server for data-parallel machine learning.
 
