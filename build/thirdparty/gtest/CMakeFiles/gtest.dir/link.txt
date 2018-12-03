@@ -1,1 +1,0 @@
-/usr/bin/c++ -fPIC  -DUSE_MPI -fPIC -ftree-vectorize -std=c++11 -Wcpp -O2 -mavx -mavx2 -fopenmp -Wframe-larger-than=6963200 -O3 -DNDEBUG  -shared -Wl,-soname,libgtest.so -o libgtest.so CMakeFiles/gtest.dir/gtest-all.cc.o CMakeFiles/gtest.dir/gtest-main.cc.o 
