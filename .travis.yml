@@ -38,7 +38,7 @@ matrix:
         - env: COMPILER="g++-7" C_COMPILER="gcc-7"
           addons: &gcc7
               apt:
-                  source:
+                  sources:
                       - ubuntu-toolchain-r-test
                       - sourceline: 'ppa:scylladb/ppa'
                   packages:
