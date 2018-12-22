@@ -11,7 +11,7 @@ Download from project homepage. https://github.com/huzelin/hpps.git
 
 ### Prerequisites
 
-   * gcc >= 4.8.5
+   * gcc >= 7.4
 
 ### Compile
 
