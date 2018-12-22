@@ -21,6 +21,12 @@ TEST(Waiter, TestAll) {
   waiter.Wait();
   EXPECT_TRUE(true);
   thread1.join();
+
+  waiter.Reset(2);
+  std::thread thread2(JobRunner, &waiter);
+  waiter.Wait();
+  EXPECT_TRUE(true);
+  thread2.join();
 }
 
 }  // namespace hpps

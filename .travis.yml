@@ -52,6 +52,4 @@ script:
     - mkdir build
     - cd build
     - cmake ../
-    - make -j 2
-jobs:
-    - cd build && make test
+    - make -j 2 && make test

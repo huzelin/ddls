@@ -1,5 +1,6 @@
-#------------------------------------
-# Test common module
-#------------------------------------
 hpps_add_test(common ".cc" hpps gtest)
+hpps_add_test(frame ".cc" hpps gtest)
+hpps_add_test(net ".cc" hpps gtest)
+hpps_add_test(table ".cc" hpps gtest)
+hpps_add_test(updater ".cc" hpps gtest)
 

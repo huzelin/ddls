@@ -94,15 +94,18 @@ inline void Logger::WriteImpl(LogLevel level,
     if (HPPS_CONFIG_logtostderr) {
       fprintf(stderr, "[%s] [%s] ", level_str.c_str(), time_str.c_str());
       vfprintf(stderr, format, *val);
+      fprintf(stderr, "\n");
     } else {
       printf("[%s] [%s] ", level_str.c_str(), time_str.c_str());
       vprintf(format, *val);
+      printf("\n");
       fflush(stdout);
     }
     // write to log file
     if (file_ != nullptr) {
       fprintf(file_, "[%s] [%s] ", level_str.c_str(), time_str.c_str());
       vfprintf(file_, format, val_copy);
+      fprintf(file_, "\n");
       fflush(file_);
     }
     va_end(val_copy);

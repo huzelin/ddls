@@ -7,6 +7,7 @@
 #include <limits>
 #include <mutex>
 
+#include "hpps/common/configure.h"
 #include "hpps/common/message.h"
 #include "hpps/common/log.h"
 
@@ -15,15 +16,18 @@
 
 namespace hpps {
 
+HPPS_DEFINE_string(net_type, "mpi", "use mpi by default");
+
 NetInterface* NetInterface::Get() {
-#ifndef USE_MPI
-  static ZMQNetWrapper net_impl;
-  return &net_impl;
-#else
-  // Use MPI by default
-  static MPINetWrapper net_impl;
-  return &net_impl;
-#endif
+  if (HPPS_CONFIG_net_type == "mpi") {
+    static MPINetWrapper net_impl;
+    return &net_impl;
+  } else if (HPPS_CONFIG_net_type == "zmq") {
+    static ZMQNetWrapper net_impl;
+    return &net_impl;
+  } else {
+    return nullptr;
+  }
 }
 
 namespace net {
