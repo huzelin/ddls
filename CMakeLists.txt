@@ -46,4 +46,4 @@ if (USE_MPI)
 target_link_libraries(hpps -lmpi)
 endif()
 
-add_subdirectory(tests)
+add_subdirectory(test)
