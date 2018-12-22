@@ -45,5 +45,5 @@ add_custom_target(seastar ALL DEPENDS)
 add_custom_command(TARGET seastar
     PRE_BUILD
     COMMAND
-    cd ${CMAKE_CURRENT_SOURCE_DIR}/seastar/ && ./cooking -r dev -d build-rel -t Release && cd build & ninja
+    cd ${CMAKE_CURRENT_SOURCE_DIR}/seastar/ && ./cooking.sh -r dev -d build-rel -t Release && cd build & ninja
     COMMENT "Build SeaStar")
