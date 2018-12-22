@@ -8,7 +8,7 @@ compiler: gcc
 matrix:
     include:
         - env: DPDK_MODE="" COMPILER="g++-7" C_COMPILER="gcc-7"
-        addons: *gcc7
+          addons: *gcc7
 
 script:
     - set -e
