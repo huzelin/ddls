@@ -25,21 +25,22 @@ endif()
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -ftree-vectorize -std=c++11 -Wcpp -O2 -mavx -mavx2 -fopenmp -Wframe-larger-than=6963200")
 
 include_directories(
-  ${PROJECT_BINARY_DIR}/
-  ${PROJECT_SOURCE_DIR}/
-  ${PROJECT_SOURCE_DIR}/thirdparty/
-  ${PROJECT_SOURCE_DIR}/gtest/
-  ${PROJECT_SOURCE_DIR}/thirdparty/zeromq/zeromq-4.2.1/include/
+    ${PROJECT_BINARY_DIR}/
+    ${PROJECT_SOURCE_DIR}/
+    ${PROJECT_SOURCE_DIR}/thirdparty/
+    ${PROJECT_SOURCE_DIR}/gtest/
+    ${PROJECT_SOURCE_DIR}/thirdparty/zeromq/include/
 )
 
 add_subdirectory(thirdparty)
 
 file(GLOB_RECURSE SOURCE
     "hpps/*.cc"
-    "HalideIR/*.cpp"
 )
 add_library(hpps SHARED ${SOURCE})
-target_link_libraries(hpps zeromq)
+target_link_libraries(hpps libzeromq)
+
+add_dependencies(hpps zeromq)
 
 if (USE_MPI)
 target_link_libraries(hpps -lmpi)
