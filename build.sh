@@ -5,6 +5,6 @@ if [ ! -d build ]; then
 fi
 
 pushd build
-    cmake .. -DMPI_PATH=/usr/local/ 
+    cmake .. 
     make -j32 
 popd

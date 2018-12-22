@@ -4,8 +4,6 @@
  */
 #pragma once
 
-#ifdef USE_MPI
-
 #include "hpps/net/net.h"
 
 #include <limits>
@@ -316,5 +314,3 @@ class MPINetWrapper : public NetInterface {
 };
 
 }  // namespace hpps
-
-#endif // USE_MPI
