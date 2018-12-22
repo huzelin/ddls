@@ -7,8 +7,14 @@ compiler: gcc
 
 matrix:
     include:
-        - env: DPDK_MODE="" COMPILER="g++-7" C_COMPILER="gcc-7"
-          addons: *gcc7
+        - env: COMPILER="g++-7" C_COMPILER="gcc-7"
+          addons: &gcc7
+              apt:
+                  source:
+                      - ubuntu-toolchain-r-test
+                      - sourceline: 'ppa:scylladb/ppa'
+                  packages:
+                      - g++-7
 
 script:
     - set -e
