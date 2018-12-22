@@ -54,4 +54,4 @@ script:
     - cmake ../
     - make -j 2
 jobs:
-    - make test
+    - cd build && make test
