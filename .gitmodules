@@ -4,3 +4,6 @@
 [submodule "thirdparty/ompi"]
 	path = thirdparty/ompi
 	url = https://github.com/open-mpi/ompi.git
+[submodule "thirdparty/seastar"]
+	path = thirdparty/seastar
+	url = https://github.com/scylladb/seastar.git
