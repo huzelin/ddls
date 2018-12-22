@@ -37,7 +37,7 @@ inline FreeList::FreeList(size_t size) : size_(size) {
 }
 
 FreeList::~FreeList() {
-  MemoryBlock*move = free_, *next;
+  MemoryBlock* move = free_, *next;
   while (move) {
     next = move->next;
     delete move;
@@ -63,7 +63,7 @@ inline void FreeList::Push(MemoryBlock*block) {
 }
 
 inline MemoryBlock::MemoryBlock(size_t size, FreeList* list) :
-next(nullptr), ref_(0) {
+    next(nullptr), ref_(0) {
   data_ = AlignMalloc(size + header_size_);
   *(FreeList**)(data_) = list;
   *(MemoryBlock**)(data_ + g_pointer_size) = this;

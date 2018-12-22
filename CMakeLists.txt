@@ -33,5 +33,16 @@ include_directories(
 )
 
 add_subdirectory(thirdparty)
-add_subdirectory(hpps)
+
+file(GLOB_RECURSE SOURCE
+    "hpps/*.cc"
+    "HalideIR/*.cpp"
+)
+add_library(hpps SHARED ${SOURCE})
+target_link_libraries(hpps zeromq)
+
+if (USE_MPI)
+target_link_libraries(hpps -lmpi)
+endif()
+
 add_subdirectory(tests)
