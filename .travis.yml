@@ -4,6 +4,8 @@ language: cpp
 os: linux
 stage: test
 compiler: gcc
+addons: &gcc7
+packages: g++-7
 script:
     - set -e
     - mkdir build
