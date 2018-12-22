@@ -6,14 +6,14 @@ if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/zeromq/src/.libs/libzmq.so)
     add_custom_command(TARGET zeromq
 	PRE_BUILD
 	COMMAND
-	echo "ZeroMQ Is Compiled"
-	COMMENT "Compile ZeroMQ")
+	echo "ZeroMQ Is Builded"
+	COMMENT "Build ZeroMQ")
 else()
     add_custom_command(TARGET zeromq
 	PRE_BUILD
 	COMMAND
 	cd ${CMAKE_CURRENT_SOURCE_DIR}/zeromq/ && ./autogen.sh && ./configure && make -j 4
-	COMMENT "Compile ZeroMQ")
+	COMMENT "Build ZeroMQ")
 endif()
 
 add_library(libzeromq SHARED IMPORTED GLOBAL)
@@ -26,14 +26,14 @@ if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/ompi/ompi/.libs/libmpi.so)
     add_custom_command(TARGET ompi
 	PRE_BUILD
 	COMMAND
-	echo "OMPI Is Compiled"
-	COMMENT "Compile MPI")
+	echo "OMPI Is Builded"
+	COMMENT "Build MPI")
 else()
     add_custom_command(TARGET ompi
 	PRE_BUILD
 	COMMAND
 	cd ${CMAKE_CURRENT_SOURCE_DIR}/ompi/ && ./autogen.pl && ./configure && make -j 4
-	COMMENT "Compile OMPI")
+	COMMENT "Build OMPI")
 endif()
 
 add_library(libompi SHARED IMPORTED GLOBAL)
@@ -46,4 +46,4 @@ add_custom_command(TARGET seastar
     PRE_BUILD
     COMMAND
     cd ${CMAKE_CURRENT_SOURCE_DIR}/seastar/ && ./cooking -r dev -d build-rel -t Release && cd build & ninja
-    COMMENT "Compile SeaStar")
+    COMMENT "Build SeaStar")
