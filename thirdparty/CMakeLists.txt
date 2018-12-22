@@ -11,3 +11,6 @@ add_custom_command(TARGET zeromq
 add_library(libzeromq SHARED IMPORTED GLOBAL)
 set_target_properties(libzeromq PROPERTIES IMPORTED_LOCATION
     ${CMAKE_CURRENT_SOURCE_DIR}/zeromq/src/.libs/libzmq.so)
+
+# build openmpi
+
