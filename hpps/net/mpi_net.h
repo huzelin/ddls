@@ -114,30 +114,30 @@ class MPINetWrapper : public NetInterface {
     }
     HPPS_MPI_CALL(MPI_Query_thread(&thread_provided_));
     if (thread_provided_ < MPI_THREAD_SERIALIZED) {
-      Log::Fatal("At least MPI_THREAD_SERIALIZED supported is needed by hpps.\n");
+      Log::Fatal("At least MPI_THREAD_SERIALIZED supported is needed by hpps.");
     }
     else if (thread_provided_ == MPI_THREAD_SERIALIZED) {
-      Log::Info("hpps MPI-Net is initialized under MPI_THREAD_SERIALIZED mode.\n");
+      Log::Info("hpps MPI-Net is initialized under MPI_THREAD_SERIALIZED mode.");
     }
     else if (thread_provided_ == MPI_THREAD_MULTIPLE) {
-      Log::Debug("hpps MPI-Net is initialized under MPI_THREAD_MULTIPLE mode.\n");
+      Log::Debug("hpps MPI-Net is initialized under MPI_THREAD_MULTIPLE mode.");
     }
     MPI_Comm_rank(MPI_COMM_WORLD, &rank_);
     MPI_Comm_size(MPI_COMM_WORLD, &size_);
     MPI_Barrier(MPI_COMM_WORLD);
-    Log::Debug("%s net util inited, rank = %d, size = %d\n",
+    Log::Debug("%s net util inited, rank = %d, size = %d",
       name().c_str(), rank(), size());
   }
 
   void Finalize() override { inited_ = 0; MPI_Finalize(); }
 
   int Bind(int, char*) override { 
-    Log::Fatal("Shouldn't call this in MPI Net\n"); 
+    Log::Fatal("Shouldn't call this in MPI Net"); 
     return -1;
   }
 
   int Connect(int*, char* [], int) override { 
-    Log::Fatal("Shouldn't call this in MPI Net\n");
+    Log::Fatal("Shouldn't call this in MPI Net");
     return -1;
   }
   

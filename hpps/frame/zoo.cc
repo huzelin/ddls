@@ -60,7 +60,7 @@ void Zoo::Stop(bool finalize_net) {
   if (finalize_net) net_util_->Finalize();
   for (auto actor : zoo_) delete actor.second;
   zoo_.clear();
-  Log::Info("Multiverso Shutdown successfully\n");
+  Log::Info("Parameter Server Shutdown successfully");
 }
 
 int Zoo::rank() const { return NetInterface::Get()->rank(); }
@@ -102,7 +102,7 @@ void Zoo::StartPS() {
     worker->Start();
   }
   Barrier();
-  Log::Info("Rank %d: Multiverso start successfully\n", rank());
+  Log::Info("Rank %d: Parameter Server start successfully", rank());
 }
 
 void Zoo::StopPS() {

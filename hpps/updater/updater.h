@@ -136,8 +136,7 @@ class Updater {
 };
 
 #define HPPS_INSTANTIATE_CLASS_WITH_REAL_TYPE(classname) \
-  template class classname<float>;                     \
-  template class classname<double>;
+  template class classname<float>;                     
 
 #define HPPS_INSTANTIATE_CLASS_WITH_BASE_TYPE(classname) \
   HPPS_INSTANTIATE_CLASS_WITH_REAL_TYPE(classname)       \
