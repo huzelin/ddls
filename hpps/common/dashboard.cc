@@ -47,9 +47,9 @@ std::string Monitor::InfoString() const {
 
 void Dashboard::Display() {
   std::lock_guard<std::mutex> l(m_);
-  Log::Info("--------------Show dashboard monitor information--------------\n");
-  for (auto& it : record_) Log::Info("%s\n", it.second->InfoString().c_str());
-  Log::Info("--------------------------------------------------------------\n");
+  Log::Info("--------------Show dashboard monitor information--------------");
+  for (auto& it : record_) Log::Info("%s", it.second->InfoString().c_str());
+  Log::Info("--------------------------------------------------------------");
 }
 
 }  // namespace hpps
