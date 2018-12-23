@@ -62,7 +62,6 @@ class ArrayServer : public ServerTable {
   std::vector<T> storage_;
   Updater<T>* updater_;
   size_t size_; // number of element with type T
-  
 };
 
 template<typename T>

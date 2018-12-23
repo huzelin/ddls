@@ -45,6 +45,7 @@ TEST(Zoo, RegisterTable) {
 
   float data[100];
   array_worker->Get(data, 100);
+
   Dashboard::Display();
 }
 

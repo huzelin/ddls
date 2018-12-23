@@ -25,8 +25,8 @@ ArrayWorker<T>::ArrayWorker(size_t size) : WorkerTable(), size_(size) {
 }
 
 template <typename T>
-ArrayWorker<T>::ArrayWorker(const ArrayTableOption<T> &option)
-: ArrayWorker<T>(option.size) {
+ArrayWorker<T>::ArrayWorker(const ArrayTableOption<T> &option) :
+    ArrayWorker<T>(option.size) {
 }
 
 template <typename T>
@@ -72,8 +72,8 @@ int ArrayWorker<T>::AddAsync(T* data, size_t size, const AddOption* option) {
 
 template <typename T>
 int ArrayWorker<T>::Partition(const std::vector<Blob>& kv,
-  MsgType,
-  std::unordered_map<int, std::vector<Blob> >* out) {
+                              MsgType,
+                              std::unordered_map<int, std::vector<Blob> >* out) {
   CHECK(kv.size() == 1 || kv.size() == 2 || kv.size() == 3);
   for (int i = 0; i < num_server_; ++i) (*out)[i].push_back(kv[0]);
   if (kv.size() >= 2) {
@@ -113,8 +113,8 @@ ArrayServer<T>::ArrayServer(size_t size) : ServerTable() {
 }
 
 template <typename T>
-ArrayServer<T>::ArrayServer(const ArrayTableOption<T> &option) 
-: ArrayServer<T>(option.size) {
+ArrayServer<T>::ArrayServer(const ArrayTableOption<T> &option) :
+    ArrayServer<T>(option.size) {
 }
 
 template <typename T>
@@ -133,7 +133,7 @@ void ArrayServer<T>::ProcessAdd(const std::vector<Blob>& data) {
 
 template <typename T>
 void ArrayServer<T>::ProcessGet(const std::vector<Blob>& data,
-  std::vector<Blob>* result) {
+                                std::vector<Blob>* result) {
   size_t key_size = data[0].size<integer_t>();
   CHECK(key_size == 1 && data[0].As<integer_t>() == -1); 
   // Always request the whole table

@@ -14,4 +14,4 @@ script:
     # install zeromq
     - cd ../zeromq && sudo make install && cd ../../
     # make testunit
-    - cd build && make test
+    - cd build && ctest -v
