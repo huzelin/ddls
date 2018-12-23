@@ -5,19 +5,6 @@ os: linux
 stage: test
 compiler: gcc
 
-matrix:
-    include:
-        - env: COMPILER="g++-7" C_COMPILER="gcc-7"
-          addons: &gcc7
-              apt:
-                  sources:
-                      - ubuntu-toolchain-r-test
-                      - sourceline: 'ppa:scylladb/ppa'
-                  packages:
-                      - g++-7
-        - env: DPDK_MODE="" COMPILER="g++-7" C_COMPILER="gcc-7"
-          addons: *gcc7
-
 script:
     - set -e
     - mkdir build
