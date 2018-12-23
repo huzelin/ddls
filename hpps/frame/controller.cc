@@ -58,7 +58,7 @@ class Controller::RegisterController {
       all_nodes_[src].server_id = num_server_++;
     if (++num_registered_ == Zoo::Get()->size()) {  // all nodes is registered
       Log::Info("All nodes registered. System contains %d nodes. num_worker = "
-        "%d, num_server = %d\n", Zoo::Get()->size(), num_worker_, num_server_);
+        "%d, num_server = %d", Zoo::Get()->size(), num_worker_, num_server_);
       Blob info_blob(all_nodes_.data(), all_nodes_.size() * sizeof(Node));
       Blob count_blob(2 * sizeof(int));
       count_blob.As<int>(0) = num_worker_;
