@@ -7,6 +7,7 @@
 #include <thread>
 
 #include "hpps/common/dashboard.h"
+#include "hpps/frame/table_factory.h"
 #include "hpps/frame/zoo.h"
 #include "hpps/table/array_table.h"
 
@@ -35,24 +36,41 @@ TEST(Zoo, server_rank) {
 }
 
 TEST(Zoo, RegisterTable) {
-  auto zoo = Zoo::Get();
-  auto array_server = new ArrayServer<float>(100);
-  auto table_id = zoo->RegisterTable(array_server);
-  EXPECT_EQ(1, table_id);
+  ArrayTableOption<float> array_table_option(100);
+  array_table_option.random_option.set_algorithm(kAssign);
+  array_table_option.random_option.set_assigned_value(2.0);
 
-  auto array_worker = new ArrayWorker<float>(100);
-  table_id = zoo->RegisterTable(array_worker);
-  EXPECT_EQ(1, table_id);
+  auto table = table_factory::CreateTable(array_table_option);
 
-  float data[100];
-  array_worker->Get(data, 100);
-
+  if (table != nullptr) {
+#define SIZE 100
+    // Step1: Get
+    float data[SIZE];
+    table->Get(data, SIZE);
+    for (auto i = 0; i < SIZE; ++i) {
+      EXPECT_FLOAT_EQ(data[i], 2.0);
+    }
+    // Step2: Add
+    float delta[SIZE] = { 0 };
+    delta[0] = 1.2;
+    table->Add(delta, SIZE);
+    // Step3: Get
+    table->Get(data, SIZE);
+    for (auto i = 0; i < SIZE; ++i) {
+      if (i == 0) {
+        EXPECT_FLOAT_EQ(data[i], 3.2);
+      } else {
+        EXPECT_FLOAT_EQ(data[i], 2.0);
+      }
+    }
+  }
   Dashboard::Display();
 }
 
 TEST(Zoo, Stop) {
   auto zoo = Zoo::Get();
-  zoo->Stop(false);
+  zoo->Stop(true);
+  table_factory::FreeServerTables();
 }
 
 }  // namespace hpps

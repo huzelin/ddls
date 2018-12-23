@@ -81,7 +81,7 @@ class ServerTable : public Serializable {
 template <typename DType>
 class ParamInitializer {
  public:
-  void set_random_option(const RandomOption& random_option) {
+  void ResetRandomOption(const RandomOption& random_option) {
     random_.SetRandomOption(random_option);
   }
 

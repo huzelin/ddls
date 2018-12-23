@@ -10,7 +10,6 @@
 #include <string>
 
 namespace hpps {
-
 namespace table_factory {
 
 void FreeServerTables();
@@ -29,5 +28,4 @@ typename OptionType::WorkerTableType* CreateTable(const OptionType& option) {
 }
 
 } // namespace table_factory
-
 } // namespace hpps

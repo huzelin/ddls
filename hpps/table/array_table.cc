@@ -115,6 +115,8 @@ ArrayServer<T>::ArrayServer(size_t size) : ServerTable() {
 template <typename T>
 ArrayServer<T>::ArrayServer(const ArrayTableOption<T> &option) :
     ArrayServer<T>(option.size) {
+  ParamInitializer<T>::ResetRandomOption(option.random_option);
+  this->random_.Gen(const_cast<T*>(storage_.data()), size_);
 }
 
 template <typename T>

@@ -13,7 +13,6 @@ struct ArrayTableOption;
 template <typename T>
 class ArrayWorker : public WorkerTable {
  public:
-  explicit ArrayWorker(size_t size);
   explicit ArrayWorker(const ArrayTableOption<T> &option);
   // std::vector<T>& raw() { return table_; }
 
@@ -33,6 +32,8 @@ class ArrayWorker : public WorkerTable {
   void ProcessReplyGet(std::vector<Blob>& reply_data) override;
  
  private:
+  explicit ArrayWorker(size_t size);
+  
   T* data_; // not owned
   size_t size_;
   int num_server_;
@@ -44,9 +45,8 @@ class Updater;
 
 // The storage is a continuous large chunk of memory
 template <typename T>
-class ArrayServer : public ServerTable, ParamInitializer<T> {
+class ArrayServer : public ServerTable, public ParamInitializer<T> {
  public:
-  explicit ArrayServer(size_t size);
   explicit ArrayServer(const ArrayTableOption<T> &option);
 
   void ProcessAdd(const std::vector<Blob>& data) override;
@@ -58,6 +58,8 @@ class ArrayServer : public ServerTable, ParamInitializer<T> {
   void Load(Stream* s) override;
  
  private:
+  explicit ArrayServer(size_t size);
+
   int32_t server_id_;
   std::vector<T> storage_;
   Updater<T>* updater_;
@@ -68,6 +70,8 @@ template<typename T>
 struct ArrayTableOption {
   explicit ArrayTableOption(size_t s) : size(s) {}
   size_t size;
+  RandomOption random_option;
+
   DEFINE_TABLE_TYPE(T, ArrayWorker, ArrayServer);
 };
 

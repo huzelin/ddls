@@ -57,7 +57,7 @@ class ZMQNetWrapper : public NetInterface {
     }
     CHECK_NOTNULL(receiver_.socket);
     active_ = true;
-    Log::Info("%s net util inited, rank = %d, size = %d\n",
+    Log::Info("%s net util inited, rank = %d, size = %d",
       name().c_str(), rank(), size());
   }
 
@@ -77,7 +77,7 @@ class ZMQNetWrapper : public NetInterface {
       return 0;
     }
     else {
-      Log::Error("Failed to bind the socket for receiver, ip:port = %s\n", 
+      Log::Error("Failed to bind the socket for receiver, ip:port = %s", 
                  endpoint);
       return -1;
     }
@@ -101,7 +101,7 @@ class ZMQNetWrapper : public NetInterface {
       int rc = zmq_connect(senders_[rank].socket, ("tcp://" + senders_[rank].endpoint).c_str());
       if (rc != 0) {
         Log::Error("Failed to connect the socket for sender, rank = %d, " 
-                    "ip:port = %s\n", rank, endpoints[i]);
+                    "ip:port = %s", rank, endpoints[i]);
         return -1;
       }
     }
@@ -116,7 +116,7 @@ class ZMQNetWrapper : public NetInterface {
         CHECK(zmq_setsockopt(senders_[i].socket, ZMQ_LINGER, &linger, sizeof(linger)) == 0);
         int rc = zmq_close(senders_[i].socket);
         if (rc != 0) {
-          Log::Error("rc = %d, i = %d, rank = %d\n", rc, i, rank_);
+          Log::Error("rc = %d, i = %d, rank = %d", rc, i, rank_);
         }
         CHECK(rc == 0);
       }
@@ -126,12 +126,12 @@ class ZMQNetWrapper : public NetInterface {
     int rc = zmq_close(receiver_.socket);
     CHECK(rc == 0);
 
-    Log::Info("zmq finalize: before close context\n");
+    Log::Info("zmq finalize: before close context");
     CHECK(zmq_ctx_shutdown(context_)==0);
     CHECK_NOTNULL(context_);
     zmq_ctx_term(context_);
     context_ = nullptr;
-    Log::Info("zmq finalize: close context\n");
+    Log::Info("zmq finalize: close context");
   }
 
   bool active() const override { return active_; }

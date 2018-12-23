@@ -82,9 +82,9 @@ private:
 };
 
 template <typename Key, typename Val>
-class KVServerTable : public ServerTable/*, ParamInitializer<Val>*/ {
+class KVServerTable : public ServerTable, ParamInitializer<Val> {
 public:
-  explicit KVServerTable(const KVTableOption<Key, Val>&) {}
+  explicit KVServerTable(const KVTableOption<Key, Val>& option);
 
   void ProcessGet(const std::vector<Blob>& data, 
                   std::vector<Blob>* result) override {
@@ -117,6 +117,7 @@ private:
 
 template <typename Key, typename Val>
 struct KVTableOption {
+  RandomOption random_option;
   typedef KVWorkerTable<Key, Val> WorkerTableType;
   typedef KVServerTable<Key, Val> ServerTableType;
 };

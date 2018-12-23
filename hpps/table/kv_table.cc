@@ -11,6 +11,11 @@
 namespace hpps {
 
 template <typename Key, typename Val>
+KVServerTable<Key, Val>::KVServerTable(const KVTableOption<Key, Val>& kvtable_option) {
+  ParamInitializer<Val>::ResetRandomOption(kvtable_option.random_option);
+}
+
+template <typename Key, typename Val>
 void KVServerTable<Key, Val>::Store(Stream* stream) {
 
 }
