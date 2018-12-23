@@ -155,8 +155,8 @@ void ArrayServer<T>::Load(Stream* s) {
   s->Read(storage_.data(), storage_.size() * sizeof(T));
 }
 
-HPPS_INSTANTIATE_CLASS_WITH_BASE_TYPE(ArrayWorker);
-HPPS_INSTANTIATE_CLASS_WITH_BASE_TYPE(ArrayServer);
+HPPS_INSTANTIATE_CLASS_WITH_REAL_TYPE(ArrayWorker)
+HPPS_INSTANTIATE_CLASS_WITH_REAL_TYPE(ArrayServer)
 
 }  // namespace hpps
 

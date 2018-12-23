@@ -11,6 +11,7 @@
 
 #include "hpps/common/blob.h"
 #include "hpps/common/message.h"
+#include "hpps/common/random.h"
 
 namespace std { class mutex; }
 
@@ -62,14 +63,14 @@ class Stream;
 
 // interface for checkpoint table
 class Serializable {
-public:
+ public:
   virtual void Store(Stream* s) = 0;
   virtual void Load(Stream* s) = 0;
 };
 
 // describe the server parameter storage data structure and related method
 class ServerTable : public Serializable {
-public:
+ public:
   ServerTable();
   virtual ~ServerTable() = default;
   virtual void ProcessAdd(const std::vector<Blob>& data) = 0;
@@ -77,9 +78,19 @@ public:
                           std::vector<Blob>* result) = 0;
 };
 
-#define DEFINE_TABLE_TYPE(template_type,                    \
-  worker_table_type,  server_table_type)                    \
-  typedef worker_table_type<template_type> WorkerTableType; \
+template <typename DType>
+class ParamInitializer {
+ public:
+  void set_random_option(const RandomOption& random_option) {
+    random_.SetRandomOption(random_option);
+  }
+
+ protected:
+  Random<DType> random_;
+};
+
+#define DEFINE_TABLE_TYPE(template_type, worker_table_type,  server_table_type) \
+  typedef worker_table_type<template_type> WorkerTableType;                     \
   typedef server_table_type<template_type> ServerTableType;
 
 }  // namespace hpps

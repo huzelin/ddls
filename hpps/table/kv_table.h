@@ -5,6 +5,7 @@
 #pragma once
 
 #include "hpps/frame/table_interface.h"
+#include "hpps/frame/zoo.h"
 #include "hpps/common/log.h"
 
 #include <unordered_map>
@@ -48,7 +49,7 @@ public:
     std::unordered_map<int, int> counts;
     Blob keys = kv[0];
     for (int i = 0; i < keys.size<Key>(); ++i) { // iterate as type Key
-      int dst = static_cast<int>(keys.As<Key>(i) % MV_NumServers());
+      int dst = static_cast<int>(keys.As<Key>(i) % Zoo::Get()->num_servers());
       ++counts[dst];
     }
     for (auto& it : counts) { // Allocate memory
@@ -58,7 +59,7 @@ public:
     }
     counts.clear();
     for (int i = 0; i < keys.size<Key>(); ++i) {
-      int dst = static_cast<int>(keys.As<Key>(i) % MV_NumServers());
+      int dst = static_cast<int>(keys.As<Key>(i) % Zoo::Get()->num_servers());
       (*out)[dst][0].As<Key>(counts[dst]) = keys.As<Key>(i);
       if (kv.size() == 2) 
         (*out)[dst][1].As<Val>(counts[dst]) = kv[1].As<Val>(i);
@@ -81,7 +82,7 @@ private:
 };
 
 template <typename Key, typename Val>
-class KVServerTable : public ServerTable {
+class KVServerTable : public ServerTable/*, ParamInitializer<Val>*/ {
 public:
   explicit KVServerTable(const KVTableOption<Key, Val>&) {}
 
@@ -107,13 +108,8 @@ public:
     }
   }
 
-  void Store(Stream*) override {
-    Log::Fatal("Not implemented yet\n");
-  }
-
-  void Load(Stream*) override {
-    Log::Fatal("Not implemented yet\n");
-  }
+  void Store(Stream*) override; 
+  void Load(Stream*) override;
 
 private:
   std::unordered_map<Key, Val> table_;

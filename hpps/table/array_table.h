@@ -44,7 +44,7 @@ class Updater;
 
 // The storage is a continuous large chunk of memory
 template <typename T>
-class ArrayServer : public ServerTable {
+class ArrayServer : public ServerTable, ParamInitializer<T> {
  public:
   explicit ArrayServer(size_t size);
   explicit ArrayServer(const ArrayTableOption<T> &option);
