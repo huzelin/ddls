@@ -50,7 +50,7 @@ TEST(Zoo, RegisterTable) {
 
 TEST(Zoo, Stop) {
   auto zoo = Zoo::Get();
-  zoo->Stop(true);
+  zoo->Stop(false);
 }
 
 }  // namespace hpps
