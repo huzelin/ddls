@@ -14,8 +14,9 @@ namespace hpps {
 
 TEST(Zoo, Start) {
   auto zoo = Zoo::Get();
-  int argc = 0;
-  zoo->Start(&argc, nullptr);
+  int argc = 1;
+  char* data[] = { "-machine_file=./utest_data/hostfile" };
+  zoo->Start(&argc, data);
 }
 
 TEST(Zoo, Barrier) {

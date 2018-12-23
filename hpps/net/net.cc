@@ -16,7 +16,7 @@
 
 namespace hpps {
 
-HPPS_DEFINE_string(net_type, "mpi", "use mpi by default");
+HPPS_DEFINE_string(net_type, "zmq", "use zmq by default");
 
 NetInterface* NetInterface::Get() {
   if (HPPS_CONFIG_net_type == "mpi") {

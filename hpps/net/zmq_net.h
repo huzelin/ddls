@@ -38,7 +38,7 @@ class ZMQNetWrapper : public NetInterface {
     zmq_ctx_set(context_, ZMQ_MAX_SOCKETS, 256);
 
     for (auto ip : machine_lists_) {
-      if (local_ip.find(ip) != local_ip.end()) { // my rank
+      if (local_ip.find(ip) != local_ip.end() || machine_lists_.size() == 1) { // my rank
         rank_ = static_cast<int>(senders_.size());
         Entity sender; sender.endpoint = ""; sender.socket = nullptr;
         senders_.push_back(sender);
