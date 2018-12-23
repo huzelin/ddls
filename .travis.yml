@@ -10,8 +10,8 @@ script:
     # build
     - mkdir build && cd build && cmake ../ && make -j 4
     # install openmpi
-    - cd ../thirdparty/ompi && make install
+    - cd ../thirdparty/ompi && sudo make install
     # install zeromq
-    - cd ../zeromq && make install && cd ../../
+    - cd ../zeromq && sudo make install && cd ../../
     # make testunit
     - cd build && make test
