@@ -32,7 +32,7 @@ else()
     add_custom_command(TARGET ompi
 	PRE_BUILD
 	COMMAND
-	cd ${CMAKE_CURRENT_SOURCE_DIR}/ompi/ && ./autogen.pl && ./configure && make -j 4
+	cd ${CMAKE_CURRENT_SOURCE_DIR}/ompi/ && ./autogen.pl && ./configure --enable-mpi-fortran=no && make -j 4
 	COMMENT "Build OMPI")
 endif()
 

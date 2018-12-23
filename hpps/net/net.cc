@@ -26,6 +26,7 @@ NetInterface* NetInterface::Get() {
     static ZMQNetWrapper net_impl;
     return &net_impl;
   } else {
+    Log::Fatal("Unkown net type: %s", HPPS_CONFIG_net_type.c_str());
     return nullptr;
   }
 }
