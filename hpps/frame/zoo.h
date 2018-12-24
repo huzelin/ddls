@@ -59,6 +59,8 @@ class Zoo {
   inline int num_workers() const { return num_workers_; }
   inline int num_servers() const { return num_servers_; }
 
+  inline bool is_server() const { return node::is_server(nodes_[rank()].role); }
+  inline bool is_worker() const { return node::is_worker(nodes_[rank()].role); }
 
   int RegisterTable(WorkerTable* worker_table);
   int RegisterTable(ServerTable* server_table);

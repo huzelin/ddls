@@ -1,4 +1,4 @@
-""" base for ams """
+""" base for hpps """
 from __future__ import absolute_import
 
 import sys
@@ -12,8 +12,8 @@ from .libinfo import find_lib_path
 #------------------------------------------
 py_str = lambda x: x
 
-class AMSError(Exception):
-    """ Error that will be throwed by all AMS functions """
+class HPPSError(Exception):
+    """ Error that will be throwed by all HPPS functions """
     pass
 
 def _load_lib(name):
@@ -23,7 +23,7 @@ def _load_lib(name):
     return lib
 
 # library instance of xdl
-LIB = _load_lib('ams')
+LIB = _load_lib('hpps')
 
 #-------------------------------------------
 # helper function definition
@@ -42,8 +42,8 @@ def check_call(ret):
     """
     if ret != 0:
         msg = ctypes.c_char_p(None)
-        LIB.AMS_GetLastErrorString(ctypes.byref(msg))
-        raise AMSError(py_str(msg.value))
+        LIB.HPPS_GetLastErrorString(ctypes.byref(msg))
+        raise HPPSError(py_str(msg.value))
 
 def c_str(string):
     """

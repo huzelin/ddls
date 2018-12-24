@@ -1,4 +1,4 @@
-""" zoo is the controll center of ams."""
+""" zoo is the controll center of hpps."""
 from __future__ import absolute_import
 
 import sys
@@ -7,25 +7,25 @@ import ctypes
 from .base import LIB, check_call, c_str
 
 #------------------------------------------
-# ams zoo
+# hpps zoo
 #------------------------------------------
 class Zoo(object):
-    """The ams zoo, which use Actor Model design pattern for well controll the system.
+    """The hpps zoo, which use Actor Model design pattern for well controll the system.
     Your program only need declare one Zoo instance, and Start/Stop by default.
     """
     def __init__(self):
         """Start the Zoo, all the Actors will be registered.
         """
-        check_call(LIB.AMS_ZooStart())
+        check_call(LIB.HPPS_ZooStart())
 
     def __del__(self):
         """Stop the Zoo, all the Actors will be destroyed
         """
-        check_call(LIB.AMS_ZooStop())
+        check_call(LIB.HPPS_ZooStop())
 
     def barrier(self):
         """Barrier all the nodes"""
-        check_call(LIB.AMS_ZooBarrier())
+        check_call(LIB.HPPS_ZooBarrier())
 
     def rank(self):
         """
@@ -35,7 +35,7 @@ class Zoo(object):
 
         """
         rank = ctypes.c_int()
-        check_call(LIB.AMS_ZooRank(ctypes.byref(rank)))
+        check_call(LIB.HPPS_ZooRank(ctypes.byref(rank)))
         return rank.value
 
     def size(self):
@@ -46,7 +46,7 @@ class Zoo(object):
 
         """
         size = ctypes.c_int()
-        check_call(LIB.AMS_ZooSize(ctypes.byref(size)))
+        check_call(LIB.HPPS_ZooSize(ctypes.byref(size)))
         return size.value
     
     def num_workers(self):
@@ -57,7 +57,7 @@ class Zoo(object):
 
         """
         num_workers = ctypes.c_int()
-        check_call(LIB.AMS_ZooNumWorkers(ctypes.byref(num_workers)))
+        check_call(LIB.HPPS_ZooNumWorkers(ctypes.byref(num_workers)))
         return num_workers.value
 
     def num_servers(self):
@@ -68,7 +68,7 @@ class Zoo(object):
 
         """
         num_servers = ctypes.c_int()
-        check_call(LIB.AMS_ZooNumServers(ctypes.byref(num_servers)))
+        check_call(LIB.HPPS_ZooNumServers(ctypes.byref(num_servers)))
         return num_servers.value
 
     def is_worker(self):
@@ -79,7 +79,7 @@ class Zoo(object):
 
         """
         is_worker = ctypes.c_int()
-        check_call(LIB.AMS_ZooIsWorker(ctypes.byref(is_worker)))
+        check_call(LIB.HPPS_ZooIsWorker(ctypes.byref(is_worker)))
         return True if is_worker else False
 
     def is_server(self):
@@ -90,7 +90,7 @@ class Zoo(object):
 
         """
         is_server = ctypes.c_int()
-        check_call(LIB.AMS_ZooIsServer(ctypes.byref(is_server)))
+        check_call(LIB.HPPS_ZooIsServer(ctypes.byref(is_server)))
         return True if is_server else False
 
     def is_controller(self):
@@ -101,7 +101,7 @@ class Zoo(object):
 
         """
         is_controller = ctypes.c_int()
-        check_call(LIB.AMS_ZooIsController(ctypes.byref(is_controller)))
+        check_call(LIB.HPPS_ZooIsController(ctypes.byref(is_controller)))
         return True if is_controller else False
 
     def worker_id(self):
@@ -112,7 +112,7 @@ class Zoo(object):
 
         """
         worker_id = ctypes.c_int()
-        check_call(LIB.AMS_ZooWorkerId(ctypes.byref(worker_id)))
+        check_call(LIB.HPPS_ZooWorkerId(ctypes.byref(worker_id)))
         return worker_id.value
 
     def server_id(self):
@@ -123,7 +123,7 @@ class Zoo(object):
 
         """
         server_id = ctypes.c_int()
-        check_call(LIB.AMS_ZooServerId(ctypes.byref(server_id)))
+        check_call(LIB.HPPS_ZooServerId(ctypes.byref(server_id)))
         return server_id.value
 
     def set_log_level(self, log_level):
@@ -137,7 +137,7 @@ class Zoo(object):
                    2 -> Error
                    3 -> Fatal
         """
-        check_call(LIB.AMS_ZooSetLogLevel(log_level))
+        check_call(LIB.HPPS_ZooSetLogLevel(log_level))
 
     def set_log_file(self, log_file):
         """
@@ -145,8 +145,8 @@ class Zoo(object):
         Parameters
         ----------
 
-        log_file: The log file path for AMS.
+        log_file: The log file path for HPPS.
 
         """
-        check_call(LIB.AMS_ZooSetLogFile(c_str(log_file)))
+        check_call(LIB.HPPS_ZooSetLogFile(c_str(log_file)))
 

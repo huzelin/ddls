@@ -4,7 +4,7 @@ import os
 import platform
 
 def find_lib_path(name):
-    """ Find AMS related dynamic library files for setup
+    """ Find HPPS related dynamic library files for setup
 
     Returns:
     ------
@@ -19,7 +19,7 @@ def find_lib_path(name):
     if os.path.exists(lib_path):
         return lib_path 
 
-    build_path = os.path.abspath(os.path.join(curr_path, '../../../../build/ams/'))
+    build_path = os.path.abspath(os.path.join(curr_path, '../../../build/'))
     lib_path = os.path.join(build_path, 'lib%s.so'%name)
     if os.path.exists(lib_path):
         return lib_path 
