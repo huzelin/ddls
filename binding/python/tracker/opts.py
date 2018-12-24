@@ -26,4 +26,5 @@ def get_opts(args = None):
 
     if args.cluster is None:
         raise RuntimeError('--cluster is not specified, youcan also specify')
+    return args
 

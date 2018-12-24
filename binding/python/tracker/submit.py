@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 from __future__ import absolute_import
 
+import logging
 import sys
 import os
 
@@ -11,6 +12,7 @@ def main():
     """ Main submission function
     """
     args = opts.get_opts()
+    logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s', level=logging.INFO)
 
     if args.cluster == 'mpi':
         mpi.submit(args)
@@ -20,5 +22,4 @@ def main():
 curr_path = os.path.dirname(os.path.abspath(os.path.expanduser(__file__)))
 sys.path.insert(0, curr_path)
 
-def submit():
-    main()
+main()

@@ -30,9 +30,10 @@ def submit(args):
     """
     def mpi_submit(nworker):
         if args.host_file is not None:
-            cmd = '--mca plm_rsh_no_tree_spawn 1 --mca btl self,sm,tcp --mca btl_tcp_include -hostfile %s' % (args.host_file)
+            cmd = ' -hostfile %s' % (args.host_file)
         else:
             raise RuntimeError('--host-file can not none')
+        cmd += ' ' + ' '.join(args.command)
 
         # sync program is necessary
         local_dir = os.getcwd() + '/'
