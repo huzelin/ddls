@@ -16,7 +16,8 @@ namespace hpps {
 TEST(Zoo, Start) {
   auto zoo = Zoo::Get();
   int argc = 1;
-  char* data[] = { const_cast<char*>("-machine_file=./utest_data/hostfile") };
+  char* data[] = { const_cast<char*>("-machine_file=./utest_data/hostfile"),
+                   const_cast<char*>("-net_type=mpi") };
   zoo->Start(&argc, data);
 }
 

@@ -8,7 +8,7 @@ set(CMAKE_VERBOSE_MAKEFILE on)
 
 include(${PROJECT_SOURCE_DIR}/cmake/Utils.cmake)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -ftree-vectorize -std=c++11 -Wcpp -mavx -mavx2 -fopenmp -Wframe-larger-than=6963200 -O2 -g")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -ftree-vectorize -std=c++11 -Wcpp -mavx -mavx2 -fopenmp -O2 -g")
 
 include_directories(
     ${PROJECT_BINARY_DIR}/
@@ -29,3 +29,4 @@ target_link_libraries(hpps libzeromq libompi)
 add_dependencies(hpps zeromq ompi)
 
 add_subdirectory(test)
+add_subdirectory(benchmark)
