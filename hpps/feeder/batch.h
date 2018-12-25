@@ -6,5 +6,9 @@
 
 namespace hpps {
 
+class Batch {
+
+
+};
 
 }  // namespace hpps

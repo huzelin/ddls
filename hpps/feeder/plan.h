@@ -20,8 +20,6 @@ struct Plan {
     size_t count;
     Plan* plan;
   };
-  // Return the tensor count
-  size_t tensor_count() const { return names.size(); }
 
   std::vector<Block> block;
   // The total sample count
@@ -36,8 +34,9 @@ struct Plan {
 
 class PlanMaker {
  public:
+  PlanMaker() : epoch_(2), batch_size_(128) { }
   // Make the Batch assemble plan.
-  std::shared_ptr<Plan> Make();
+  Plan* Make();
   
   void set_uri(const std::vector<URI>& uri) { uri_ = uri; }
   const std::vector<URI>& uri() const { return uri_; }

@@ -17,7 +17,7 @@ namespace hpps {
  */
 template<typename T>
 class Queue {
-public:
+ public:
   /*! \brief Constructor */
   Queue() { exit_.store(false); }
 
@@ -65,7 +65,7 @@ public:
 
   bool Alive();
 
-private:
+ private:
   /*! the underlying container of queue */
   std::queue<T> buffer_;
   mutable std::mutex mutex_;

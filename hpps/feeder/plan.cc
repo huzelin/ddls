@@ -20,8 +20,8 @@
 
 namespace hpps {
 
-std::shared_ptr<Plan> PlanMaker::Make() {
-  std::shared_ptr<Plan> plan(new Plan());
+Plan* PlanMaker::Make() {
+  Plan* plan = new Plan();
   plan->batch_size = batch_size_;
 
   for (const auto& u : uri_) {
@@ -47,7 +47,7 @@ std::shared_ptr<Plan> PlanMaker::Make() {
       plan->types.push_back(tensor_type);
     }
 
-    Plan::Block block = { stream, sample_count, plan.get() };
+    Plan::Block block = { stream, sample_count, plan };
     plan->block.push_back(block);
   }
   return plan;
