@@ -5,6 +5,7 @@
 #include <thread>
 
 #include "hpps/common/dashboard.h"
+#include "hpps/common/timer.h"
 #include "hpps/frame/table_factory.h"
 #include "hpps/frame/zoo.h"
 #include "hpps/table/array_table.h"
@@ -13,9 +14,10 @@ namespace hpps {
 
 void Bench() {
   auto zoo = Zoo::Get();
-  int argc = 2;
+  int argc = 3;
   char* data[] = { const_cast<char*>("-machine_file=./utest_data/hostfile"),
-                   const_cast<char*>("-net_type=mpi") };
+                   const_cast<char*>("-net_type=mpi"),
+                   const_cast<char*>("-sync=false") };
   zoo->Start(&argc, data);
   
   const int kSize = 1024 * 1024;  // 1 MB model size
@@ -27,6 +29,8 @@ void Bench() {
   auto table = table_factory::CreateTable(array_table_option);
 
   zoo->Barrier();
+  Timer timer;
+  timer.Start();
 
   if (table != nullptr) {
     float* data = new float[kSize];
@@ -47,7 +51,12 @@ void Bench() {
     delete [] data;
     delete [] delta;
   }
-  Dashboard::Display();
+  zoo->Barrier();
+
+  if (zoo->rank() == 0) {
+    Dashboard::Display();
+    Log::Info("Total time=%f", timer.Elapse());
+  }
 
   zoo->Stop(true);
 }
