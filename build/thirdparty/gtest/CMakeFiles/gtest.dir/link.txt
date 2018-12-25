@@ -1,0 +1,1 @@
+/usr/bin/c++ -fPIC  -fPIC -ftree-vectorize -std=c++11 -Wcpp -mavx -mavx2 -fopenmp -O2 -g  -shared -Wl,-soname,libgtest.so -o libgtest.so CMakeFiles/gtest.dir/gtest-all.cc.o CMakeFiles/gtest.dir/gtest-main.cc.o  -L/home/app/HPPS/hpps/thirdparty/hdfs/lib64 
