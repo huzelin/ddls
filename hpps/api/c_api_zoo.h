@@ -8,7 +8,7 @@
 extern "C" {
 #endif
 
-int HPPS_ZooStart();
+int HPPS_ZooStart(const char* args);
 int HPPS_ZooStop();
 int HPPS_ZooBarrier();
 

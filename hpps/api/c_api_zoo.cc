@@ -5,12 +5,20 @@
 
 #include "hpps/api/c_api_error.h"
 #include "hpps/common/log.h"
+#include "hpps/common/string_util.h"
 #include "hpps/frame/zoo.h"
 
 using namespace hpps;
 
-int HPPS_ZooStart() {
-  Zoo::Get()->Start(0, NULL);
+int HPPS_ZooStart(const char* args) {
+  auto splits = StrSplit(args, ' ');
+  std::vector<char*> data;
+  data.resize(splits.size());
+  int size = data.size();
+  for (auto i = 0; i < data.size(); ++i) {
+    data[i] = const_cast<char*>(splits[i].c_str());
+  }
+  Zoo::Get()->Start(&size, data.data());
   return 0;
 }
 

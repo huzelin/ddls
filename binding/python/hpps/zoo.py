@@ -12,11 +12,15 @@ from .base import LIB, check_call, c_str
 class Zoo(object):
     """The hpps zoo, which use Actor Model design pattern for well controll the system.
     Your program only need declare one Zoo instance, and Start/Stop by default.
+
+    Parameter
+    --------
+       args: The user control args, default user mpi/async training.
     """
-    def __init__(self):
+    def __init__(self, args = '-net_type=mpi -sync=false'):
         """Start the Zoo, all the Actors will be registered.
         """
-        check_call(LIB.HPPS_ZooStart())
+        check_call(LIB.HPPS_ZooStart(c_str(args)))
 
     def __del__(self):
         """Stop the Zoo, all the Actors will be destroyed
