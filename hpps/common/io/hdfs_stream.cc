@@ -2,8 +2,6 @@
  * \file hdfs_stream.cc
  * \brief The hdfs stream
  */
-#ifdef USE_HDFS
-
 #include "hpps/common/io/hdfs_stream.h"
 
 namespace hpps {
@@ -26,13 +24,13 @@ HDFSStream::HDFSStream(hdfsFS fs, const URI &uri, FileOpenMode mode) {
     flag = O_WRONLY | O_APPEND;
     break;
   case FileOpenMode::BinaryWrite:
-    flag = O_WRONLY | O_BINARY;
+    flag = O_WRONLY;
     break;
   case FileOpenMode::BinaryRead:
-    flag = O_RDONLY | O_BINARY;
+    flag = O_RDONLY;
     break;
   case FileOpenMode::BinaryAppend:
-    flag = O_WRONLY | O_APPEND | O_BINARY;
+    flag = O_WRONLY | O_APPEND;
     break;
   }    
 
@@ -158,5 +156,3 @@ Stream* HDFSStreamFactory::Open(const URI & uri, FileOpenMode mode) {
 }
 
 }  // namespace hpps
-
-#endif

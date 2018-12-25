@@ -17,15 +17,19 @@ include_directories(
     ${PROJECT_SOURCE_DIR}/gtest/
     ${PROJECT_SOURCE_DIR}/thirdparty/zeromq/include/
     ${PROJECT_SOURCE_DIR}/thirdparty/ompi/ompi/include/
+    ${PROJECT_SOURCE_DIR}/thirdparty/hdfs/include/
 )
-
+link_directories(
+    ${PROJECT_SOURCE_DIR}/thirdparty/hdfs/lib64/
+)
 add_subdirectory(thirdparty)
 
 file(GLOB_RECURSE SOURCE
     "hpps/*.cc"
+    "feeder/*.cc"
 )
 add_library(hpps SHARED ${SOURCE})
-target_link_libraries(hpps libzeromq libompi)
+target_link_libraries(hpps libzeromq libompi -lhdfs)
 add_dependencies(hpps zeromq ompi)
 
 add_subdirectory(test)

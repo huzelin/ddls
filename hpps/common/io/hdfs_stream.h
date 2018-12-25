@@ -4,14 +4,12 @@
  */
 #pragma once
 
-#ifdef USE_HDFS
+#include "hpps/common/io/io.h"
 
-/*!
-* \file local_file_sys.h
-* \brief The implement of hdfs io interface.
-*/
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
-#include "hpps/common/ioo/io.h"
 #include "hdfs.h"
 
 #include <cstring>
@@ -79,5 +77,3 @@ class HDFSStreamFactory : public StreamFactory {
 };
 
 }  // namespace hpps
-
-#endif
