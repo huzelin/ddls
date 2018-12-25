@@ -19,7 +19,7 @@ class Feeder {
   void Stop();
 
   // Schedule one data source's sample.
-  BlockingQueueIterator<Batch*>* Schedule(Plan* plan, int max_queue_size = 2);
+  BlockingQueueIterator<Batch*>* Schedule(Plan* plan, int max_queue_size = 1);
 
  protected:
   void Run(int tid);

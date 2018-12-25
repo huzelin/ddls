@@ -11,7 +11,7 @@ namespace hpps {
 template <typename T>
 class BlockingQueue {
  public:
-  explicit BlockingQueue(uint32_t max_queue_size = 2) : max_queue_size_(max_queue_size) { }
+  explicit BlockingQueue(uint32_t max_queue_size = 1) : max_queue_size_(max_queue_size) { }
 
   // Return the mutable queue
   Queue<T>* mutable_queue() { return &queue_; }
