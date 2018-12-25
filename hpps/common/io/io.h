@@ -114,20 +114,4 @@ class StreamFactory {
   StreamFactory() {}
 };
 
-class TextReader {
- public:
-  TextReader(const URI &uri, size_t buf_size);
-
-  size_t GetLine(std::string &line);
-
-  ~TextReader();
- 
- private:
-  size_t LoadBuffer();
-
-  char* buf_;
-  size_t pos_, buf_size_, length_;
-  Stream* stream_;
-};
-
 }  // namespace hpps

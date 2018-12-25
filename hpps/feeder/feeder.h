@@ -1,6 +1,6 @@
 /*!
- * \file runner.h
- * \brief The runner for i/o reading.
+ * \file feeder.h
+ * \brief The feeder for i/o reading.
  */
 #pragma once
 
