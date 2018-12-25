@@ -26,7 +26,6 @@ add_subdirectory(thirdparty)
 
 file(GLOB_RECURSE SOURCE
     "hpps/*.cc"
-    "feeder/*.cc"
 )
 add_library(hpps SHARED ${SOURCE})
 target_link_libraries(hpps libzeromq libompi -lhdfs)
