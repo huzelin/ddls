@@ -27,9 +27,9 @@ struct Plan {
   // The batch size you want
   int batch_size;
   // The tensor name array
-  std::vector<std::string> names;
+  std::vector<std::string> tensor_names;
   // The tensor type array
-  std::vector<uint8_t> types;
+  std::vector<tensor_data_type_t> tensor_data_types;
 };
 
 class PlanMaker {

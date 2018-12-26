@@ -14,12 +14,13 @@ namespace hpps {
 class Feeder {
  public:
   static Feeder* Get() { static Feeder feeder; return &feeder; }
+  virtual ~Feeder();
 
-  void Start();
-  void Stop();
+  void Start(int thread_num = 10);
 
   // Schedule one data source's sample.
-  BlockingQueueIterator<Batch*>* Schedule(Plan* plan, int max_queue_size = 1);
+  BlockingQueueIterator<std::shared_ptr<Batch>>* Schedule(
+      Plan* plan, int max_queue_size = 1);
 
  protected:
   void Run(int tid);
@@ -27,7 +28,7 @@ class Feeder {
   // Each entry mean one data source.
   struct Entry {
     Plan* plan;
-    BlockingQueue<Batch*>* blocking_queue;
+    BlockingQueue<std::shared_ptr<Batch>>* blocking_queue;
   };
   void AddTask(const Entry& entry);
 
@@ -35,9 +36,21 @@ class Feeder {
   struct Task {
     size_t curr;
     Plan::Block block;
-    BlockingQueue<Batch*>* blocking_queue;
+    BlockingQueue<std::shared_ptr<Batch>>* blocking_queue;
   };
+  
+  // Produce one batch
+  void ProduceBatch(Queue<Task>* queue);
+  // Assemble tensors into Batch 
+  int AssembleBatch(Stream* stream, Plan* plan, std::shared_ptr<Batch>& batch);
+  // Read batch tensor
+  std::vector<std::vector<Tensor*>> ReadBatchTensor(Stream* stream, Plan* plan);
+  // Assemble batch
+  void AssembleBatch(std::vector<std::vector<Tensor*>>& batch_tensor,
+                     Plan* plan,
+                     std::shared_ptr<Batch>& batch);
 
+  ThreadPool* thread_pool_;
   std::vector<Entry> entries_;
   std::vector<Queue<Task>*> task_queues_;
   std::mutex mutex_;

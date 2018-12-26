@@ -5,7 +5,7 @@
 #pragma once
 
 #include <atomic>
-#include <queue>
+#include <list>
 #include <mutex>
 #include <condition_variable>
 
@@ -28,6 +28,7 @@ class Queue {
    * \param item item to be pushed
    */
   void Push(T& item);
+  void PushFront(T& item);
 
   /*!
    * \brief Pop an element from the queue, if the queue is empty, thread
@@ -67,7 +68,7 @@ class Queue {
 
  private:
   /*! the underlying container of queue */
-  std::queue<T> buffer_;
+  std::list<T> buffer_;
   mutable std::mutex mutex_;
   std::condition_variable empty_condition_;
   /*! whether the queue is still work */
@@ -79,14 +80,21 @@ class Queue {
   void operator=(const Queue&);
 };
 
-template<typename T>
+template <typename T>
 void Queue<T>::Push(T& item) {
   std::lock_guard<std::mutex> lock(mutex_);
-  buffer_.push(std::move(item));
+  buffer_.push_back(std::move(item));
   empty_condition_.notify_one();
 }
 
-template<typename T>
+template <typename T>
+void Queue<T>::PushFront(T& item) {
+  std::lock_guard<std::mutex> lock(mutex_);
+  buffer_.push_front(std::move(item));
+  empty_condition_.notify_one();
+}
+
+template <typename T>
 bool Queue<T>::Pop(T& result) {
   std::unique_lock<std::mutex> lock(mutex_);
   // empty_condition_.wait(lock,
@@ -96,20 +104,20 @@ bool Queue<T>::Pop(T& result) {
   }
   if (buffer_.empty()) return false;
   result = std::move(buffer_.front());
-  buffer_.pop();
+  buffer_.pop_front();
   return true;
 }
 
-template<typename T>
+template <typename T>
 bool Queue<T>::TryPop(T& result) {
   std::lock_guard<std::mutex> lock(mutex_);
   if (buffer_.empty()) return false;
   result = std::move(buffer_.front());
-  buffer_.pop();
+  buffer_.pop_front();
   return true;
 }
 
-template<typename T>
+template <typename T>
 bool Queue<T>::Front(T& result) {
   std::unique_lock<std::mutex> lock(mutex_);
   empty_condition_.wait(lock,
@@ -119,26 +127,26 @@ bool Queue<T>::Front(T& result) {
   return true;
 }
 
-template<typename T>
+template <typename T>
 int Queue<T>::Size() const {
   std::lock_guard<std::mutex> lock(mutex_);
   return static_cast<int>(buffer_.size());
 }
 
-template<typename T>
+template <typename T>
 bool Queue<T>::Empty() const {
   std::lock_guard<std::mutex> lock(mutex_);
   return buffer_.empty();
 }
 
-template<typename T>
+template <typename T>
 void Queue<T>::Exit() {
   std::lock_guard<std::mutex> lock(mutex_);
   exit_.store(true);
   empty_condition_.notify_all();
 }
 
-template<typename T>
+template <typename T>
 bool Queue<T>::Alive() {
   std::lock_guard<std::mutex> lock(mutex_);
   return exit_ == false;
