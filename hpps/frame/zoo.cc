@@ -20,9 +20,9 @@
 
 namespace hpps {
 
-Zoo::Zoo() {}
+Zoo::Zoo() { }
 
-Zoo::~Zoo() {}
+Zoo::~Zoo() { }
 
 HPPS_DEFINE_string(ps_role, "default", "none / worker / server / default");
 HPPS_DEFINE_bool(ma, false, "model average, will not start server if true");
@@ -41,6 +41,11 @@ int ParsePSRole(const std::string& ps_role) {
 const int kController = 0;
 
 }  // namespace
+
+Zoo* Zoo::Get() {
+  static Zoo zoo;
+  return &zoo;
+}
 
 void Zoo::Start(int* argc, char** argv) {
   Log::Debug("Zoo started\n");

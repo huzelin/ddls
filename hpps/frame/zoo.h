@@ -22,7 +22,7 @@ class NetInterface;
 class Zoo {
  public:
   ~Zoo();
-  inline static Zoo* Get() { static Zoo zoo; return &zoo; }
+  static Zoo* Get();
 
   // Start all actors
   void Start(int* argc, char** argv);
