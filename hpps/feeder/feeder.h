@@ -4,10 +4,10 @@
  */
 #pragma once
 
+#include "hpps/common/thread_pool.h"
 #include "hpps/feeder/plan.h"
 #include "hpps/feeder/batch.h"
 #include "hpps/feeder/blocking_queue.h"
-#include "hpps/feeder/thread_pool.h"
 
 namespace hpps {
 

@@ -1,6 +1,6 @@
 /*!
- * \file common.h
- * \brief The common definiton in feeder module
+ * \file types.h
+ * \brief The types in feeder module
  */
 #pragma once
 
