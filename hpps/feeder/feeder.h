@@ -35,20 +35,20 @@ class Feeder {
   // The task in data source.
   struct Task {
     size_t curr;
-    Plan::Block block;
+    Plan::SampleRecord sample_record;
     BlockingQueue<std::shared_ptr<Batch>>* blocking_queue;
   };
   
   // Produce one batch
   void ProduceBatch(Queue<Task>* queue);
   // Assemble tensors into Batch 
-  int AssembleBatch(Stream* stream, Plan* plan, std::shared_ptr<Batch>& batch);
+  int AssembleBatch(Plan::SampleRecord& sample_record, std::shared_ptr<Batch>& batch);
   // Read batch tensor
-  std::vector<std::vector<Tensor*>> ReadBatchTensor(Stream* stream, Plan* plan);
-  // Assemble batch
-  void AssembleBatch(std::vector<std::vector<Tensor*>>& batch_tensor,
-                     Plan* plan,
-                     std::shared_ptr<Batch>& batch);
+  std::vector<std::vector<Tensor*>> ReadBatchTensor(Plan::SampleRecord& sample_record);
+  // Batch tensor to Batch
+  void BatchTensor2Batch(std::vector<std::vector<Tensor*>>& batch_tensor,
+                         Plan::SampleRecord& sample_record,
+                         std::shared_ptr<Batch>& batch);
 
   ThreadPool* thread_pool_;
   std::vector<Entry> entries_;

@@ -18,6 +18,12 @@ class LocalStream : public Stream {
    */
   virtual void Write(const void *buf, size_t size) override;
 
+  /*
+   * \brief Seek offset
+   * \param offset the offset of file
+   */
+  virtual void Seek(size_t offset) override;
+
   /*!
    * \brief read data from Stream
    * \param buf pointer to a memory buffer

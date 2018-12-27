@@ -35,6 +35,7 @@ class HDFSStream : public Stream {
   */
   virtual void Write(const void *buf, size_t size) override;
 
+  virtual void Seek(size_t offset) override;
 
   /*!
   * \brief read data from Stream

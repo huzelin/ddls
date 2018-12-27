@@ -4,6 +4,9 @@
  */
 #pragma once
 
+#include <vector>
+#include <memory>
+
 #include "hpps/common/blob.h"
 #include "hpps/feeder/types.h"
 

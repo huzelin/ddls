@@ -82,6 +82,13 @@ void HDFSStream::Write(const void *buf, size_t size) {
   }
 }
 
+void HDFSStream::Seek(size_t offset) {
+  if (0 != hdfsSeek(fs_, fp_, offset)) {
+    int errsv = errno;
+    Log::Fatal("Failed to Seek to HDFSSTream %s, %s\n", path_.c_str(), strerror(errsv));
+  }
+}
+
 /*!
 * \brief read data from Stream
 * \param buf pointer to a memory buffer

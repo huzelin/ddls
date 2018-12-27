@@ -67,6 +67,12 @@ class Stream {
   */
   virtual void Write(const void *buf, size_t size) = 0;
 
+  /*
+   * \brief seek to desired pos
+   * \param offset the desired position
+   */
+  virtual void Seek(size_t offset) = 0;
+  
   /*!
   * \brief read data from Stream
   * \param buf pointer to a memory buffer;

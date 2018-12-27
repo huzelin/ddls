@@ -6,6 +6,7 @@
 
 #include "hpps/common/io/io.h"
 #include "hpps/feeder/types.h"
+#include "hpps/feeder/record_io.h"
 
 #include <memory>
 
@@ -13,23 +14,17 @@ namespace hpps {
 
 struct Plan {
   Plan() : count(0) { }
-  // The block [start, end) sample segment
-  // block can be read parallelly.
-  struct Block {
-    Stream* stream;
-    size_t count;
+  // SampleRecord means a sample file.
+  struct SampleRecord {
+    std::shared_ptr<RecordIO> record_io;
     Plan* plan;
   };
 
-  std::vector<Block> block;
+  std::vector<SampleRecord> sample_record;
   // The total sample count
   size_t count;
   // The batch size you want
   int batch_size;
-  // The tensor name array
-  std::vector<std::string> tensor_names;
-  // The tensor type array
-  std::vector<tensor_data_type_t> tensor_data_types;
 };
 
 class PlanMaker {
@@ -38,8 +33,8 @@ class PlanMaker {
   // Make the Batch assemble plan.
   Plan* Make();
   
-  void set_uri(const std::vector<URI>& uri) { uri_ = uri; }
-  const std::vector<URI>& uri() const { return uri_; }
+  void set_uri(const std::vector<std::string>& uri) { uri_ = uri; }
+  const std::vector<std::string>& uri() const { return uri_; }
 
   void set_epoch(int epoch) { epoch_ = epoch; }
   int epoch() const { return epoch_; }
@@ -49,7 +44,7 @@ class PlanMaker {
 
  protected:
   // The sample URI
-  std::vector<URI> uri_;
+  std::vector<std::string> uri_;
   // The epoch number
   int epoch_;
   // The batch size

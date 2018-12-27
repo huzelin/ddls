@@ -23,33 +23,18 @@ namespace hpps {
 Plan* PlanMaker::Make() {
   Plan* plan = new Plan();
   plan->batch_size = batch_size_;
+  plan->count = 0;
   CHECK(batch_size_ > 0);
 
   for (const auto& u : uri_) {
-    auto stream = StreamFactory::GetStream(u, FileOpenMode::BinaryRead);
-    CHECK(stream->Good());
-    
-    // sample count
-    sample_count_t sample_count;
-    CHECK(sizeof(sample_count) == stream->Read(&sample_count, sizeof(sample_count)));
-    plan->count += sample_count;
-    
-    // tensor count
-    tensor_count_t tensor_count;
-    CHECK(sizeof(tensor_count) == stream->Read(&tensor_count, sizeof(tensor_count)));
-    
-    for (auto i = 0; i < tensor_count; ++i) {
-      char tensor_name[kTensorNameLen];
-      CHECK(kTensorNameLen == stream->Read(tensor_name, kTensorNameLen));
-      plan->tensor_names.push_back(tensor_name);
-      
-      tensor_data_type_t tensor_data_type;
-      CHECK(sizeof(tensor_data_type) == stream->Read(&tensor_data_type, sizeof(tensor_data_type)));
-      plan->tensor_data_types.push_back(tensor_data_type);
-    }
+    auto record_io = new RecordIO(u, FileOpenMode::BinaryRead);
+    plan->count += record_io->sample_count();
 
-    Plan::Block block = { stream, sample_count, plan };
-    plan->block.push_back(block);
+    Plan::SampleRecord sample_record;
+    sample_record.plan = plan;
+    sample_record.record_io.reset(record_io);
+    
+    plan->sample_record.push_back(sample_record);
   }
   return plan;
 }

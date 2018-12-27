@@ -72,10 +72,15 @@ LocalStream::~LocalStream(void)
 void LocalStream::Write(const void *buf, size_t size) {
   if (std::fwrite(buf, 1, size, fp_) != size) {
     is_good_ = false;
-    Log::Error("LocalStream.Write incomplete\n");
+    Log::Fatal("LocalStream.Write incomplete\n");
   }
 }
 
+void LocalStream::Seek(size_t offset) {
+  if (!std::fseek(fp_, offset, SEEK_SET)) {
+    Log::Fatal("LocalStream.Seek failed\n");
+  }
+}
 
 /*!
 * \brief read data from Stream
