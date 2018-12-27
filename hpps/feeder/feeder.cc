@@ -8,6 +8,10 @@ namespace hpps {
 
 Feeder::~Feeder() {
   running_ = false;
+  for (auto i = 0; i < entries_.size(); i++) {
+    task_queues_[i]->Exit();
+  }
+
   delete thread_pool_;
   for (auto& entry : entries_) {
     delete entry.plan;
@@ -55,10 +59,10 @@ void Feeder::Run(int tid) {
 
 void Feeder::ProduceBatch(Queue<Task>* queue) {
   Task task;
-  queue->Pop(task);
+  if (!queue->Pop(task)) return;
+  
   if (task.curr + task.sample_record.plan->batch_size <=
       task.sample_record.record_io->sample_count()) {
-    
     // Step1: init batch
     std::shared_ptr<Batch> batch(new Batch(task.sample_record.record_io->names()));
     

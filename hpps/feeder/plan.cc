@@ -26,15 +26,19 @@ Plan* PlanMaker::Make() {
   plan->count = 0;
   CHECK(batch_size_ > 0);
 
-  for (const auto& u : uri_) {
-    auto record_io = new RecordIO(u, FileOpenMode::BinaryRead);
-    plan->count += record_io->sample_count();
-
-    Plan::SampleRecord sample_record;
-    sample_record.plan = plan;
-    sample_record.record_io.reset(record_io);
-    
-    plan->sample_record.push_back(sample_record);
+  for (auto i = 0; i < epoch_; ++i) {
+    for (const auto& u : uri_) {
+      auto record_io = new RecordIO(u, FileOpenMode::BinaryRead);
+      record_io->ReadHeader();
+      
+      plan->count += record_io->sample_count();
+      
+      Plan::SampleRecord sample_record;
+      sample_record.plan = plan;
+      sample_record.record_io.reset(record_io);
+      
+      plan->sample_record.push_back(sample_record);
+    }
   }
   return plan;
 }

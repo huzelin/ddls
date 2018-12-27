@@ -51,9 +51,9 @@ void RecordIO::ReadHeader() {
   tensor_data_type_t data_type;
   for (auto i = 0; i < tensor_count; ++i) {
     stream_->Read(buf, kTensorNameLen);
-    names_[i] = buf;
+    names_.push_back(buf);
     stream_->Read(&data_type, sizeof(data_type));
-    types_[i] = data_type;
+    types_.push_back(data_type);
   }
 }
 
@@ -82,7 +82,12 @@ void RecordIO::WriteSample(const std::unordered_map<std::string, Tensor*>& sampl
 
 std::vector<Tensor*> RecordIO::ReadSampleAsArray() {
   std::vector<Tensor*> tensors;
-  for (auto i = 0; i < names_.size(); ++i) {
+
+  tensor_count_t count;
+  stream_->Read(&count, sizeof(count));
+  CHECK(count == names_.size());
+
+  for (auto i = 0; i < count; ++i) {
     tensor_dim_count_t dim_count;
     stream_->Read(&dim_count, sizeof(dim_count));
 

@@ -77,7 +77,7 @@ void LocalStream::Write(const void *buf, size_t size) {
 }
 
 void LocalStream::Seek(size_t offset) {
-  if (!std::fseek(fp_, offset, SEEK_SET)) {
+  if (0 != std::fseek(fp_, offset, SEEK_SET)) {
     Log::Fatal("LocalStream.Seek failed\n");
   }
 }

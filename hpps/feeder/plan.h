@@ -29,7 +29,7 @@ struct Plan {
 
 class PlanMaker {
  public:
-  PlanMaker() : epoch_(2), batch_size_(128) { }
+  PlanMaker() : epoch_(1), batch_size_(128) { }
   // Make the Batch assemble plan.
   Plan* Make();
   

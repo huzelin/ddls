@@ -18,7 +18,7 @@ class Feeder {
 
   void Start(int thread_num = 10);
 
-  // Schedule one data source's sample.
+  // Schedule one data source's sample, the plan is managed by feeder.
   BlockingQueueIterator<std::shared_ptr<Batch>>* Schedule(
       Plan* plan, int max_queue_size = 1);
 
@@ -54,7 +54,7 @@ class Feeder {
   std::vector<Entry> entries_;
   std::vector<Queue<Task>*> task_queues_;
   std::mutex mutex_;
-  mutable bool running_;
+  mutable bool running_ = false;
 };
 
 }  // namespace hpps
