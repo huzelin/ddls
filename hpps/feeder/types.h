@@ -38,6 +38,24 @@ inline size_t TensorDataTypeSize(tensor_data_type_t data_type) {
   }
 }
 
+#ifndef ID_TYPE_SWITCH
+#define ID_TYPE_SWITCH(type, DType, ...)      \
+    switch (type) {                           \
+      case kUInt32:                           \
+        {                                     \
+          typedef uint32_t DType;             \
+          {__VA_ARGS__}                       \
+        }                                     \
+        break;                                \
+      case kUInt64:                           \
+        {                                     \
+          typedef uint64_t DType;             \
+          {__VA_ARGS__}                       \
+        }                                     \
+        break;                                \
+    }
+#endif
+
 #ifndef DATA_TYPE_SWITCH
 #define DATA_TYPE_SWITCH(type, DType, ...)    \
     switch (type) {                           \
