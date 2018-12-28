@@ -4,6 +4,8 @@
  */
 #pragma once
 
+#ifdef USE_HDFS
+
 #include "hpps/common/io/io.h"
 
 #include <sys/types.h>
@@ -78,3 +80,5 @@ class HDFSStreamFactory : public StreamFactory {
 };
 
 }  // namespace hpps
+
+#endif // USE_HDFS

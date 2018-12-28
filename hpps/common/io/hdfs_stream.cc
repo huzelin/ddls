@@ -4,6 +4,8 @@
  */
 #include "hpps/common/io/hdfs_stream.h"
 
+#ifdef USE_HDFS
+
 namespace hpps {
 
 HDFSStream::HDFSStream(hdfsFS fs, const URI &uri, FileOpenMode mode) {
@@ -163,3 +165,5 @@ Stream* HDFSStreamFactory::Open(const URI & uri, FileOpenMode mode) {
 }
 
 }  // namespace hpps
+
+#endif  // USE_HDFS

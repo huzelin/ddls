@@ -14,8 +14,10 @@ Stream* StreamFactory::GetStream(const URI& uri,
   if (instances_.find(addr) == instances_.end()) {
     if (uri.scheme == std::string("file"))
       instances_[addr] = std::shared_ptr<StreamFactory>(new LocalStreamFactory(uri.host));
+#ifdef USE_HDFS
     else if (uri.scheme == std::string("hdfs"))
       instances_[addr] = std::shared_ptr<StreamFactory>(new HDFSStreamFactory(uri.host));
+#endif
     else Log::Fatal("Can not support the StreamFactory '%s'", uri.scheme.c_str());
   }
   return instances_[addr]->Open(uri, mode);

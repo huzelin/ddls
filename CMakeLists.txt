@@ -7,8 +7,12 @@ enable_testing()
 set(CMAKE_VERBOSE_MAKEFILE on)
 
 include(${PROJECT_SOURCE_DIR}/cmake/Utils.cmake)
+hpps_option(USE_HDFS "USE_HDFS" OFF)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -ftree-vectorize -std=c++11 -Wcpp -mavx -mavx2 -fopenmp -O2 -g")
+if(USE_HDFS)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DUSE_HDFS")
+endif()
 
 include_directories(
     ${PROJECT_BINARY_DIR}/
@@ -28,7 +32,10 @@ file(GLOB_RECURSE SOURCE
     "hpps/*.cc"
 )
 add_library(hpps SHARED ${SOURCE})
-target_link_libraries(hpps libzeromq libompi -lhdfs)
+target_link_libraries(hpps libzeromq libompi)
+if(USE_HDFS)
+    target_link_libraries(hpps -lhdfs)
+endif()
 add_dependencies(hpps zeromq ompi)
 
 add_subdirectory(test)
