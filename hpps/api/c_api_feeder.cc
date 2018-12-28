@@ -4,9 +4,13 @@
 
 #include "hpps/api/c_api_feeder.h"
 
+#include <vector>
+
 #include "hpps/api/c_api_error.h"
 #include "hpps/feeder/feeder.h"
 #include "hpps/feeder/record_io.h"
+#include "hpps/feeder/tensor.h"
+#include "hpps/feeder/types.h"
 
 using namespace hpps;
 
@@ -21,7 +25,7 @@ int HPPS_RecordIOCreate(const char* uri, int mode, Handle* record_io) {
   return 0;
 }
 
-int HPPS_WriteHeader(Handle handle, int num, const char** name, const int* type) {
+int HPPS_RecordIOWriteHeader(Handle handle, int num, const char** name, const int* type) {
   RecordIO* record_io = reinterpret_cast<RecordIO*>(handle);
   std::unordered_map<std::string, tensor_data_type_t> tensor_meta;
   for (auto i = 0; i < num; ++i) {
@@ -31,7 +35,7 @@ int HPPS_WriteHeader(Handle handle, int num, const char** name, const int* type)
   return 0;
 }
 
-int HPPS_WriteSample(Handle handle, int num, const char** name, Handle* tensor) {
+int HPPS_RecordIOWriteSample(Handle handle, int num, const char** name, Handle* tensor) {
   RecordIO* record_io = reinterpret_cast<RecordIO*>(handle);
   std::unordered_map<std::string, Tensor*> sample;
   for (auto i = 0; i < num; ++i) {
@@ -41,13 +45,30 @@ int HPPS_WriteSample(Handle handle, int num, const char** name, Handle* tensor) 
   return 0;
 }
 
-int HPPS_WriteFinalize(Handle handle) {
+int HPPS_RecordIOWriteFinalize(Handle handle) {
   RecordIO* record_io = reinterpret_cast<RecordIO*>(handle);
   record_io->WriteFinalize();
   return 0;
 }
 
+int HPPS_RecordIODestroy(Handle handle) {
+  RecordIO* record_io = reinterpret_cast<RecordIO*>(handle);
+  delete record_io;
+  return 0;
+}
+
 // Tensor
+int HPPS_TensorCreate(uint32_t dim, const uint32_t* shape, uint32_t type, Handle* out) {
+  std::vector<tensor_dim_t> shp;
+  for (auto i = 0; i < dim; ++i) {
+    shp.push_back(shape[i]);
+  }
+  tensor_data_type_t data_type = type;
+  auto tensor = new Tensor(shp, type);
+  *out = tensor;
+  return 0;
+}
+
 int HPPS_TensorShape(Handle handle, uint32_t* out_dim, const uint32_t** out_data) {
   Tensor* tensor = reinterpret_cast<Tensor*>(handle);
   const auto& shape = tensor->shape();
@@ -69,6 +90,20 @@ int HPPS_TensorData(Handle handle, void** out) {
   return 0;
 }
 
+int HPPS_TensorLoadData(Handle handle, void* data) {
+  Tensor* tensor = reinterpret_cast<Tensor*>(handle);
+  memcpy(tensor->mutable_blob()->data(),
+         data,
+         tensor->mutable_blob()->size());
+  return 0;
+}
+
+int HPPS_TensorDestroy(Handle handle) {
+  Tensor* tensor = reinterpret_cast<Tensor*>(handle);
+  delete tensor;
+  return 0;
+}
+
 // Feeder start and Plan scheduling.
 int HPPS_FeederStart(int thread_num) {
   Feeder::Get()->Start(thread_num);
@@ -81,7 +116,7 @@ int HPPS_FeederSchedule(Handle plan, int max_queue_size, Handle* iterator) {
 }
 
 // Plan maker creation
-int HPPS_CreatePlanMaker(Handle* plan_maker) {
+int HPPS_PlanMakerCreate(Handle* plan_maker) {
   *plan_maker = new PlanMaker();
   if (plan_maker == nullptr) {
     HPPS_SetLastErrorString("Create PlanMaker Failed");

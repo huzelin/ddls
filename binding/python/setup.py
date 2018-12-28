@@ -16,6 +16,6 @@ setup(name='hpps',
       version=__version__,
       description=open(os.path.join(CURRENT_DIR, 'README.md')).read(),
       zip_safe=False,
-      packages=['hpps', 'hpps/tracker'],
+      packages=['hpps', 'hpps/tracker', 'hpps/feeder'],
       data_files=[('hpps', [LIB_PATH]), ]
 )

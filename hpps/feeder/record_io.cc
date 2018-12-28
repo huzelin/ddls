@@ -46,6 +46,8 @@ void RecordIO::ReadHeader() {
   stream_->Read(&sample_count_, sizeof(sample_count_));
   tensor_count_t tensor_count;
   stream_->Read(&tensor_count, sizeof(tensor_count));
+  Log::Debug("version_=%u", version_);
+  Log::Debug("sample_count_=%u", sample_count_);
 
   char buf[kTensorNameLen];
   tensor_data_type_t data_type;

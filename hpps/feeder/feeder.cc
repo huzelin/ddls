@@ -50,11 +50,14 @@ void Feeder::Run(int tid) {
   while (running_) {
     for (auto i = 0; i < entries_.size(); i++) {
       auto& entry = entries_[i];
-      if (entry.blocking_queue->Full()) continue;
+      if (entry.blocking_queue->Full()) {
+        continue;
+      }
       // produce one batch for the data source.
       ProduceBatch(task_queues_[i]);
     }
   }
+  Log::Info("Thread-%d is exiting", tid);
 }
 
 void Feeder::ProduceBatch(Queue<Task>* queue) {

@@ -14,21 +14,25 @@ typedef void* Handle;
 
 // Record I/O
 int HPPS_RecordIOCreate(const char* uri, int mode, Handle* record_io);
-int HPPS_WriteHeader(Handle record_io, int num, const char** name, const int* type);
-int HPPS_WriteSample(Handle record_io, int num, const char** name, Handle* tensor);
-int HPPS_WriteFinalize(Handle record_io);
+int HPPS_RecordIOWriteHeader(Handle record_io, int num, const char** name, const int* type);
+int HPPS_RecordIOWriteSample(Handle record_io, int num, const char** name, Handle* tensor);
+int HPPS_RecordIOWriteFinalize(Handle record_io);
+int HPPS_RecordIODestroy(Handle handle);
 
 // Tensor
+int HPPS_TensorCreate(uint32_t dim, const uint32_t* shape, uint32_t type, Handle* out);
 int HPPS_TensorShape(Handle handle, uint32_t* out_dim, const uint32_t** out_data);
 int HPPS_TensorType(Handle handle, uint8_t* out);
 int HPPS_TensorData(Handle handle, void** out);
+int HPPS_TensorLoadData(Handle handle, void* data);
+int HPPS_TensorDestroy(Handle handle);
 
 // Feeder start and Plan scheduling.
 int HPPS_FeederStart(int thread_num);
 int HPPS_FeederSchedule(Handle plan, int max_queue_size, Handle* iterator);
 
 // Plan maker creation
-int HPPS_CreatePlanMaker(Handle* plan_maker);
+int HPPS_PlanMakerCreate(Handle* plan_maker);
 int HPPS_PlanMakerSetURI(Handle plan_maker, int num, const char** uri);
 int HPPS_PlanMakerSetEpoch(Handle plan_maker, int epoch);
 int HPPS_PlanMakerSetBatchSize(Handle plan_maker, int batch_size);

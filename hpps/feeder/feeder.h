@@ -34,6 +34,7 @@ class Feeder {
 
   // The task in data source.
   struct Task {
+    Task() : curr(0) { }
     size_t curr;
     Plan::SampleRecord sample_record;
     BlockingQueue<std::unique_ptr<Batch>>* blocking_queue;

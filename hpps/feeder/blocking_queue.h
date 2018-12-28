@@ -25,6 +25,9 @@ class BlockingQueue {
     if (queue_.Size() >= max_queue_size_) return true;
     return false;
   }
+  size_t Size() const {
+    return queue_.Size();
+  }
 
  protected:
   Queue<T> queue_;
@@ -40,6 +43,9 @@ class BlockingQueueIterator {
 
   bool Pop(T& result) {
     return queue_->mutable_queue()->Pop(result);
+  }
+  void Debug() {
+    Log::Info("queue_size_=%u", queue_->Size());
   }
 
  protected:
