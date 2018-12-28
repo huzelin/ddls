@@ -1,6 +1,6 @@
-# hpps
+# UCDL
 
-[![Build Status](https://travis-ci.org/huzelin/hpps.svg?branch=master)](https://travis-ci.org/huzelin/hpps)
+[![Build Status](https://travis-ci.org/huzelin/ucdl.svg?branch=master)](https://travis-ci.org/huzelin/ucdl)
 
 ## Introduction
 UCDL is a Urban Computing system based on Deep Leaning, deep learning is used for spatial-temporal prediction, such as tax trajactories etc.
