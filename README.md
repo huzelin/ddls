@@ -3,15 +3,15 @@
 [![Build Status](https://travis-ci.org/huzelin/hpps.svg?branch=master)](https://travis-ci.org/huzelin/hpps)
 
 ## Introduction
-hpps is a high performance parameter server for data-parallel machine learning.
+UCDL is a Urban Computing system based on Deep Leaning, deep learning is used for spatial-temporal prediction, such as tax trajactories etc.
 
 ## Installation from source
 
-Download from project homepage. https://github.com/huzelin/hpps.git
+Download from project homepage. https://github.com/huzelin/ucdl.git
 
 ### Prerequisites
 
-   * gcc >= 7.4
+   * gcc >= 4.8.5
 
 ### Compile
 
