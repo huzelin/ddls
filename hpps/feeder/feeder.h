@@ -19,7 +19,7 @@ class Feeder {
   void Start(int thread_num = 10);
 
   // Schedule one data source's sample, the plan is managed by feeder.
-  BlockingQueueIterator<std::shared_ptr<Batch>>* Schedule(
+  BlockingQueueIterator<std::unique_ptr<Batch>>* Schedule(
       Plan* plan, int max_queue_size = 1);
 
  protected:
@@ -28,7 +28,7 @@ class Feeder {
   // Each entry mean one data source.
   struct Entry {
     Plan* plan;
-    BlockingQueue<std::shared_ptr<Batch>>* blocking_queue;
+    BlockingQueue<std::unique_ptr<Batch>>* blocking_queue;
   };
   void AddTask(const Entry& entry);
 
@@ -36,19 +36,19 @@ class Feeder {
   struct Task {
     size_t curr;
     Plan::SampleRecord sample_record;
-    BlockingQueue<std::shared_ptr<Batch>>* blocking_queue;
+    BlockingQueue<std::unique_ptr<Batch>>* blocking_queue;
   };
   
   // Produce one batch
   void ProduceBatch(Queue<Task>* queue);
   // Assemble tensors into Batch 
-  int AssembleBatch(Plan::SampleRecord& sample_record, std::shared_ptr<Batch>& batch);
+  int AssembleBatch(Plan::SampleRecord& sample_record, std::unique_ptr<Batch>& batch);
   // Read batch tensor
   std::vector<std::vector<Tensor*>> ReadBatchTensor(Plan::SampleRecord& sample_record);
   // Batch tensor to Batch
   void BatchTensor2Batch(std::vector<std::vector<Tensor*>>& batch_tensor,
                          Plan::SampleRecord& sample_record,
-                         std::shared_ptr<Batch>& batch);
+                         std::unique_ptr<Batch>& batch);
 
   ThreadPool* thread_pool_;
   std::vector<Entry> entries_;

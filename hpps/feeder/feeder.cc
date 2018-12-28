@@ -22,13 +22,13 @@ Feeder::~Feeder() {
   }
 }
 
-BlockingQueueIterator<std::shared_ptr<Batch>>* Feeder::Schedule(Plan* plan, int max_queue_size) {
+BlockingQueueIterator<std::unique_ptr<Batch>>* Feeder::Schedule(Plan* plan, int max_queue_size) {
   Entry entry;
   entry.plan = plan;
-  entry.blocking_queue = new BlockingQueue<std::shared_ptr<Batch>>(max_queue_size);
+  entry.blocking_queue = new BlockingQueue<std::unique_ptr<Batch>>(max_queue_size);
   entries_.push_back(entry);
   AddTask(entry);
-  return new BlockingQueueIterator<std::shared_ptr<Batch>>(entry.blocking_queue);
+  return new BlockingQueueIterator<std::unique_ptr<Batch>>(entry.blocking_queue);
 }
 
 void Feeder::AddTask(const Feeder::Entry& entry) {
@@ -64,7 +64,7 @@ void Feeder::ProduceBatch(Queue<Task>* queue) {
   if (task.curr + task.sample_record.plan->batch_size <=
       task.sample_record.record_io->sample_count()) {
     // Step1: init batch
-    std::shared_ptr<Batch> batch(new Batch(task.sample_record.record_io->names()));
+    std::unique_ptr<Batch> batch(new Batch(task.sample_record.record_io->names()));
     
     // Step2: merge block and generate batch
     auto size = AssembleBatch(task.sample_record, batch);
@@ -77,7 +77,7 @@ void Feeder::ProduceBatch(Queue<Task>* queue) {
   }
 }
 
-int Feeder::AssembleBatch(Plan::SampleRecord& sample_record, std::shared_ptr<Batch>& batch) {
+int Feeder::AssembleBatch(Plan::SampleRecord& sample_record, std::unique_ptr<Batch>& batch) {
   // Step1: Read batch tensor
   std::vector<std::vector<Tensor*>> batch_tensor = ReadBatchTensor(sample_record);
 
@@ -103,7 +103,7 @@ std::vector<std::vector<Tensor*>> Feeder::ReadBatchTensor(Plan::SampleRecord& sa
 
 void Feeder::BatchTensor2Batch(std::vector<std::vector<Tensor*>>& batch_tensor,
                                Plan::SampleRecord& sample_record,
-                               std::shared_ptr<Batch>& batch) {
+                               std::unique_ptr<Batch>& batch) {
   for (auto col = 0; col < batch_tensor[0].size(); ++col) {
     auto row = 0;
     std::vector<tensor_dim_t> shape = batch_tensor[row++][col]->shape();

@@ -48,7 +48,7 @@ TEST(Feeder, Feeder) {
 
   Feeder::Get()->Start(10);
   
-  std::shared_ptr<Batch> batch;
+  std::unique_ptr<Batch> batch;
   iterator->Pop(batch);
   iterator->Pop(batch);
 }

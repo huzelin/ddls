@@ -6,20 +6,22 @@
 
 #ifdef __cplusplus
 extern "C" {
+#include <stdint.h>
 #endif
 
 // Definition of handle
 typedef void* Handle;
 
 // Record I/O
-int HPPS_RecordIOCreate(int mode, Handle* record_io);
-int HPPS_WriteHeader(Handle record_io, int num, const char** name, const int** type);
+int HPPS_RecordIOCreate(const char* uri, int mode, Handle* record_io);
+int HPPS_WriteHeader(Handle record_io, int num, const char** name, const int* type);
 int HPPS_WriteSample(Handle record_io, int num, const char** name, Handle* tensor);
 int HPPS_WriteFinalize(Handle record_io);
 
 // Tensor
-int HPPS_TensorShape(Handle tensor);
-int HPPS_TensorType(Handle tensor);
+int HPPS_TensorShape(Handle handle, uint32_t* out_dim, const uint32_t** out_data);
+int HPPS_TensorType(Handle handle, uint8_t* out);
+int HPPS_TensorData(Handle handle, void** out);
 
 // Feeder start and Plan scheduling.
 int HPPS_FeederStart(int thread_num);
