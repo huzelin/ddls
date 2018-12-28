@@ -15,7 +15,8 @@
 
 namespace hpps {
 
-Actor::Actor(const std::string& name) : name_(name) {
+Actor::Actor(const std::string& name, int thread_num)
+    : name_(name), thread_num_(thread_num) {
   mailbox_.reset(new Queue<MessagePtr>());
   Zoo::Get()->RegisterActor(name, this);
   is_working_ = false;
@@ -24,7 +25,10 @@ Actor::Actor(const std::string& name) : name_(name) {
 Actor::~Actor() {}
 
 void Actor::Start() {
-  thread_.reset(new std::thread(&Actor::Main, this));
+  thread_.resize(thread_num_);
+  for (auto i = 0; i < thread_num_; ++i) {
+    thread_[i].reset(new std::thread(&Actor::Main, this));
+  }
   while (!is_working_) {
     std::this_thread::sleep_for(std::chrono::milliseconds(10));
   }
@@ -34,7 +38,9 @@ void Actor::Stop() {
   while (!mailbox_->Empty()) { ; }
   is_working_ = false;
   mailbox_->Exit();
-  thread_->join();
+  for (auto i = 0; i < thread_num_; ++i) {
+    thread_[i]->join();
+  }
 }
 
 void Actor::Receive(MessagePtr& msg) { mailbox_->Push(msg); }

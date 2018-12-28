@@ -20,8 +20,9 @@ namespace hpps {
 
 HPPS_DEFINE_bool(sync, false, "sync or async");
 HPPS_DEFINE_int(backup_worker_ratio, 0, "ratio% of backup workers, set 20 means 20%");
+HPPS_DEFINE_int(server_thread_num, 1, "threadnum of server, set 10 means 10 threads");
 
-Server::Server() : Actor(actor::kServer) {
+Server::Server(int thread_num) : Actor(actor::kServer, thread_num) {
   RegisterHandler(MsgType::Request_Get, std::bind(
     &Server::ProcessGet, this, std::placeholders::_1));
   RegisterHandler(MsgType::Request_Add, std::bind(
@@ -68,7 +69,7 @@ void Server::ProcessAdd(MessagePtr& msg) {
 // workers finished their j-th update
 class SyncServer : public Server {
  public:
-  SyncServer() : Server() {
+  SyncServer(int thread_num) : Server(thread_num) {
     RegisterHandler(MsgType::Server_Finish_Train, std::bind(
       &SyncServer::ProcessFinishTrain, this, std::placeholders::_1));
     int num_worker = Zoo::Get()->num_workers();
@@ -227,10 +228,10 @@ class SyncServer : public Server {
 Server* Server::GetServer() {
   if (!HPPS_CONFIG_sync) {
     Log::Info("Create a async server");
-    return new Server();
+    return new Server(HPPS_CONFIG_server_thread_num);
   }
   Log::Info("Create a sync server");
-  return new SyncServer();
+  return new SyncServer(HPPS_CONFIG_server_thread_num);
 }
 
 }  // namespace hpps

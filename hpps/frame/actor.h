@@ -20,7 +20,7 @@ template<typename T> class Queue;
 // The basic computation and communication unit in the system
 class Actor {
  public:
-  explicit Actor(const std::string& name);
+  explicit Actor(const std::string& name, int thread_num = 1);
   virtual ~Actor();
   // Start to run the Actor
   void Start();
@@ -54,7 +54,8 @@ class Actor {
 
  private:
   std::string name_;
-  std::unique_ptr<std::thread> thread_;
+  int thread_num_;
+  std::vector<std::unique_ptr<std::thread>> thread_;
 
   Actor(const Actor&) = delete;
   void operator=(const Actor&) = delete;

@@ -15,7 +15,7 @@ class ServerTable;
 
 class Server : public Actor {
  public:
-  Server();
+  Server(int thread_num);
   static Server* GetServer();
   int RegisterTable(ServerTable* table);
 
