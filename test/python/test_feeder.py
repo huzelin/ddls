@@ -24,4 +24,4 @@ batch = batch_iterator.next_batch()
 batch = batch_iterator.next_batch()
 
 print batch.get_tensor('ad').shape
-print batch.get_tensor('ad')
+print batch.get_tensor('ad').asnumpy()

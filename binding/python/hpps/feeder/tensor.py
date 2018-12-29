@@ -70,5 +70,8 @@ class Tensor(object):
     def asnumpy(self):
         """ Return the numpy
         """
-        pass
+        data = np.empty(self.shape, dtype=self.dtype)
+        check_call(LIB.HPPS_TensorExportData(self.handle,
+                                             data.ctypes.data_as(ctypes.c_void_p)))
+        return data
 

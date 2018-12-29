@@ -98,6 +98,14 @@ int HPPS_TensorLoadData(Handle handle, void* data) {
   return 0;
 }
 
+int HPPS_TensorExportData(Handle handle, void* data) {
+  Tensor* tensor = reinterpret_cast<Tensor*>(handle);
+  memcpy(data,
+         tensor->mutable_blob()->data(),
+         tensor->mutable_blob()->size());
+  return 0;
+}
+
 int HPPS_TensorDestroy(Handle handle) {
   Tensor* tensor = reinterpret_cast<Tensor*>(handle);
   delete tensor;

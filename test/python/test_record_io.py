@@ -12,6 +12,8 @@ record_io.write_header({ 'ad' : np.float32, 'user' : np.float32 })
 
 ad_tensor = Tensor([200, 300], np.float32)
 user_tensor = Tensor([200, 400], np.float32)
+np_ad = np.ones([200, 300], np.float32)
+ad_tensor.load_numpy(np_ad)
 
 record_io.write_sample({ 'ad' : ad_tensor, 'user' : user_tensor })
 record_io.write_sample({ 'ad' : ad_tensor, 'user' : user_tensor })
