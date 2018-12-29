@@ -10,7 +10,7 @@ from hpps.feeder.feeder import Feeder
 # create plan
 plan_maker = PlanMaker()
 plan_maker.set_uri(['/tmp/sample1', '/tmp/sample1'])
-plan_maker.set_batch_size(1)
+plan_maker.set_batch_size(10)
 plan_maker.set_epoch(1)
 plan = plan_maker.make()
 

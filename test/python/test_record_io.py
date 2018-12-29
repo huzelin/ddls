@@ -10,15 +10,13 @@ import numpy as np
 record_io = RecordIO('/tmp/sample1', BinaryWrite)
 record_io.write_header({ 'ad' : np.float32, 'user' : np.float32 })
 
-ad_tensor = Tensor([200, 300], np.float32)
-user_tensor = Tensor([200, 400], np.float32)
-np_ad = np.ones([200, 300], np.float32)
-ad_tensor.load_numpy(np_ad)
+ad_tensor = Tensor([300], np.float32)
+ad_tensor.load_numpy(np.random.rand(300))
+user_tensor = Tensor([400], np.float32)
+user_tensor.load_numpy(np.random.rand(400))
 
-record_io.write_sample({ 'ad' : ad_tensor, 'user' : user_tensor })
-record_io.write_sample({ 'ad' : ad_tensor, 'user' : user_tensor })
-record_io.write_sample({ 'ad' : ad_tensor, 'user' : user_tensor })
-record_io.write_sample({ 'ad' : ad_tensor, 'user' : user_tensor })
+for x in xrange(1, 100000):
+    record_io.write_sample({ 'ad' : ad_tensor, 'user' : user_tensor })
 record_io.write_finalize()
 
 ##################################################################

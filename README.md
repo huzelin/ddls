@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/huzelin/ucdl.svg?branch=master)](https://travis-ci.org/huzelin/ucdl)
 
 ## Introduction
-UCDL is a Urban Computing system based on Deep Leaning, deep learning is used for spatial-temporal prediction, such as tax trajactories etc.
+UCDL is a parameter server based framework for traing machine learning models on Urban Computing Big Data with a numbers of machines.
 
 ## Installation from source
 
