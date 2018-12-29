@@ -25,6 +25,18 @@ def _load_lib(name):
 # library instance of xdl
 LIB = _load_lib('hpps')
 
+_NP_2_DTYPE = {
+    np.int32 : 0,
+    np.int64 : 1,
+    np.float32 : 2
+}
+
+_DTYPE_2_NP = {
+    0 : np.int32,
+    1 : np.int64,
+    2 : np.float32
+}
+
 #-------------------------------------------
 # helper function definition
 #-------------------------------------------

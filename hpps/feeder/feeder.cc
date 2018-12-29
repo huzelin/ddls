@@ -57,7 +57,7 @@ void Feeder::Run(int tid) {
       ProduceBatch(task_queues_[i]);
     }
   }
-  Log::Info("Thread-%d is exiting", tid);
+  LOG_INFO("Thread-%d is exiting", tid);
 }
 
 void Feeder::ProduceBatch(Queue<Task>* queue) {

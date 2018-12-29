@@ -66,7 +66,7 @@ void Communicator::Main() {
     break;
   }
   default:
-    Log::Fatal("Unexpected thread level\n");
+    LOG_FATAL("Unexpected thread level\n");
   }
 }
 
@@ -91,7 +91,7 @@ void Communicator::Communicate() {
       LocalForward(msg);
     }
   }
-  Log::Debug("Comm recv thread exit\n");
+  LOG_DEBUG("Comm recv thread exit\n");
 }
 
 void Communicator::LocalForward(MessagePtr& msg) {

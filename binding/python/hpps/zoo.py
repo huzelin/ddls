@@ -17,7 +17,7 @@ class Zoo(object):
     --------
        args: The user control args, default user mpi/async training.
     """
-    def __init__(self, args = '-net_type=mpi -sync=false'):
+    def __init__(self, args = '-net_type=mpi -sync=true'):
         """Start the Zoo, all the Actors will be registered.
         """
         check_call(LIB.HPPS_ZooStart(c_str(args)))

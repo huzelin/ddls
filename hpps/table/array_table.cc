@@ -20,7 +20,7 @@ ArrayWorker<T>::ArrayWorker(size_t size) : WorkerTable(), size_(size) {
     server_offsets_.push_back(i * length); // may not balance
   }
   server_offsets_.push_back(size_);
-  Log::Debug("worker %d create arrayTable with %d elements.\n",
+  LOG_DEBUG("worker %d create arrayTable with %d elements.\n",
              Zoo::Get()->rank(), size);
 }
 
@@ -36,7 +36,7 @@ void ArrayWorker<T>::Get(T* data, size_t size) {
   integer_t all_key = -1;
   Blob whole_table(&all_key, sizeof(integer_t));
   WorkerTable::Get(whole_table);
-  Log::Debug("worker %d getting all parameters.\n", Zoo::Get()->rank());
+  LOG_DEBUG("worker %d getting all parameters.\n", Zoo::Get()->rank());
 }
 
 template <typename T>
@@ -56,7 +56,7 @@ void ArrayWorker<T>::Add(T* data, size_t size, const AddOption* option) {
   Blob key(&all_key, sizeof(integer_t));
   Blob val(data, sizeof(T) * size);
   WorkerTable::Add(key, val, option);
-  Log::Debug("worker %d adding parameters with size of %d.\n",
+  LOG_DEBUG("worker %d adding parameters with size of %d.\n",
              Zoo::Get()->rank(), size);
 }
 
@@ -108,7 +108,7 @@ ArrayServer<T>::ArrayServer(size_t size) : ServerTable() {
   }
   storage_.resize(size_);
   updater_ = Updater<T>::GetUpdater(size_);
-  Log::Debug("server %d create arrayTable with %d elements of %d elements.\n", 
+  LOG_DEBUG("server %d create arrayTable with %d elements of %d elements.\n", 
              server_id_, size_, size);
 }
 

@@ -34,7 +34,7 @@ inline size_t TensorDataTypeSize(tensor_data_type_t data_type) {
     case kFloat32:
       return sizeof(float);
     default:
-      Log::Fatal("Unkown data_type=%d", data_type);
+      LOG_FATAL("Unkown data_type=%d", data_type);
   }
 }
 

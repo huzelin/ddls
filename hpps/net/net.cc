@@ -26,7 +26,7 @@ NetInterface* NetInterface::Get() {
     static ZMQNetWrapper net_impl;
     return &net_impl;
   } else {
-    Log::Fatal("Unkown net type: %s", HPPS_CONFIG_net_type.c_str());
+    LOG_FATAL("Unkown net type: %s", HPPS_CONFIG_net_type.c_str());
     return nullptr;
   }
 }
@@ -38,7 +38,7 @@ void Allreduce(Typename* data, size_t elem_count) {
   CHECK(NetInterface::Get()->active());
   MPINetWrapper::Allreduce(data, elem_count);
 #else
-  Log::Fatal("Not implemented yet");
+  LOG_FATAL("Not implemented yet");
 #endif
 }
 

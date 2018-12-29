@@ -126,7 +126,7 @@ SmartAllocator::SmartAllocator() {
 }
 
 SmartAllocator::~SmartAllocator() {
-  Log::Debug("~SmartAllocator, final pool size: %d\n", pools_.size());
+  LOG_DEBUG("~SmartAllocator, final pool size: %d\n", pools_.size());
   delete mutex_;
   for (auto i : pools_) {
     delete i.second;

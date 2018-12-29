@@ -37,7 +37,7 @@ void GetLocalIPAddress(std::unordered_set<std::string>* result) {
   ULONG ulOutBufLen = sizeof(IP_ADAPTER_INFO);
   pAdapterInfo = (IP_ADAPTER_INFO *)MALLOC(sizeof(IP_ADAPTER_INFO));
   if (pAdapterInfo == NULL) {
-    Log::Fatal("Error allocating memory needed to call GetAdaptersinfo\n");
+    LOG_FATAL("Error allocating memory needed to call GetAdaptersinfo\n");
     return;
   }
   // Make an initial call to GetAdaptersInfo to get
@@ -46,7 +46,7 @@ void GetLocalIPAddress(std::unordered_set<std::string>* result) {
     FREE(pAdapterInfo);
     pAdapterInfo = (IP_ADAPTER_INFO *)MALLOC(ulOutBufLen);
     if (pAdapterInfo == NULL) {
-      Log::Fatal("Error allocating memory needed to call GetAdaptersinfo\n");
+      LOG_FATAL("Error allocating memory needed to call GetAdaptersinfo\n");
       return;
     }
   }
@@ -66,7 +66,7 @@ void GetLocalIPAddress(std::unordered_set<std::string>* result) {
       pAdapter = pAdapter->Next;
     }
   } else {
-    Log::Fatal("GetAdaptersInfo failed with error: %d\n", dwRetVal);
+    LOG_FATAL("GetAdaptersInfo failed with error: %d\n", dwRetVal);
   }
   if (pAdapterInfo)
     FREE(pAdapterInfo);

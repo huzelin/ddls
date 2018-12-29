@@ -48,7 +48,7 @@ Zoo* Zoo::Get() {
 }
 
 void Zoo::Start(int* argc, char** argv) {
-  Log::Debug("Zoo started\n");
+  LOG_DEBUG("Zoo started\n");
   ParseCMDFlags(argc, argv);
 
   // Init the network
@@ -65,7 +65,7 @@ void Zoo::Stop(bool finalize_net) {
   if (finalize_net) net_util_->Finalize();
   for (auto actor : zoo_) delete actor.second;
   zoo_.clear();
-  Log::Info("Parameter Server Shutdown successfully");
+  LOG_INFO("Parameter Server Shutdown successfully");
 }
 
 int Zoo::rank() const { return NetInterface::Get()->rank(); }
@@ -107,7 +107,7 @@ void Zoo::StartPS() {
     worker->Start();
   }
   Barrier();
-  Log::Info("Rank %d: Parameter Server start successfully", rank());
+  LOG_INFO("Rank %d: Parameter Server start successfully", rank());
 }
 
 void Zoo::StopPS() {
@@ -150,7 +150,7 @@ void Zoo::RegisterNode() {
       server_id_to_rank_[node.server_id] = node.rank;
     }
   }
-  Log::Debug("rank %d end register\n", Zoo::Get()->rank());
+  LOG_DEBUG("rank %d end register\n", Zoo::Get()->rank());
 }
 
 void Zoo::RegisterActor(const std::string name, Actor* actor) {
@@ -177,11 +177,11 @@ void Zoo::Barrier() {
   msg->set_type(MsgType::Control_Barrier);
   SendTo(actor::kCommunicator, msg);
 
-  Log::Debug("rank %d requested barrier.\n", rank());
+  LOG_DEBUG("rank %d requested barrier.\n", rank());
   // wait for reply
   mailbox_->Pop(msg);
   CHECK(msg->type() == MsgType::Control_Reply_Barrier);
-  Log::Debug("rank %d reached barrier\n", rank());
+  LOG_DEBUG("rank %d reached barrier\n", rank());
 }
 
 int Zoo::RegisterTable(WorkerTable* worker_table) {

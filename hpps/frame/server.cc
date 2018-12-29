@@ -227,10 +227,10 @@ class SyncServer : public Server {
 
 Server* Server::GetServer() {
   if (!HPPS_CONFIG_sync) {
-    Log::Info("Create a async server");
+    LOG_INFO("Create a async server");
     return new Server(HPPS_CONFIG_server_thread_num);
   }
-  Log::Info("Create a sync server");
+  LOG_INFO("Create a sync server");
   return new SyncServer(HPPS_CONFIG_server_thread_num);
 }
 

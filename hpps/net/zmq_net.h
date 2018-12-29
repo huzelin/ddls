@@ -57,7 +57,7 @@ class ZMQNetWrapper : public NetInterface {
     }
     CHECK_NOTNULL(receiver_.socket);
     active_ = true;
-    Log::Info("%s net util inited, rank = %d, size = %d",
+    LOG_INFO("%s net util inited, rank = %d, size = %d",
       name().c_str(), rank(), size());
   }
 
@@ -77,7 +77,7 @@ class ZMQNetWrapper : public NetInterface {
       return 0;
     }
     else {
-      Log::Error("Failed to bind the socket for receiver, ip:port = %s", 
+      LOG_ERROR("Failed to bind the socket for receiver, ip:port = %s", 
                  endpoint);
       return -1;
     }
@@ -100,7 +100,7 @@ class ZMQNetWrapper : public NetInterface {
       senders_[rank].endpoint = ip_port;
       int rc = zmq_connect(senders_[rank].socket, ("tcp://" + senders_[rank].endpoint).c_str());
       if (rc != 0) {
-        Log::Error("Failed to connect the socket for sender, rank = %d, " 
+        LOG_ERROR("Failed to connect the socket for sender, rank = %d, " 
                     "ip:port = %s", rank, endpoints[i]);
         return -1;
       }
@@ -116,7 +116,7 @@ class ZMQNetWrapper : public NetInterface {
         CHECK(zmq_setsockopt(senders_[i].socket, ZMQ_LINGER, &linger, sizeof(linger)) == 0);
         int rc = zmq_close(senders_[i].socket);
         if (rc != 0) {
-          Log::Error("rc = %d, i = %d, rank = %d", rc, i, rank_);
+          LOG_ERROR("rc = %d, i = %d, rank = %d", rc, i, rank_);
         }
         CHECK(rc == 0);
       }
@@ -126,12 +126,12 @@ class ZMQNetWrapper : public NetInterface {
     int rc = zmq_close(receiver_.socket);
     CHECK(rc == 0);
 
-    Log::Info("zmq finalize: before close context");
+    LOG_INFO("zmq finalize: before close context");
     CHECK(zmq_ctx_shutdown(context_)==0);
     CHECK_NOTNULL(context_);
     zmq_ctx_term(context_);
     context_ = nullptr;
-    Log::Info("zmq finalize: close context");
+    LOG_INFO("zmq finalize: close context");
   }
 
   bool active() const override { return active_; }
@@ -203,7 +203,7 @@ class ZMQNetWrapper : public NetInterface {
     int send_size = 0;
     while (send_size < len) {
       int cur_size = zmq_send(senders_[rank].socket, buf + send_size, len - send_size, 0);
-      if (cur_size < 0) { Log::Error("socket send error %d", cur_size); }
+      if (cur_size < 0) { LOG_ERROR("socket send error %d", cur_size); }
       send_size += cur_size;
     }
   }
@@ -213,7 +213,7 @@ class ZMQNetWrapper : public NetInterface {
     int recv_size = 0;
     while (recv_size < len) {
       int cur_size = zmq_recv(receiver_.socket, buf + recv_size, len - recv_size, 0);
-      if (cur_size < 0) { Log::Error("socket receive error %d", cur_size); }
+      if (cur_size < 0) { LOG_ERROR("socket receive error %d", cur_size); }
       recv_size += cur_size;
     }
   }

@@ -2,7 +2,7 @@
 from __future__ import absolute_import
 
 import ctypes
-from hpps.base import check_call, LIB, c_str, c_array
+from hpps.base import check_call, LIB, c_str, c_array, _NP_2_DTYPE
 from hpps.feeder.tensor import Tensor
 
 # FileOpenMode
@@ -35,7 +35,7 @@ class RecordIO(object):
         types = []
         for name, type in name_type_map.iteritems():
             names.append(c_str(name))
-            types.append(type)
+            types.append(_NP_2_DTYPE[type])
         check_call(LIB.HPPS_RecordIOWriteHeader(self.handle,
                                                 len(names),
                                                 c_array(ctypes.c_char_p, names),

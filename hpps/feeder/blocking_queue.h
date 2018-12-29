@@ -45,7 +45,7 @@ class BlockingQueueIterator {
     return queue_->mutable_queue()->Pop(result);
   }
   void Debug() {
-    Log::Info("queue_size_=%u", queue_->Size());
+    LOG_INFO("queue_size_=%u", queue_->Size());
   }
 
  protected:

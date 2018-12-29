@@ -16,7 +16,7 @@ class DCASGDUpdater : public Updater<T> {
  public:
   explicit DCASGDUpdater(size_t size) :
       size_(size){
-	  Log::Debug("[DC-ASGDUpdater] Init. \n");
+	  LOG_DEBUG("[DC-ASGDUpdater] Init. \n");
 		shadow_copies_.resize(MV_NumWorkers(), std::vector<T>(size_));
 	}
   

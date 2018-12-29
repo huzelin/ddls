@@ -20,6 +20,22 @@ namespace hpps {
   if ((pointer) == nullptr) Log::Fatal(#pointer " Can't be NULL\n");
 #endif
 
+#ifndef LOG_DEBUG
+#define LOG_DEBUG(format, ...)  Log::Debug("[%s:%d] "  format, __FILE__, __LINE__, ##__VA_ARGS__)
+#endif
+
+#ifndef LOG_INFO
+#define LOG_INFO(format, ...)   Log::Info("[%s:%d] "  format, __FILE__, __LINE__, ##__VA_ARGS__)
+#endif
+
+#ifndef LOG_ERROR
+#define LOG_ERROR(format, ...)  Log::Error("[%s:%d] "  format, __FILE__, __LINE__, ##__VA_ARGS__)
+#endif
+
+#ifndef LOG_FATAL
+#define LOG_FATAL(format, ...)  Log::Fatal("[%s:%d] "  format, __FILE__, __LINE__, ##__VA_ARGS__)
+#endif
+
 // A enumeration type of log message levels. The values are ordered:
 // Debug < Info < Error < Fatal.
 enum class LogLevel : int {

@@ -1,6 +1,6 @@
 from hpps.feeder.plan_maker import PlanMaker
 from hpps.feeder.record_io import RecordIO, BinaryWrite
-from hpps.feeder.tensor import Tensor, FLOAT32
+from hpps.feeder.tensor import Tensor
 from hpps.feeder.feeder import Feeder
 
 ################################################################
@@ -23,4 +23,5 @@ batch = batch_iterator.next_batch()
 batch = batch_iterator.next_batch()
 batch = batch_iterator.next_batch()
 
+print batch.get_tensor('ad').shape
 print batch.get_tensor('ad')

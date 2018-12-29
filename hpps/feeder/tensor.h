@@ -27,16 +27,16 @@ class Tensor {
   // Return mutable blob of tensor
   Blob* mutable_blob() { return blob_.get(); }
   // Return the shape of tensor
-  const std::vector<tensor_dim_t> shape() const { return shape_; }
+  const std::vector<tensor_dim_t>& shape() const { return shape_; }
   // Return the size of tensor
-  tensor_dim_t size() const { return size_; }
+  size_t size() const { return size_; }
   // Return the data type
   tensor_data_type_t data_type() const { return data_type_; }
 
  protected:
   std::shared_ptr<Blob> blob_;
   std::vector<tensor_dim_t> shape_;
-  tensor_dim_t size_;
+  size_t size_;
   tensor_data_type_t data_type_;
 };
 

@@ -2,12 +2,8 @@
 from __future__ import absolute_import
 
 import ctypes
-from hpps.base import check_call, LIB, c_str, c_array
-
-# Tensor Types
-INT32 = 0
-INT64 = 1
-FLOAT32 = 2
+import numpy as np
+from hpps.base import check_call, LIB, c_str, c_array, _NP_2_DTYPE, _DTYPE_2_NP
 
 class Tensor(object):
     """ The sample record i/o 
@@ -23,7 +19,7 @@ class Tensor(object):
             self.handle = ctypes.c_void_p()
             check_call(LIB.HPPS_TensorCreate(len(shape),
                                              c_array(ctypes.c_int, shape),
-                                             type,
+                                             _NP_2_DTYPE[type],
                                              ctypes.byref(self.handle)))
 
     def __del__(self):
@@ -63,11 +59,16 @@ class Tensor(object):
         """
         dtype = ctypes.c_ubyte()
         check_call(LIB.HPPS_TensorType(self.handle, ctypes.byref(dtype)))
-        return dtype.value
+        return _DTYPE_2_NP[dtype.value]
 
-    def load_data(self, data):
+    def load_numpy(self, data):
         """ load data from numpy
         """
         check_call(LIB.HPPS_TensorLoadData(self.handle,
                                            data.ctypes.data_as(ctypes.c_void_p)))
+
+    def asnumpy(self):
+        """ Return the numpy
+        """
+        pass
 
