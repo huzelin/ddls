@@ -53,6 +53,22 @@ inline size_t TensorDataTypeSize(tensor_data_type_t data_type) {
           {__VA_ARGS__}                       \
         }                                     \
         break;                                \
+      default:                                \
+        LOG_FATAL("Unkown dtype %d", type);   \
+    }
+#endif
+
+#ifndef VALUE_TYPE_SWITCH
+#define VALUE_TYPE_SWITCH(type, DType, ...)    \
+    switch (type) {                           \
+     case kFloat32:                           \
+        {                                     \
+          typedef float DType;                \
+          {__VA_ARGS__}                       \
+        }                                     \
+        break;                                \
+      default:                                \
+        LOG_FATAL("Unkown dtype %d", type);   \
     }
 #endif
 
@@ -77,6 +93,8 @@ inline size_t TensorDataTypeSize(tensor_data_type_t data_type) {
           {__VA_ARGS__}                       \
         }                                     \
         break;                                \
+      default:                                \
+        LOG_FATAL("Unkown dtype %d", type);   \
     }
 #endif
 

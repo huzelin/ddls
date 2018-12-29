@@ -8,11 +8,11 @@ from hpps.base import check_call, LIB, c_str, c_array, _NP_2_DTYPE, _DTYPE_2_NP
 class Tensor(object):
     """ The sample record i/o 
     """
-    def __init__(self, shape, type, handle = None):
+    def __init__(self, shape, type, handle = None, own_handle = False):
         """ create a new Tensor instance
         """
         if handle != None:
-            self.own_handle = False
+            self.own_handle = own_handle
             self.handle = handle
         else:
             self.own_handle = True

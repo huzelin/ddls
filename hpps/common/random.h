@@ -29,7 +29,6 @@ struct RandomOption {
     set_mu(0);
     set_sigma(0.01);
   }
-
   void set_algorithm(RandomAlgoType ra) { data_[0].i = ra; }
   RandomAlgoType algorithm() const { return static_cast<RandomAlgoType>(data_[0].i); }
 

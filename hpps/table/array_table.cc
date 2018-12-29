@@ -122,15 +122,14 @@ ArrayServer<T>::ArrayServer(const ArrayTableOption<T> &option) :
 template <typename T>
 void ArrayServer<T>::ProcessAdd(const std::vector<Blob>& data) {
   Blob keys = data[0], values = data[1];
-  AddOption* option = nullptr;
+  AddOption option;
   if (data.size() == 3)
-    option = new AddOption(data[2].data(), data[2].size());
+    option.CopyFrom(data[2].data(), data[2].size());
   // Always request whole table
   CHECK(keys.size<integer_t>() == 1 && keys.As<integer_t>() == -1); 
   CHECK(values.size() == size_ * sizeof(T));
   T* pvalues = reinterpret_cast<T*>(values.data());
-  updater_->Update(size_, storage_.data(), pvalues, option);
-  delete option;
+  updater_->Update(size_, storage_.data(), pvalues, &option);
 }
 
 template <typename T>

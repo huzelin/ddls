@@ -18,7 +18,7 @@ inline Tensor* Num2Indices(Tensor* num_tensor) {
     for (auto i = 0; i < num_tensor->size(); ++i) {
       size += addr[i];
     }
-    Tensor* indices = new Tensor({ size }, kUInt32);
+    Tensor* indices = new Tensor({ size }, data_type);
     uint32_t* int_addr = reinterpret_cast<uint32_t*>(indices->mutable_blob()->data());
     for (auto i = 0; i < num_tensor->size(); ++i) {
       auto count = addr[i];

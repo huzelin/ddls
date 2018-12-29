@@ -11,6 +11,7 @@
 #include "hpps/feeder/record_io.h"
 #include "hpps/feeder/tensor.h"
 #include "hpps/feeder/types.h"
+#include "hpps/feeder/utils.h"
 
 using namespace hpps;
 
@@ -195,5 +196,11 @@ int HPPS_BatchGetTensorFromIndex(Handle handle, int index, Handle* tensor) {
 int HPPS_BatchDestroy(Handle handle) {
   Batch* batch = reinterpret_cast<Batch*>(handle);
   delete batch;
+  return 0;
+}
+
+int HPPS_Num2Indices(Handle num_handle, Handle* indices) {
+  Tensor* tensor = reinterpret_cast<Tensor*>(num_handle);
+  *indices = Num2Indices(tensor);
   return 0;
 }

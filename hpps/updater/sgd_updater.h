@@ -15,7 +15,7 @@ public:
     LOG_DEBUG("[SGDUpdater] Init. \n");
   }
   void Update(size_t num_element, T* data, T* delta,
-              AddOption*, size_t offset) override {
+              AddOption* option, size_t offset) override {
     for (size_t index = 0; index < num_element; ++index) {
       data[index + offset] -= delta[index];
     }

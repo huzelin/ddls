@@ -47,6 +47,9 @@ int HPPS_BatchGetTensorFromKey(Handle batch, const char* key, Handle* tensor);
 int HPPS_BatchGetTensorFromIndex(Handle batch, int index, Handle* tensor);
 int HPPS_BatchDestroy(Handle batch);
 
+// Utils
+int HPPS_Num2Indices(Handle num_handle, Handle* indices);
+
 #ifdef __cplusplus
 }
 #endif
