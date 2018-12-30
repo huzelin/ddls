@@ -7,7 +7,7 @@ import numpy as np
 
 from hpps.array_table import ArrayTable, create_array_table
 from hpps.feeder.tensor import Tensor
-from hpps.zoo import Zoo
+from hpps.zoo import *
 
 class ModelParamManager(object):
     """ The neural network model param manager, which is used for managing and
@@ -24,51 +24,51 @@ class ModelParamManager(object):
         """
         self.model = model
         
+        self.arg_offsets = []
         self.arg_shapes = []
-        self.arg_dtypes = []
-        self.arg_sizes = []
-
+        self.aux_offsets = []
         self.aux_shapes = []
-        self.aux_dtypes = []
-        self.aux_sizes = []
 
-        for arr in self.get_all_arg_list():
-            self.arg_shapes.append(arr.shape)
-            self.arg_dtypes.append(arr.dtype)
-            self.arg_sizes.append(arr.size)
+        self.arg_size = 0
+        for value in self.get_all_arg_list():
+            assert(np.dtype("float32") == value.dtype)
+            self.arg_offsets.append(self.arg_size)
+            self.arg_size += value.size
+            self.arg_shapes.append(value.shape)
 
-        for arr in self.get_all_aux_list():
-            self.aux_shapes.append(arr.shape)
-            self.aux_dtypes.append(arr.dtype)
-            self.aux_sizes.append(arr.size)
+        self.aux_size = 0
+        for value in self.get_all_aux_list():
+            assert(np.dtype("float32") == value.dtype)
+            self.aux_offsets.append(self.aux_size)
+            self.aux_size += value.size
+            self.aux_shapes.append(value.shape)
 
-        z = Zoo()
         self.arg_tensor = None
         self.arg_grad_tensor = None
 
-        self.arg_array_table = create_array_table(sum(self.arg_sizes), np.float32)
-        if z.is_worker():
-            self.arg_tensor = Tensor([sum(self.arg_sizes)], np.float32)
-            seld.arg_grad_tensor = Tensor([sum(self.arg_sizes)], np.float32)
+        self.arg_array_table = create_array_table(self.arg_size, np.float32)
+        if zoo_is_worker():
+            self.arg_tensor = Tensor([ self.arg_size ], np.float32)
+            self.arg_grad_tensor = Tensor([ self.arg_size ], np.float32)
         
         self.aux_tensor = None
-        if len(self.aux_sizes) > 0:
-            self.aux_array_table = create_array_table(sum(self.aux_sizes), np.float32)
+        if self.aux_size > 0:
+            self.aux_array_table = create_array_table(self.aux_size, np.float32)
             if z.is_worker():
-                self.aux_tensor = Tensor([sum(self.aux_sizes)], np.float32)
+                self.aux_tensor = Tensor([ self.aux_size ], np.float32)
         
-        z.barrier()
+        zoo_barrier()
 
-        if z.is_worker():
+        # Pull argument from Parameter Server
+        if zoo_is_worker():
             self.arg_array_table.get(self.arg_tensor)
-            if len(self.aux_sizes) > 0:
-                self.aux_array_table.get(self.aux_tensor)
-            
             self.set_all_arg_to_model()
-            self.set_all_aux_to_model()
+            if self.aux_size > 0:
+                self.aux_array_table.get(self.aux_tensor)
+                self.set_all_aux_to_model()
 
     def get_all_arg_list(self):
-        """ Get all args of specific model
+        """ Get all args list of specific model
 
         Parameters
         ----------
@@ -81,7 +81,7 @@ class ModelParamManager(object):
         raise NotImplemented()
 
     def get_all_aux_list(self):
-        """ Get all auxs of specific model
+        """ Get all auxs list of specific model
 
         Parameters
         ----------
@@ -94,7 +94,7 @@ class ModelParamManager(object):
         raise NotImplemented()
 
     def get_all_arg_grad_list(self):
-        """ Get all arg grad of specific model
+        """ Get all arg grad list of specific model
 
         Parameters
         ----------
@@ -143,19 +143,32 @@ class ModelParamManager(object):
         ------
           None
         """
-        if z.is_worker() == False:
+        if zoo_is_worker() == False:
             return
 
-        for arr in self.get_all_arg_grad_list():
-            # Copy grad
-            pass
+        # copy grad from backend engine
+        all_arg_grad_list = self.get_all_arg_grad_list()
+        for index in xrange(len(all_arg_grad_list)):
+            self.arg_grad_tensor.load_numpy(all_arg_grad_list[index],
+                                            self.arg_offsets[index])
         
+        # push grad and pull arg
         self.arg_array_table.add(self.arg_grad_tensor)
         self.arg_array_table.get(self.arg_tensor)
+
+        # deploy new arg to backend engine
         self.set_all_arg_to_model()
 
-        if len(self.aux_sizes) > 0:
+        if self.aux_size > 0:
+            # copy aux from backend engine
+            all_aux_list = self.get_all_aux_list()
+            for index in xrange(len(all_aux_list)):
+                self.aux_tensor.load_numpy(all_aux_list[index], self.aux_offsets[index])
+
+            # push and pull aux 
             self.aux_array_table.add(self.arg_aux_tensor)
             self.aux_array_table.get(self.arg_aux_tensor)
+
+            # deploy new aux to backend engine
             self.set_all_aux_to_model()
 

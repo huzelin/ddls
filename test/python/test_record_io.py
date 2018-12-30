@@ -12,6 +12,7 @@ record_io.write_header({ 'ad' : np.float32, 'user' : np.float32 })
 
 ad_tensor = Tensor([300], np.float32)
 ad_tensor.load_numpy(np.random.rand(300))
+print(ad_tensor.asnumpy())
 user_tensor = Tensor([400], np.float32)
 user_tensor.load_numpy(np.random.rand(400))
 

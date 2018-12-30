@@ -91,11 +91,12 @@ int HPPS_TensorData(Handle handle, void** out) {
   return 0;
 }
 
-int HPPS_TensorLoadData(Handle handle, void* data) {
+int HPPS_TensorLoadData(Handle handle, size_t offset, void* data, size_t size) {
   Tensor* tensor = reinterpret_cast<Tensor*>(handle);
-  memcpy(tensor->mutable_blob()->data(),
+  auto data_type_size = TensorDataTypeSize(tensor->data_type());
+  memcpy(tensor->mutable_blob()->data() + data_type_size * offset,
          data,
-         tensor->mutable_blob()->size());
+         size * data_type_size);
   return 0;
 }
 

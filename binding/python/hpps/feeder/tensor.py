@@ -61,11 +61,13 @@ class Tensor(object):
         check_call(LIB.HPPS_TensorType(self.handle, ctypes.byref(dtype)))
         return _DTYPE_2_NP[dtype.value]
 
-    def load_numpy(self, data):
+    def load_numpy(self, data, offset = 0):
         """ load data from numpy
         """
         check_call(LIB.HPPS_TensorLoadData(self.handle,
-                                           data.ctypes.data_as(ctypes.c_void_p)))
+                                           offset,
+                                           data.ctypes.data_as(ctypes.c_void_p),
+                                           data.size))
 
     def asnumpy(self):
         """ Return the numpy

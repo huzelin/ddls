@@ -1,12 +1,12 @@
-from hpps.zoo import Zoo
+from hpps.zoo import *
 from hpps.array_table import ArrayTable, create_array_table
 from hpps.feeder.tensor import Tensor
 import numpy as np
 
-zoo = Zoo()
+zoo_start()
 
 array_table = create_array_table(100, np.float32)
-zoo.barrier()
+zoo_barrier()
 
 data = Tensor(shape = [100], type= np.float32)
 array_table.get(data)
@@ -18,3 +18,5 @@ array_table.add(grad)
 
 array_table.get(data)
 print data.asnumpy()
+
+zoo_stop()

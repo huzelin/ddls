@@ -23,6 +23,7 @@ struct RandomOption {
   RandomOption() {
     data_.resize(12);
     set_algorithm(RandomAlgoType::kGaussian);
+    set_assigned_value(0.1);
     set_seed(0);
     set_min(0);
     set_max(1.0);
