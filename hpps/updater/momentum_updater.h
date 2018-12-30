@@ -23,7 +23,8 @@ class MomentumUpdater : public Updater<T> {
       smooth_gradient_[index + offset] = 
         option->momentum() * smooth_gradient_[index + offset] 
         + (1 - option->momentum()) * delta[index];
-      data[index + offset] -= smooth_gradient_[index + offset];
+      data[index + offset] -= smooth_gradient_[index + offset] *
+          option->learning_rate();
     }
   }
 

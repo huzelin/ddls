@@ -17,7 +17,7 @@ public:
   void Update(size_t num_element, T* data, T* delta,
               AddOption* option, size_t offset) override {
     for (size_t index = 0; index < num_element; ++index) {
-      data[index + offset] -= delta[index];
+      data[index + offset] -= delta[index] * option->learning_rate();
     }
   }
 
