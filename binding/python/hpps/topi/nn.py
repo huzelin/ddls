@@ -13,7 +13,7 @@ class ModelParamManager(object):
     """ The neural network model param manager, which is used for managing and
     synchronizing the variables in NN model more easily
     """
-    def __init__(self, model):
+    def __init__(self, model, kwargs = { }):
         """ The constructor of ModelParamManager
 
         The constructor will associate the parameter with hpps array table,
@@ -46,14 +46,14 @@ class ModelParamManager(object):
         self.arg_tensor = None
         self.arg_grad_tensor = None
 
-        self.arg_array_table = create_array_table(self.arg_size, np.float32)
+        self.arg_array_table = create_array_table(self.arg_size, np.float32, kwargs)
         if zoo_is_worker():
             self.arg_tensor = Tensor([ self.arg_size ], np.float32)
             self.arg_grad_tensor = Tensor([ self.arg_size ], np.float32)
         
         self.aux_tensor = None
         if self.aux_size > 0:
-            self.aux_array_table = create_array_table(self.aux_size, np.float32)
+            self.aux_array_table = create_array_table(self.aux_size, np.float32, kwargs)
             if z.is_worker():
                 self.aux_tensor = Tensor([ self.aux_size ], np.float32)
         

@@ -33,7 +33,7 @@ def get_model():
     return model
 
 def train(model):
-    data = torch.rand(100, 1, 20, 20)
+    data = torch.rand(128, 1, 20, 20)
     #target = torch.empty(5, 1, 10)
     output = model(data)
     output.mean().backward()
@@ -42,17 +42,15 @@ zoo_start()
 
 model = get_model()
 
-param_manager = TorchParamManager(model)
+param_manager = TorchParamManager(model, { 'algo' : 'assign' })
 
 for iter in xrange(1000):
     train(model)
-    """   
     for key, value in model.named_parameters():
         if key == "fc2.bias":
             print(key)
             print(value.data)
             print(value.grad.data)
-    """
     param_manager.sync_all_param()
     print('iter-%d', iter)
 
