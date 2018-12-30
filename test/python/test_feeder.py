@@ -10,17 +10,12 @@ from hpps.feeder.feeder import Feeder
 # create plan
 plan_maker = PlanMaker()
 plan_maker.set_uri(
-    ['/tmp/sample1',
-     '/tmp/sample1',
-     '/tmp/sample1',
-     '/tmp/sample1',
-     '/tmp/sample1',
-     '/tmp/sample1',
-     '/tmp/sample1',
-     '/tmp/sample1',
-     '/tmp/sample1'
+    [
+     #'/tmp/sample1',
+     '/tmp/minst_train',
+     '/tmp/minst_t10k',
     ])
-plan_maker.set_batch_size(8192)
+plan_maker.set_batch_size(32)
 plan_maker.set_epoch(10)
 
 plans = []
@@ -40,7 +35,7 @@ for x in xrange(1, 200):
     indice = x % len(plans)
     batch = batch_iterator[indice].next_batch()
     print batch, indice, x
-    #print batch.get_tensor('ad').asnumpy()
+    print batch.get_tensor('image').asnumpy()
 
 feeder.stop()
 #print batch.get_tensor('ad').shape
