@@ -6,7 +6,7 @@
 
 namespace hpps {
 
-Feeder::~Feeder() {
+void Feeder::Stop() {
   running_ = false;
   for (auto i = 0; i < entries_.size(); i++) {
     task_queues_[i]->Exit();

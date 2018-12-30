@@ -124,6 +124,11 @@ int HPPS_FeederSchedule(Handle plan, int max_queue_size, Handle* iterator) {
   return 0;
 }
 
+int HPPS_FeederStop() {
+  Feeder::Get()->Stop();
+  return 0;
+}
+
 // Plan maker creation
 int HPPS_PlanMakerCreate(Handle* plan_maker) {
   *plan_maker = new PlanMaker();

@@ -28,3 +28,8 @@ class Feeder(object):
                                            ctypes.byref(out)))
         return BatchIterator(out)
 
+    def stop(self):
+        """ Stop feeder
+        """
+        check_call(LIB.HPPS_FeederStop())
+

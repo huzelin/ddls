@@ -15,7 +15,7 @@ ad_tensor.load_numpy(np.random.rand(300))
 user_tensor = Tensor([400], np.float32)
 user_tensor.load_numpy(np.random.rand(400))
 
-for x in xrange(1, 100000):
+for x in xrange(1, 1000000):
     record_io.write_sample({ 'ad' : ad_tensor, 'user' : user_tensor })
 record_io.write_finalize()
 

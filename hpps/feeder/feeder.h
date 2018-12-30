@@ -14,9 +14,9 @@ namespace hpps {
 class Feeder {
  public:
   static Feeder* Get() { static Feeder feeder; return &feeder; }
-  virtual ~Feeder();
 
   void Start(int thread_num = 10);
+  void Stop();
 
   // Schedule one data source's sample, the plan is managed by feeder.
   BlockingQueueIterator<std::unique_ptr<Batch>>* Schedule(

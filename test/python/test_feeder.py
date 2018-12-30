@@ -9,19 +9,20 @@ from hpps.feeder.feeder import Feeder
 
 # create plan
 plan_maker = PlanMaker()
-plan_maker.set_uri(['/tmp/sample1', '/tmp/sample1'])
-plan_maker.set_batch_size(10)
+plan_maker.set_uri(['/tmp/sample1', '/tmp/sample1', '/tmp/sample1'])
+plan_maker.set_batch_size(8192)
 plan_maker.set_epoch(1)
 plan = plan_maker.make()
 
 # feeder
 feeder = Feeder()
 batch_iterator = feeder.schedule(plan, 1)
-feeder.start(thread_num=2)
-batch = batch_iterator.next_batch()
-batch = batch_iterator.next_batch()
-batch = batch_iterator.next_batch()
-batch = batch_iterator.next_batch()
+feeder.start(thread_num=3)
 
-print batch.get_tensor('ad').shape
-print batch.get_tensor('ad').asnumpy()
+for x in xrange(1, 100):
+    batch = batch_iterator.next_batch()
+    print batch
+    #print batch.get_tensor('ad').asnumpy()
+feeder.stop()
+#print batch.get_tensor('ad').shape
+#print batch.get_tensor('ad').asnumpy()

@@ -5,5 +5,5 @@ fi
 
 pushd build
     cmake .. 
-    make -j32 
+    make -j4 
 popd

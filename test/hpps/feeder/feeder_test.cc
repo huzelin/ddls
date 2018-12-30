@@ -51,6 +51,8 @@ TEST(Feeder, Feeder) {
   std::unique_ptr<Batch> batch;
   iterator->Pop(batch);
   iterator->Pop(batch);
+
+  Feeder::Get()->Stop();
 }
 
 }  // namespace hpps

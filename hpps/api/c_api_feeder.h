@@ -31,6 +31,7 @@ int HPPS_TensorDestroy(Handle handle);
 // Feeder start and Plan scheduling.
 int HPPS_FeederStart(int thread_num);
 int HPPS_FeederSchedule(Handle plan, int max_queue_size, Handle* iterator);
+int HPPS_FeederStop();
 
 // Plan maker creation
 int HPPS_PlanMakerCreate(Handle* plan_maker);
