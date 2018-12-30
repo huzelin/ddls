@@ -19,7 +19,7 @@ class Feeder(object):
         """
         check_call(LIB.HPPS_FeederStart(thread_num))
 
-    def schedule(self, plan, max_queue_size):
+    def schedule(self, plan, max_queue_size = 1):
         """ Schedule the plan
         """
         out = ctypes.c_void_p()
