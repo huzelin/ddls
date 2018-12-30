@@ -20,7 +20,7 @@
 
 namespace hpps {
 
-Zoo::Zoo() { }
+Zoo::Zoo() : inited_(false) { }
 
 Zoo::~Zoo() { }
 
@@ -48,6 +48,8 @@ Zoo* Zoo::Get() {
 }
 
 void Zoo::Start(int* argc, char** argv) {
+  if (inited_) return;
+
   LOG_DEBUG("Zoo started\n");
   ParseCMDFlags(argc, argv);
 
@@ -56,6 +58,8 @@ void Zoo::Start(int* argc, char** argv) {
   net_util_->Init(argc, argv);
 
   if (!HPPS_CONFIG_ma) { StartPS(); }
+
+  inited_ = true;
 }
 
 void Zoo::Stop(bool finalize_net) {

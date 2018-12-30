@@ -87,6 +87,8 @@ class Zoo {
 
   int num_workers_;
   int num_servers_;
+
+  bool inited_;
 };
 
 }  // namespace hpps
