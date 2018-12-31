@@ -39,14 +39,16 @@ def gen_sample(type):
         label = labels[index : index + 1]
         image = images[index : index + 1]
 
-        label_tensor = Tensor([10], np.float32)
+        label_tensor = Tensor([1], np.float32)
         image_tensor = Tensor([images.shape[1]], np.float32)
 
-        r_label = np.zeros([10], np.float32)
-        r_label[label[0]] = 1.0
-
-        label_tensor.load_numpy(r_label)
+        label_tensor.load_numpy(label.astype(np.float32))
         image_tensor.load_numpy(np.array(image[0], np.float32))
+
+        '''
+        print(label_tensor.asnumpy())
+        print(image_tensor.asnumpy())
+        '''
 
         record_io.write_sample({ 'label' : label_tensor, 'image' : image_tensor })
         

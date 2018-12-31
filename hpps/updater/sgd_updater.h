@@ -12,7 +12,7 @@ template <typename T>
 class SGDUpdater : public Updater<T> {
 public:
   explicit SGDUpdater(size_t){
-    LOG_DEBUG("[SGDUpdater] Init. \n");
+    LOG_DEBUG("[SGDUpdater] Init. ");
   }
   void Update(size_t num_element, T* data, T* delta,
               AddOption* option, size_t offset) override {

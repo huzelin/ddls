@@ -50,7 +50,7 @@ Zoo* Zoo::Get() {
 void Zoo::Start(int* argc, char** argv) {
   if (inited_) return;
 
-  LOG_DEBUG("Zoo started\n");
+  LOG_DEBUG("Zoo started");
   ParseCMDFlags(argc, argv);
 
   // Init the network
@@ -154,7 +154,7 @@ void Zoo::RegisterNode() {
       server_id_to_rank_[node.server_id] = node.rank;
     }
   }
-  LOG_DEBUG("rank %d end register\n", Zoo::Get()->rank());
+  LOG_DEBUG("rank %d end register", Zoo::Get()->rank());
 }
 
 void Zoo::RegisterActor(const std::string name, Actor* actor) {
@@ -181,11 +181,11 @@ void Zoo::Barrier() {
   msg->set_type(MsgType::Control_Barrier);
   SendTo(actor::kCommunicator, msg);
 
-  LOG_DEBUG("rank %d requested barrier.\n", rank());
+  LOG_DEBUG("rank %d requested barrier.", rank());
   // wait for reply
   mailbox_->Pop(msg);
   CHECK(msg->type() == MsgType::Control_Reply_Barrier);
-  LOG_DEBUG("rank %d reached barrier\n", rank());
+  LOG_DEBUG("rank %d reached barrier", rank());
 }
 
 int Zoo::RegisterTable(WorkerTable* worker_table) {

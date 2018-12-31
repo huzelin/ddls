@@ -48,6 +48,10 @@ void RecordIO::ReadHeader() {
   stream_->Read(&tensor_count, sizeof(tensor_count));
   LOG_DEBUG("version_=%u", version_);
   LOG_DEBUG("sample_count_=%u", sample_count_);
+  LOG_DEBUG("tensor_count=%u", tensor_count);
+
+  names_.clear();
+  types_.clear();
 
   char buf[kTensorNameLen];
   tensor_data_type_t data_type;
@@ -83,11 +87,13 @@ void RecordIO::WriteSample(const std::unordered_map<std::string, Tensor*>& sampl
 }
 
 std::vector<Tensor*> RecordIO::ReadSampleAsArray() {
+  LOG_DEBUG("names_.size()=%u", names_.size());
   std::vector<Tensor*> tensors;
 
   tensor_count_t count;
   stream_->Read(&count, sizeof(count));
   CHECK(count == names_.size());
+  LOG_DEBUG("count=%u names_.size()=%u", names_.size());
 
   for (auto i = 0; i < count; ++i) {
     tensor_dim_count_t dim_count;
@@ -121,6 +127,11 @@ std::unordered_map<std::string, Tensor*> RecordIO::ReadSampleAsMap() {
 void RecordIO::WriteFinalize() {
   stream_->Seek(sizeof(version_));
   stream_->Write(&sample_count_, sizeof(sample_count_));
+
+  LOG_INFO("sample_count=%u tensor_count=%u", sample_count_, names_.size());
+  for (auto i = 0; i < names_.size(); ++i) {
+    LOG_INFO("name=%s dtype=%d", names_[i].c_str(), types_[i]);
+  }
 }
 
 }  // namespace hpps

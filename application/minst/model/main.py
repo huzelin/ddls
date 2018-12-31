@@ -1,10 +1,14 @@
 from models import fc_net, conv_net, AlexNet
 import torch
+from torch.autograd import Variable
+import numpy as np
 from hpps.zoo import *
 from hpps.topi.torch_nn import TorchParamManager
 from hpps.feeder.plan_maker import PlanMaker
 from hpps.feeder.tensor import Tensor
 from hpps.feeder.feeder import Feeder
+
+#zoo_set_log_level(0)
 
 # Start zoo
 zoo_start()
@@ -40,18 +44,17 @@ test_iterator = feeder.schedule(test_plan, max_queue_size = 1)
 feeder.start(thread_num = 1)
 
 # training iteration
-criterion = torch.nn.MSELoss()
-#criterion = torch.nn.CrossEntropyLoss()
+criterion = torch.nn.CrossEntropyLoss()
 
 for _epoch in range(epoch):
     for iteration in xrange(60000 / batch_size):
         batch = train_iterator.next_batch()
-        image, label = batch.get_tensor('image').asnumpy(), batch.get_tensor('label').asnumpy()
+        image, label = batch.get_tensor('image').asnumpy(), batch.get_tensor('label').asnumpy().reshape([-1])
         prediction = model.forward(torch.from_numpy(image))
-        #print(label)
-        #print(prediction.data.numpy())
         
-        loss = criterion(prediction, torch.from_numpy(label)) / batch_size
+        label = Variable(torch.from_numpy(label.astype(np.long)), requires_grad=False)
+        
+        loss = criterion(prediction, label) / (batch_size * zoo_num_workers()) 
         print('epoch=%d iteration=%d loss=%f' % (_epoch, iteration, loss.data.numpy()))
         loss.backward()
         #for name, value in model.named_parameters():
