@@ -12,7 +12,7 @@ from hpps.utils.log import init_logging
 from hpps.utils.eval import EvalPloter
 
 batch_size = 100
-epoch = 200
+epoch = 80
 
 def eval(model, test_iterator, eval_ploter, total_iteration):
     sum = 0.0
