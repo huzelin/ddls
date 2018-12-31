@@ -1,5 +1,6 @@
 from models import fc_net, conv_net, AlexNet
 import torch
+import logging
 from torch.autograd import Variable
 import numpy as np
 from hpps.zoo import *
@@ -7,13 +8,17 @@ from hpps.topi.torch_nn import TorchParamManager
 from hpps.feeder.plan_maker import PlanMaker
 from hpps.feeder.tensor import Tensor
 from hpps.feeder.feeder import Feeder
+from hpps.utils.log import init_logging
+from hpps.utils.eval import EvalPloter
 
 batch_size = 100
 epoch = 200
 
-def eval(model, test_iterator):
+def eval(model, test_iterator, eval_ploter, total_iteration):
     sum = 0.0
     accurate = 0.0
+    loss_sum = 0.0
+    loss_num = 0
     
     criterion = torch.nn.CrossEntropyLoss()
     
@@ -23,8 +28,10 @@ def eval(model, test_iterator):
         prediction = model.forward(torch.from_numpy(image))
 
         loss = criterion(prediction, torch.from_numpy(label)) / (batch_size)
+        loss_sum += loss.data.numpy()
+        loss_num += 1
         if iteration % (1000 / batch_size) == 0:
-            print('test iteration=%d test_loss=%f' %(iteration, loss.data.numpy()))
+            logging.info('test iteration=%d test_loss=%f' %(iteration, loss.data.numpy()))
 
         plabel = torch.max(prediction.data, 1)[1].numpy()
         sum += plabel.shape[0]
@@ -32,12 +39,15 @@ def eval(model, test_iterator):
             if plabel[0] == label[0]:
                 accurate += 1
 
-    print('test accuracy: %f' % (accurate / sum))
+    logging.info('test accuracy: %f' % (accurate / sum))
+    eval_ploter.add_test_plot(iter = total_iteration, loss = (loss_sum / loss_num), accuracy = (accurate / sum))
 
-def train(model, param_manager, train_iterator, test_iterator):
+def train(model, param_manager, train_iterator, test_iterator, eval_plotter):
     # training iteration
     criterion = torch.nn.CrossEntropyLoss()
-    
+    delay = 1.0
+    total_iteration = 0
+
     for _epoch in range(epoch):
         for iteration in xrange(60000 / batch_size):
             batch = train_iterator.next_batch()
@@ -46,9 +56,13 @@ def train(model, param_manager, train_iterator, test_iterator):
             #print(label.astype(np.long)) 
             label = Variable(torch.from_numpy(label.astype(np.long)), requires_grad=False)
         
+            total_iteration += 1
             loss = criterion(prediction, label) / (batch_size) 
             if iteration % (1000 / batch_size) == 0:
-                print('epoch=%d train iteration=%d train_loss=%f' % (_epoch, iteration, loss.data.numpy()))
+                logging.info('epoch=%d train iteration=%d train_loss=%f' % (_epoch, iteration, loss.data.numpy()))
+                eval_ploter.add_train_plot(total_iteration, loss.data.numpy())
+
+            loss = loss * delay
             loss.backward()
             '''
             for name, value in model.named_parameters():
@@ -60,10 +74,12 @@ def train(model, param_manager, train_iterator, test_iterator):
             param_manager.sync_all_param()
 
             if iteration > 0 and iteration % (10000 / batch_size) == 0:
-                eval(model, test_iterator)
+                eval(model, test_iterator, eval_ploter, total_iteration)
+        delay *= 0.9
 
 if __name__ == "__main__":
     #zoo_set_log_level(0)
+    init_logging()
     # Start zoo
     zoo_start()
     
@@ -96,10 +112,12 @@ if __name__ == "__main__":
     
     feeder.start(thread_num = 1)
 
+    eval_ploter = EvalPloter()
     '''
     train iteration and testing
     '''
-    train(model, param_manager, train_iterator, test_iterator)
+    train(model, param_manager, train_iterator, test_iterator, eval_ploter)
+    eval_ploter.draw('plot.png')
     
     '''
     finalization
