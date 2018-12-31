@@ -22,6 +22,8 @@ Use CMAKE\_INSTAL\_PREFIX=, for example
   mkdir build && cd build && cmake ../ -DCMAKE_INSTALL_PREFIX=/opt/ucdl/ && make
 
   sudo make install
+
+  cd ../binding/python && sudo python setup.py install
 ```
 
 The default installation directory is /opt/ucdl/

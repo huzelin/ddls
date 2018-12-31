@@ -19,7 +19,7 @@ class fc_net(nn.Module):
         self.fc2 = torch.nn.Sequential(torch.nn.Linear(200, 100), torch.nn.ReLU())
         self.fc3 = torch.nn.Sequential(torch.nn.Linear(100, 20), torch.nn.ReLU())
         self.fc4 = torch.nn.Linear(20, 10)
-        self.softmax = torch.nn.Softmax()
+        self.softmax = torch.nn.Softmax(dim=1)
 
     def forward(self, x):
         x = self.fc1(x)
