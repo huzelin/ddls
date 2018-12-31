@@ -8,6 +8,7 @@ set(CMAKE_VERBOSE_MAKEFILE on)
 
 include(${PROJECT_SOURCE_DIR}/cmake/Utils.cmake)
 hpps_option(USE_HDFS "USE_HDFS" OFF)
+set(CMAKE_INSTALL_PREFIX /opt/ucdl/)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -ftree-vectorize -std=c++11 -Wcpp -mavx -mavx2 -fopenmp -O3 -g")
 if(USE_HDFS)
@@ -37,6 +38,7 @@ if(USE_HDFS)
     target_link_libraries(hpps -lhdfs)
 endif()
 add_dependencies(hpps zeromq ompi)
+#install(TARGETS hpps DESTINATION lib)
 
 add_subdirectory(test)
 add_subdirectory(benchmark)
