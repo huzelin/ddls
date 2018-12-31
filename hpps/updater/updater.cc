@@ -17,7 +17,7 @@
 
 namespace hpps {
 
-HPPS_DEFINE_string(updater_type, "default", "hpps server updater type");
+HPPS_DEFINE_string(updater_type, "sgd", "hpps server updater type");
 HPPS_DEFINE_int(omp_threads, 4 , "#theads used by openMP for updater");
 
 template <typename T>
