@@ -27,7 +27,7 @@ def eval(model, test_iterator, eval_ploter, total_iteration):
         image, label = batch.get_tensor('image').asnumpy(), batch.get_tensor('label').asnumpy().reshape([-1]).astype(np.long)
         prediction = model.forward(torch.from_numpy(image))
 
-        loss = criterion(prediction, torch.from_numpy(label)) / (batch_size)
+        loss = criterion(prediction, torch.from_numpy(label))
         loss_sum += loss.data.numpy()
         loss_num += 1
         if iteration % (1000 / batch_size) == 0:
@@ -57,14 +57,15 @@ def train(model, param_manager, train_iterator, test_iterator, eval_plotter):
             label = Variable(torch.from_numpy(label.astype(np.long)), requires_grad=False)
         
             total_iteration += 1
-            loss = criterion(prediction, label) / (batch_size) 
+            loss = criterion(prediction, label) 
             if iteration % (1000 / batch_size) == 0:
                 logging.info('epoch=%d train iteration=%d train_loss=%f' % (_epoch, iteration, loss.data.numpy()))
                 eval_ploter.add_train_plot(total_iteration, loss.data.numpy())
 
             loss = loss * delay
+            param_manager.zero_grad()
             loss.backward()
-            '''
+            ''' 
             for name, value in model.named_parameters():
                 if name == 'fc4.bias':
                     print(name)
@@ -75,7 +76,7 @@ def train(model, param_manager, train_iterator, test_iterator, eval_plotter):
 
             if iteration > 0 and iteration % (10000 / batch_size) == 0:
                 eval(model, test_iterator, eval_ploter, total_iteration)
-        delay *= 0.9
+        #delay *= 0.9
 
 if __name__ == "__main__":
     #zoo_set_log_level(0)
