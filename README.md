@@ -20,16 +20,21 @@ Use **-DCMAKE\_INSTALL\_PREFIX=**, for example
 
 ```bash
   mkdir build && cd build && cmake ../ -DCMAKE_INSTALL_PREFIX=/opt/ucdl/ && make
-
   sudo make install
-
   cd ../binding/python && sudo python setup.py install
 ```
 
 The default installation directory is /opt/ucdl/
 
+## Applications
+
+  * See [minst](application/minst) for details
+
+  * See [recommendation](application/recommendation) for details
+
+  * See [urban computing](application/urban_computing) for details
+
 ## Benchmark
 
-## Urban Computing Applications
-
+  * TODO Later
 
