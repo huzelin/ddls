@@ -16,7 +16,7 @@ struct AddOption {
   AddOption(){
     data_[0].i = Zoo::Get()->worker_rank(); 
     set_momentum(0.0f);
-    set_learning_rate(0.001f);
+    set_learning_rate(0.01f);
     data_[3].f = 0.1f;
     data_[4].f = 0.1f;
   }
