@@ -1,13 +1,13 @@
-# UCDL
+# DDLS
 
-Travis CI: [![Build Status](https://travis-ci.org/huzelin/ucdl.svg?branch=master)](https://travis-ci.org/huzelin/ucdl)
+Travis CI: [![Build Status](https://travis-ci.org/huzelin/ddls.svg?branch=master)](https://travis-ci.org/huzelin/ddls)
 
 ## Introduction
-**UCDL** is a parameter server based framework for training machine learning models on Big Data of Urban Computing(such as: Traffic Forecasting etc.) with a numbers of machines.
+**DDLS** is a parameter server based Distributed Deep Learning Studio for training machine learning models on Big Data with a numbers of machines, which also contains a few algorithm solution on Urban Computing, such as: Traffic Forecasting etc.
 
 ## Installation from source
 
-Download from project homepage. https://github.com/huzelin/ucdl.git
+Download from project homepage. https://github.com/huzelin/ddls.git
 
 ### Prerequisites
 
@@ -19,12 +19,12 @@ Download from project homepage. https://github.com/huzelin/ucdl.git
 Use **-DCMAKE\_INSTALL\_PREFIX=**, for example
 
 ```bash
-  mkdir build && cd build && cmake ../ -DCMAKE_INSTALL_PREFIX=/opt/ucdl/ && make
+  mkdir build && cd build && cmake ../ -DCMAKE_INSTALL_PREFIX=/opt/ddls/ && make
   sudo make install
   cd ../binding/python && sudo python setup.py install
 ```
 
-The default installation directory is /opt/ucdl/
+The default installation directory is /opt/ddls/
 
 ## Applications
 
