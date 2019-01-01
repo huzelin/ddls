@@ -61,6 +61,24 @@ class TorchParamManager(ModelParamManager):
             if param.requires_grad:
                 ret.append(param.grad.data.numpy())
         return ret
+    
+    def zero_grad(self):
+        """ zero all grad 
+
+        Parameters
+        ----------
+          None
+
+        Return
+        ------
+          A list of Numpy.
+        """
+        ret = [ ]
+        for param in self.model.parameters():
+            if param.requires_grad:
+                if param.grad is not None:
+                    param.grad.data.zero_()
+        return ret
 
     def set_all_arg_to_model(self):
         """ Set all args to specific model

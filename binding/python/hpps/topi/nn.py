@@ -106,6 +106,19 @@ class ModelParamManager(object):
         """
         raise NotImplemented()
 
+    def zero_grad(self):
+        """ zero all grad
+
+        Parameters
+        ----------
+          None
+
+        Return
+        ------
+          None
+        """
+        raise NotImplemented()
+
     def set_all_arg_to_model(self):
         """ Set all args to specific model
 
