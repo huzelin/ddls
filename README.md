@@ -9,10 +9,14 @@ Travis CI: [![Build Status](https://travis-ci.org/huzelin/ddls.svg?branch=master
 
 Download from project homepage. https://github.com/huzelin/ddls.git
 
+```bash
+  git clone https://github.com/huzelin/ddls.git --recursive
+```
+
 ### Prerequisites
 
    * gcc >= 4.8.5
-   * cmake >= 2.8.2
+   * cmake >= 2.8
 
 ### Install to a specific directory
 
