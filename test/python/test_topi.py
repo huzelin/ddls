@@ -45,6 +45,7 @@ model = get_model()
 param_manager = TorchParamManager(model, { 'algo' : 'assign' })
 
 for iter in xrange(1000):
+    param_manager.zero_grad()
     train(model)
     for key, value in model.named_parameters():
         if key == "fc2.bias":
