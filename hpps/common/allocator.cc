@@ -13,7 +13,7 @@ namespace hpps {
 
 HPPS_DEFINE_int(allocator_alignment, 16, "alignment for align malloc");
 
-inline char* AlignMalloc(size_t size) {
+char* AlignMalloc(size_t size) {
 #ifdef _MSC_VER 
   return (char*)_aligned_malloc(size, HPPS_CONFIG_allocator_alignment);
 #else
@@ -23,7 +23,7 @@ inline char* AlignMalloc(size_t size) {
 #endif
 }
 
-inline void AlignFree(char *data) {
+void AlignFree(char *data) {
 #ifdef _MSC_VER 
   _aligned_free(data);
 #else

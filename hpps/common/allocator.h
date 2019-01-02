@@ -11,6 +11,9 @@ namespace std { class mutex; }
 
 namespace hpps {
 
+char* AlignMalloc(size_t size);
+void AlignFree(char *data);
+
 const size_t g_pointer_size = sizeof(void*);
 
 class MemoryBlock;
