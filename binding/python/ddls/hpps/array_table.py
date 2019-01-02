@@ -3,8 +3,8 @@ from __future__ import absolute_import
 
 import ctypes
 import numpy as np
-from hpps.base import _NP_2_DTYPE, c_str, c_array, check_call, LIB
-from hpps.feeder.tensor import Tensor
+from ddls.base import _NP_2_DTYPE, c_str, c_array, check_call, LIB
+from ddls.feeder.tensor import Tensor
 
 class ArrayTable(object):
     """ ArrayTable is used for continuous Parameter. 

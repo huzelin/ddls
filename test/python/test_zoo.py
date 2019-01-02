@@ -1,5 +1,5 @@
-from ddls.zoo import *
-from ddls.array_table import ArrayTable, create_array_table
+from ddls.hpps.zoo import *
+from ddls.hpps.array_table import ArrayTable, create_array_table
 from ddls.feeder.tensor import Tensor
 import numpy as np
 

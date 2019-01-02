@@ -4,7 +4,7 @@ from __future__ import absolute_import
 import sys
 import os
 import ctypes
-from .base import LIB, check_call, c_str
+from ddls.base import LIB, check_call, c_str
 
 #------------------------------------------
 # hpps zoo

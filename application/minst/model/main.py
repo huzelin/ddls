@@ -3,7 +3,7 @@ import torch
 import logging
 from torch.autograd import Variable
 import numpy as np
-from ddls.zoo import *
+from ddls.hpps.zoo import *
 from ddls.topi.torch_nn import TorchParamManager
 from ddls.feeder.plan_maker import PlanMaker
 from ddls.feeder.tensor import Tensor
