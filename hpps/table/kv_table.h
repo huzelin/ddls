@@ -117,6 +117,8 @@ private:
 
 template <typename Key, typename Val>
 struct KVTableOption {
+  size_t init_capacity;
+  uint32_t len;
   RandomOption random_option;
   typedef KVWorkerTable<Key, Val> WorkerTableType;
   typedef KVServerTable<Key, Val> ServerTableType;
