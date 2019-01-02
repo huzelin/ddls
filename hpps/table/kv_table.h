@@ -11,6 +11,8 @@
 #include <unordered_map>
 #include <vector>
 
+#include "hpps/kvstore/kvstore.h"
+
 namespace hpps {
 
 template <typename Key, typename Val>
@@ -20,7 +22,7 @@ struct KVTableOption;
 // Key, Val should be the basic type
 template <typename Key, typename Val>
 class KVWorkerTable : public WorkerTable {
-public:
+ public:
   explicit KVWorkerTable(const KVTableOption<Key, Val>&) {}
 
   void Get(Key key) { WorkerTable::Get(Blob(&key, sizeof(Key))); }
@@ -76,14 +78,14 @@ public:
       table_[keys.As<Key>(i)] = vals.As<Val>(i);
     }
   }
-
-private:
+ 
+ private:
   std::unordered_map<Key, Val> table_;
 };
 
 template <typename Key, typename Val>
 class KVServerTable : public ServerTable, ParamInitializer<Val> {
-public:
+ public:
   explicit KVServerTable(const KVTableOption<Key, Val>& option);
 
   void ProcessGet(const std::vector<Blob>& data, 
@@ -110,8 +112,8 @@ public:
 
   void Store(Stream*) override; 
   void Load(Stream*) override;
-
-private:
+ 
+ private:
   std::unordered_map<Key, Val> table_;
 };
 

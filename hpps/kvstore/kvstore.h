@@ -20,13 +20,18 @@ class KVStore {
   };
   const int kNodeSize = sizeof(KVStore<Key, Val>::Node);
 
-  KVStore(size_t init_capacity, uint32_t value_len);
+  explicit KVStore(size_t init_capacity, uint32_t value_len);
   virtual ~KVStore();
 
   Val* mutable_data() { return data_; }
-  // Get offset
+  const Node* node() const { return node_; }
+
   void GetOffset(const Key* key, size_t key_size, int64_t* offset, bool immutable = false);
   void GetOffset(const Key& key, int64_t* offset, bool immutable = false);
+
+  void Set(const Key* key, size_t key_size, const Val* val);
+  void Set(const Key& key, const Val* val);
+  void Clear();
 
  protected:
   Node* node_;

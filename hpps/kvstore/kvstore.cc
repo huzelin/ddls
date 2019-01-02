@@ -4,7 +4,10 @@
  */
 #include "hpps/kvstore/kvstore.h"
 
+#include <string.h>
+
 #include "hpps/common/allocator.h"
+#include "hpps/common/log.h"
 
 namespace {
 int kMaxProbeNum = 32;
@@ -49,8 +52,9 @@ void KVStore<Key, Val>::GetOffset(const Key& key, int64_t* offset, bool immutabl
       *offset = node_[index].offset;
       return;
     } else if (node_[index].offset < 0) {
-      if (immutable) *offset = -1;
-      else {
+      if (immutable) {
+        *offset = -1;
+      } else {
         node_[index].key = key;
         node_[index].offset = data_size_;
         *offset = data_size_;
@@ -62,6 +66,30 @@ void KVStore<Key, Val>::GetOffset(const Key& key, int64_t* offset, bool immutabl
     index = (index + 1) & (node_capacity_ - 1);
   }
   // Need to expand the space
+  LOG_FATAL("Please set init_capacity larger");
+}
+
+template <typename Key, typename Val>
+void KVStore<Key, Val>::Set(const Key* key, size_t key_size, const Val* val) {
+  for (auto i = 0; i < key_size; ++i) {
+    Set(key[i], val + value_len_ * i);
+  }
+}
+
+template <typename Key, typename Val>
+void KVStore<Key, Val>::Set(const Key& key, const Val* val) {
+  int64_t offset;
+  GetOffset(key, &offset);
+  memcpy(mutable_data() + offset, val, value_len_ * sizeof(Val));
+}
+
+template <typename Key, typename Val>
+void KVStore<Key, Val>::Clear() {
+  for (auto i = 0; i < node_size_; ++i) {
+    node_[i].offset = 0;
+  }
+  node_size_ = 0;
+  data_size_ = 0;
 }
 
 template class KVStore<uint64_t, float>;
