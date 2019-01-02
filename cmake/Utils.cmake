@@ -9,8 +9,8 @@ endfunction()
 ################################################################################################
 # Removes duplicates from list(s)
 # Usage:
-#   hpps_list_unique(<list_variable> [<list_variable>] [...])
-macro(hpps_list_unique)
+#   ddls_list_unique(<list_variable> [<list_variable>] [...])
+macro(ddls_list_unique)
   foreach(__lst ${ARGN})
     if(${__lst})
       list(REMOVE_DUPLICATES ${__lst})
@@ -21,8 +21,8 @@ endmacro()
 ################################################################################################
 # Clears variables from list
 # Usage:
-#   hpps_clear_vars(<variables_list>)
-macro(hpps_clear_vars)
+#   ddls_clear_vars(<variables_list>)
+macro(ddls_clear_vars)
   foreach(_var ${ARGN})
     unset(${_var})
   endforeach()
@@ -31,8 +31,8 @@ endmacro()
 ################################################################################################
 # Removes duplicates from string
 # Usage:
-#   hpps_string_unique(<string_variable>)
-function(hpps_string_unique __string)
+#   ddls_string_unique(<string_variable>)
+function(ddls_string_unique __string)
   if(${__string})
     set(__list ${${__string}})
     separate_arguments(__list)
@@ -47,8 +47,8 @@ endfunction()
 ################################################################################################
 # Prints list element per line
 # Usage:
-#   hpps_print_list(<list>)
-function(hpps_print_list)
+#   ddls_print_list(<list>)
+function(ddls_print_list)
   foreach(e ${ARGN})
     message(STATUS ${e})
   endforeach()
@@ -57,8 +57,8 @@ endfunction()
 ################################################################################################
 # Function merging lists of compiler flags to single string.
 # Usage:
-#   hpps_merge_flag_lists(out_variable <list1> [<list2>] [<list3>] ...)
-function(hpps_merge_flag_lists out_var)
+#   ddls_merge_flag_lists(out_variable <list1> [<list2>] [<list3>] ...)
+function(ddls_merge_flag_lists out_var)
   set(__result "")
   foreach(__list ${ARGN})
     foreach(__flag ${${__list}})
@@ -73,8 +73,8 @@ endfunction()
 ################################################################################################
 # Converts all paths in list to absolute
 # Usage:
-#   hpps_convert_absolute_paths(<list_variable>)
-function(hpps_convert_absolute_paths variable)
+#   ddls_convert_absolute_paths(<list_variable>)
+function(ddls_convert_absolute_paths variable)
   set(__dlist "")
   foreach(__s ${${variable}})
     get_filename_component(__abspath ${__s} ABSOLUTE)
@@ -86,8 +86,8 @@ endfunction()
 ################################################################################################
 # Reads set of version defines from the header file
 # Usage:
-#   hpps_parse_header(<file> <define1> <define2> <define3> ..)
-macro(hpps_parse_header FILENAME FILE_VAR)
+#   ddls_parse_header(<file> <define1> <define2> <define3> ..)
+macro(ddls_parse_header FILENAME FILE_VAR)
   set(vars_regex "")
   set(__parnet_scope OFF)
   set(__add_cache OFF)
@@ -130,8 +130,8 @@ endmacro()
 ################################################################################################
 # Reads single version define from the header file and parses it
 # Usage:
-#   hpps_parse_header_single_define(<library_name> <file> <define_name>)
-function(hpps_parse_header_single_define LIBNAME HDR_PATH VARNAME)
+#   ddls_parse_header_single_define(<library_name> <file> <define_name>)
+function(ddls_parse_header_single_define LIBNAME HDR_PATH VARNAME)
   set(${LIBNAME}_H "")
   if(EXISTS "${HDR_PATH}")
     file(STRINGS "${HDR_PATH}" ${LIBNAME}_H REGEX "^#define[ \t]+${VARNAME}[ \t]+\"[^\"]*\".*$" LIMIT_COUNT 1)
@@ -162,8 +162,8 @@ endfunction()
 ########################################################################################################
 # An option that the user can select. Can accept condition to control when option is available for user.
 # Usage:
-#   hpps_option(<option_variable> "doc string" <initial value or boolean expression> [IF <condition>])
-function(hpps_option variable description value)
+#   ddls_option(<option_variable> "doc string" <initial value or boolean expression> [IF <condition>])
+function(ddls_option variable description value)
   set(__value ${value})
   set(__condition "")
   set(__varname "__value")
@@ -203,8 +203,8 @@ endfunction()
 ################################################################################################
 # Utility macro for comparing two lists. Used for CMake debugging purposes
 # Usage:
-#   hpps_compare_lists(<list_variable> <list2_variable> [description])
-function(hpps_compare_lists list1 list2 desc)
+#   ddls_compare_lists(<list_variable> <list2_variable> [description])
+function(ddls_compare_lists list1 list2 desc)
   set(__list1 ${${list1}})
   set(__list2 ${${list2}})
   list(SORT __list1)
@@ -229,8 +229,8 @@ endfunction()
 ################################################################################################
 # Command for disabling warnings for different platforms (see below for gcc and VisualStudio)
 # Usage:
-#   hpps_warnings_disable(<CMAKE_[C|CXX]_FLAGS[_CONFIGURATION]> -Wshadow /wd4996 ..,)
-macro(hpps_warnings_disable)
+#   ddls_warnings_disable(<CMAKE_[C|CXX]_FLAGS[_CONFIGURATION]> -Wshadow /wd4996 ..,)
+macro(ddls_warnings_disable)
   set(_flag_vars "")
   set(_msvc_warnings "")
   set(_gxx_warnings "")
@@ -266,14 +266,14 @@ macro(hpps_warnings_disable)
       endforeach()
     endforeach()
   endif()
-  hpps_clear_vars(_flag_vars _msvc_warnings _gxx_warnings)
+  ddls_clear_vars(_flag_vars _msvc_warnings _gxx_warnings)
 endmacro()
 
 ################################################################################################
 # Helper function get current definitions
 # Usage:
-#   hpps_get_current_definitions(<definitions_variable>)
-function(hpps_get_current_definitions definitions_var)
+#   ddls_get_current_definitions(<definitions_variable>)
+function(ddls_get_current_definitions definitions_var)
   get_property(current_definitions DIRECTORY PROPERTY COMPILE_DEFINITIONS)
   set(result "")
 
@@ -281,32 +281,32 @@ function(hpps_get_current_definitions definitions_var)
     list(APPEND result -D${d})
   endforeach()
 
-  hpps_list_unique(result)
+  ddls_list_unique(result)
   set(${definitions_var} ${result} PARENT_SCOPE)
 endfunction()
 
 ################################################################################################
 # Helper function get current includes/definitions
 # Usage:
-#   hpps_get_current_cflags(<cflagslist_variable>)
-function(hpps_get_current_cflags cflags_var)
+#   ddls_get_current_cflags(<cflagslist_variable>)
+function(ddls_get_current_cflags cflags_var)
   get_property(current_includes DIRECTORY PROPERTY INCLUDE_DIRECTORIES)
-  hpps_convert_absolute_paths(current_includes)
-  hpps_get_current_definitions(cflags)
+  ddls_convert_absolute_paths(current_includes)
+  ddls_get_current_definitions(cflags)
 
   foreach(i ${current_includes})
     list(APPEND cflags "-I${i}")
   endforeach()
 
-  hpps_list_unique(cflags)
+  ddls_list_unique(cflags)
   set(${cflags_var} ${cflags} PARENT_SCOPE)
 endfunction()
 
 ################################################################################################
 # Helper function to parse current linker libs into link directories, libflags and osx frameworks
 # Usage:
-#   hpps_parse_linker_libs(<hpps_LINKER_LIBS_var> <directories_var> <libflags_var> <frameworks_var>)
-function(hpps_parse_linker_libs hpps_LINKER_LIBS_variable folders_var flags_var frameworks_var)
+#   ddls_parse_linker_libs(<ddls_LINKER_LIBS_var> <directories_var> <libflags_var> <frameworks_var>)
+function(ddls_parse_linker_libs ddls_LINKER_LIBS_variable folders_var flags_var frameworks_var)
 
   set(__unspec "")
   set(__debug "")
@@ -315,7 +315,7 @@ function(hpps_parse_linker_libs hpps_LINKER_LIBS_variable folders_var flags_var 
   set(__varname "__unspec")
 
   # split libs into debug, optimized, unspecified and frameworks
-  foreach(list_elem ${${hpps_LINKER_LIBS_variable}})
+  foreach(list_elem ${${ddls_LINKER_LIBS_variable}})
     if(list_elem STREQUAL "debug")
       set(__varname "__debug")
     elseif(list_elem STREQUAL "optimized")
@@ -357,7 +357,7 @@ function(hpps_parse_linker_libs hpps_LINKER_LIBS_variable folders_var flags_var 
     endif()
   endforeach()
 
-  hpps_list_unique(libflags folders)
+  ddls_list_unique(libflags folders)
 
   set(${folders_var} ${folders} PARENT_SCOPE)
   set(${flags_var} ${libflags} PARENT_SCOPE)
@@ -367,8 +367,8 @@ endfunction()
 ################################################################################################
 # Helper function to detect Darwin version, i.e. 10.8, 10.9, 10.10, ....
 # Usage:
-#   hpps_detect_darwin_version(<version_variable>)
-function(hpps_detect_darwin_version output_var)
+#   ddls_detect_darwin_version(<version_variable>)
+function(ddls_detect_darwin_version output_var)
   if(APPLE)
     execute_process(COMMAND /usr/bin/sw_vers -productVersion
                     RESULT_VARIABLE __sw_vers OUTPUT_VARIABLE __sw_vers_out
@@ -384,7 +384,7 @@ endfunction()
 # Convenient command to setup source group for IDEs that support this feature (VS, XCode)
 # Usage:
 #   caffe_source_group(<group> GLOB[_RECURSE] <globbing_expression>)
-function(hpps_source_group group)
+function(ddls_source_group group)
   cmake_parse_arguments(CAFFE_SOURCE_GROUP "" "" "GLOB;GLOB_RECURSE" ${ARGN})
   if(CAFFE_SOURCE_GROUP_GLOB)
     file(GLOB srcs1 ${CAFFE_SOURCE_GROUP_GLOB})
@@ -399,7 +399,7 @@ endfunction()
 
 #################################################################################################
 ## Helper for test function
-function(hpps_add_test dir extension)
+function(ddls_add_test dir extension)
   file(GLOB TEST_SOURCE "${dir}/*${extension}")
   foreach(file ${TEST_SOURCE})
     string(REGEX REPLACE ".*${dir}/" "" file_exe0 ${file})
@@ -414,7 +414,7 @@ function(hpps_add_test dir extension)
   endforeach()
 endfunction()
 
-function(hpps_add_cuda_test dir extension)
+function(ddls_add_cuda_test dir extension)
   file(GLOB TEST_SOURCE "${dir}/*${extension}")
   foreach(file ${TEST_SOURCE})
     string(REGEX REPLACE ".*${dir}/" "" file_exe0 ${file})
@@ -429,7 +429,7 @@ function(hpps_add_cuda_test dir extension)
   endforeach()
 endfunction()
 
-function(hpps_add_bench dir extension)
+function(ddls_add_bench dir extension)
   file(GLOB TEST_SOURCE "${dir}/*${extension}")
   foreach(file ${TEST_SOURCE})
     string(REGEX REPLACE ".*${dir}/" "" file_exe0 ${file})
@@ -442,7 +442,7 @@ function(hpps_add_bench dir extension)
   endforeach()
 endfunction()
 
-function(hpps_add_cuda_bench dir extension)
+function(ddls_add_cuda_bench dir extension)
   file(GLOB TEST_SOURCE "${dir}/*${extension}")
   foreach(file ${TEST_SOURCE})
     string(REGEX REPLACE ".*${dir}/" "" file_exe0 ${file})

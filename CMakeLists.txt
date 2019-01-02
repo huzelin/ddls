@@ -1,4 +1,4 @@
-project(hpps)
+project(ddls)
 
 cmake_minimum_required(VERSION 2.8)
 
@@ -7,7 +7,7 @@ enable_testing()
 set(CMAKE_VERBOSE_MAKEFILE on)
 
 include(${PROJECT_SOURCE_DIR}/cmake/Utils.cmake)
-hpps_option(USE_HDFS "USE_HDFS" OFF)
+ddls_option(USE_HDFS "USE_HDFS" OFF)
 set(CMAKE_INSTALL_PREFIX /opt/ddls/)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -ftree-vectorize -std=c++11 -Wcpp -mavx -mavx2 -fopenmp -O2 -g")
@@ -32,13 +32,13 @@ add_subdirectory(thirdparty)
 file(GLOB_RECURSE SOURCE
     "hpps/*.cc"
 )
-add_library(hpps SHARED ${SOURCE})
-target_link_libraries(hpps libzeromq libompi)
+add_library(ddls SHARED ${SOURCE})
+target_link_libraries(ddls libzeromq libompi)
 if(USE_HDFS)
-    target_link_libraries(hpps -lhdfs)
+    target_link_libraries(ddls -lhdfs)
 endif()
-add_dependencies(hpps zeromq ompi)
-#install(TARGETS hpps DESTINATION lib)
+add_dependencies(ddls zeromq ompi)
+install(TARGETS ddls DESTINATION lib)
 
 add_subdirectory(test)
 add_subdirectory(benchmark)

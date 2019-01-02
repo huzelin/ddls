@@ -5,8 +5,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 import numpy as np
-from hpps.topi.torch_nn import TorchParamManager
-from hpps.zoo import *
+from ddls.topi.torch_nn import TorchParamManager
+from ddls.zoo import *
 
 class Net(nn.Module):
     def __init__(self):

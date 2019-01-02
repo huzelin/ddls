@@ -3,13 +3,13 @@ import torch
 import logging
 from torch.autograd import Variable
 import numpy as np
-from hpps.zoo import *
-from hpps.topi.torch_nn import TorchParamManager
-from hpps.feeder.plan_maker import PlanMaker
-from hpps.feeder.tensor import Tensor
-from hpps.feeder.feeder import Feeder
-from hpps.utils.log import init_logging
-from hpps.utils.eval import EvalPloter
+from ddls.zoo import *
+from ddls.topi.torch_nn import TorchParamManager
+from ddls.feeder.plan_maker import PlanMaker
+from ddls.feeder.tensor import Tensor
+from ddls.feeder.feeder import Feeder
+from ddls.utils.log import init_logging
+from ddls.utils.eval import EvalPloter
 
 batch_size = 100
 epoch = 80

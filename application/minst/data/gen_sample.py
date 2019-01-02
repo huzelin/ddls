@@ -1,9 +1,9 @@
 import os
 import struct
 import numpy as np
-from hpps.feeder.record_io import RecordIO, BinaryWrite
-from hpps.feeder.tensor import Tensor
-from hpps.feeder.feeder import Feeder
+from ddls.feeder.record_io import RecordIO, BinaryWrite
+from ddls.feeder.tensor import Tensor
+from ddls.feeder.feeder import Feeder
 
 def load_mnist(path, kind='train'):
     """Load MNIST data from `path`"""

@@ -1,7 +1,7 @@
-from hpps.feeder.plan_maker import PlanMaker
-from hpps.feeder.record_io import RecordIO, BinaryWrite
-from hpps.feeder.tensor import Tensor
-from hpps.feeder.feeder import Feeder
+from ddls.feeder.plan_maker import PlanMaker
+from ddls.feeder.record_io import RecordIO, BinaryWrite
+from ddls.feeder.tensor import Tensor
+from ddls.feeder.feeder import Feeder
 
 import numpy as np
 

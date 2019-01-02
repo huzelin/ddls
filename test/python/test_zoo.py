@@ -1,6 +1,6 @@
-from hpps.zoo import *
-from hpps.array_table import ArrayTable, create_array_table
-from hpps.feeder.tensor import Tensor
+from ddls.zoo import *
+from ddls.array_table import ArrayTable, create_array_table
+from ddls.feeder.tensor import Tensor
 import numpy as np
 
 zoo_start()
