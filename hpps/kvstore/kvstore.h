@@ -36,6 +36,8 @@ class KVStore {
   void Set(const Key& key, const Val* val);
   void Clear();
 
+  void PrintDebug();
+
  protected:
   Node* node_;
   size_t node_size_;

@@ -150,7 +150,7 @@ class KVServerTable : public ServerTable, ParamInitializer<Val> {
 template <typename Key, typename Val>
 struct KVTableOption {
   explicit KVTableOption(size_t init_capacity, uint32_t value_len)
-      : init_capacity(init_capacity), value_len(value_len) { }
+      : init_capacity(init_capacity / Zoo::Get()->num_servers()), value_len(value_len) { }
 
   size_t init_capacity;
   uint32_t value_len;

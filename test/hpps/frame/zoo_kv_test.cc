@@ -43,12 +43,15 @@ TEST(Zoo, RegisterTable) {
   kv_table_option.random_option.set_assigned_value(2.0);
 
   auto table = table_factory::CreateTable(kv_table_option);
+  int kIdNum = 100;
 
   if (table != nullptr) {
     for (int loop = 0; loop < 2; ++loop) {
       // Step1: get the parameters
       std::vector<uint64_t> keys;
-      keys.push_back(12UL);
+      for (auto i = 0; i < kIdNum; ++i) {
+        keys.push_back(i);
+      }
       table->Get(keys);
 
       // Step2: get the local parameters
@@ -57,10 +60,11 @@ TEST(Zoo, RegisterTable) {
       for (auto i = 0; i < 16; ++i) {
         LOG_INFO("data[%d]=%f", i, data[i]);
       }
+      break;
 
       // Step3: update grad
       std::vector<float> grads;
-      for (auto i = 0; i < 16; ++i) {
+      for (auto i = 0; i < 16 * kIdNum; ++i) {
         grads.push_back(i);
       }
       table->Add(keys, grads);

@@ -49,10 +49,7 @@ void KVStore<Key, Val>::Get(const Key& key, int64_t* offset, bool immutable, boo
   size_t index = key & (node_capacity_ - 1);
   int probe_num = kMaxProbeNum;
   while (index < node_capacity_ && probe_num--) {
-    if (node_[index].key == key) {
-      *offset = node_[index].offset;
-      return;
-    } else if (node_[index].offset < 0) {
+    if (node_[index].offset < 0) {
       if (immutable) {
         *offset = -1;
       } else {
@@ -63,6 +60,9 @@ void KVStore<Key, Val>::Get(const Key& key, int64_t* offset, bool immutable, boo
         ++node_size_;
         if (new_data) *new_data = true;
       }
+      return;
+    } else if (node_[index].key == key) {
+      *offset = node_[index].offset;
       return;
     }
     index = (index + 1) & (node_capacity_ - 1);
@@ -100,10 +100,19 @@ void KVStore<Key, Val>::Set(const Key& key, const Val* val) {
 template <typename Key, typename Val>
 void KVStore<Key, Val>::Clear() {
   for (auto i = 0; i < node_size_; ++i) {
-    node_[i].offset = 0;
+    node_[i].offset = -1;
   }
   node_size_ = 0;
   data_size_ = 0;
+}
+
+template <typename Key, typename Val>
+void KVStore<Key, Val>::PrintDebug() {
+  for (auto i = 0; i < node_size_; ++i) {
+    if (node_[i].offset != -1) {
+      LOG_INFO("Key=%u offset=%d", node_[i].key, node_[i].offset);
+    }
+  }
 }
 
 template class KVStore<uint64_t, float>;
