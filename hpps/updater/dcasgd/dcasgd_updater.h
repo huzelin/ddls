@@ -17,7 +17,7 @@ class DCASGDUpdater : public Updater<T> {
   explicit DCASGDUpdater(size_t size) :
       size_(size){
 	  LOG_DEBUG("[DC-ASGDUpdater] Init. \n");
-		shadow_copies_.resize(MV_NumWorkers(), std::vector<T>(size_));
+		shadow_copies_.resize(Zoo::Get()->num_workers(), std::vector<T>(size_));
 	}
   
   void Update(size_t num_element, T*data, T*delta,
