@@ -124,3 +124,24 @@ class TorchParamManager(ModelParamManager):
             tmp = aux_np[start : end].reshape(self.aux_shapes[index])
             list(self.model.parameters())[index].data = torch.from_numpy(aux_np)
 
+    def save_model(self, path, dummy_input, inames, onames):
+        """ Save model
+
+        Parameters
+        ----------
+          path: The model path
+          dummy_input: The dummy input
+          inames: The input names
+          onames: The output names
+
+        Return
+        ------
+          None
+        """
+        torch.onnx.export(self.model,
+                          dummy_input,
+                          path,
+                          verbose=True,
+                          input_names=inames,
+                          output_names=onames)
+ 

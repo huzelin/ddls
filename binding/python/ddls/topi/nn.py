@@ -185,3 +185,19 @@ class ModelParamManager(object):
             # deploy new aux to backend engine
             self.set_all_aux_to_model()
 
+    def save_model(self, path, dummy_input, inames, onames):
+        """ Save model
+
+        Parameters
+        ----------
+          path: The file path of model
+          dummy_input: The dummpy input
+          inames: The input names
+          onames: The output names
+
+        Return
+        ------
+          None
+        """
+        raise NotImplemented()
+ 
