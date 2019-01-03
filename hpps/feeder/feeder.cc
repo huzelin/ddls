@@ -57,7 +57,7 @@ void Feeder::Run(int tid) {
       ProduceBatch(task_queues_[i]);
     }
   }
-  LOG_INFO("Thread-%d is exiting", tid);
+  LOG_INFO("Thread-%d is exiting ... ", tid);
 }
 
 void Feeder::ProduceBatch(Queue<Task>* queue) {
@@ -110,25 +110,28 @@ void Feeder::BatchTensor2Batch(std::vector<std::vector<Tensor*>>& batch_tensor,
   for (auto col = 0; col < batch_tensor[0].size(); ++col) {
     auto row = 0;
     std::vector<tensor_dim_t> shape = batch_tensor[row++][col]->shape();
+    std::vector<size_t> offsets;
+    offsets.push_back(0);
+    size_t stride = batch_tensor[0][col]->size();
+
     for (; row < batch_tensor.size(); ++row) {
       const std::vector<tensor_dim_t>& shape_tmp = batch_tensor[row][col]->shape();
       CHECK(shape_tmp.size() == shape.size());
-      for (auto i = 0; i < shape_tmp.size(); ++i) {
+      for (auto i = 1; i < shape_tmp.size(); ++i) {
         CHECK(shape[i] == shape_tmp[i]);
       }
+      shape[0] += shape_tmp[0];
+      offsets.push_back(stride);
+      stride += batch_tensor[row][col]->size();
     }
-    size_t stride = 1;
-    for (auto dim : shape) stride *= dim;
-    stride *= TensorDataTypeSize(sample_record.record_io->types()[col]);
-
-    shape.insert(shape.begin(), batch_tensor.size());
     Tensor* result = new Tensor(shape, sample_record.record_io->types()[col]);
     memset(result->mutable_blob()->data(), 0, result->mutable_blob()->size());
 
+    auto type_size = TensorDataTypeSize(sample_record.record_io->types()[col]);
     for (row = 0; row < batch_tensor.size(); ++row) {
       Tensor* src = batch_tensor[row][col];
       Tensor* dst = result;
-      memcpy(dst->mutable_blob()->data() + row * stride,
+      memcpy(dst->mutable_blob()->data() + offsets[row] * type_size,
              src->mutable_blob()->data(),
              src->mutable_blob()->size());
     }

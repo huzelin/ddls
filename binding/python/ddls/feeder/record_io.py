@@ -2,8 +2,8 @@
 from __future__ import absolute_import
 
 import ctypes
-from hpps.base import check_call, LIB, c_str, c_array, _NP_2_DTYPE
-from hpps.feeder.tensor import Tensor
+from ddls.base import check_call, LIB, c_str, c_array, _NP_2_DTYPE
+from ddls.feeder.tensor import Tensor
 
 # FileOpenMode
 BinaryWrite = 3

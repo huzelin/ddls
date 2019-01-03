@@ -15,7 +15,7 @@ plan_maker.set_uri(
      '/tmp/minst_train',
      '/tmp/minst_t10k',
     ])
-plan_maker.set_batch_size(32)
+plan_maker.set_batch_size(2)
 plan_maker.set_epoch(10)
 
 plans = []
@@ -36,6 +36,7 @@ for x in xrange(1, 200):
     batch = batch_iterator[indice].next_batch()
     print batch, indice, x
     print batch.get_tensor('image').asnumpy()
+    print batch.get_tensor('label').asnumpy()
 
 feeder.stop()
 #print batch.get_tensor('ad').shape

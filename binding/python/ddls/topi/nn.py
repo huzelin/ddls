@@ -5,9 +5,9 @@ import os
 import ctypes
 import numpy as np
 
-from hpps.array_table import ArrayTable, create_array_table
-from hpps.feeder.tensor import Tensor
-from hpps.zoo import *
+from ddls.feeder.tensor import Tensor
+from ddls.hpps.zoo import *
+from ddls.hpps.array_table import ArrayTable, create_array_table
 
 class ModelParamManager(object):
     """ The neural network model param manager, which is used for managing and

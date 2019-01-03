@@ -2,8 +2,8 @@
 from __future__ import absolute_import
 
 import ctypes
-from hpps.base import check_call, LIB, c_str, c_array
-from hpps.feeder.batch_iterator import BatchIterator
+from ddls.base import check_call, LIB, c_str, c_array
+from ddls.feeder.batch_iterator import BatchIterator
 
 class Feeder(object):
     """ The feeder

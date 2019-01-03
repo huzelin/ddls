@@ -3,7 +3,7 @@ from __future__ import absolute_import
 
 import ctypes
 import numpy as np
-from hpps.base import check_call, LIB, c_str, c_array, _NP_2_DTYPE, _DTYPE_2_NP
+from ddls.base import check_call, LIB, c_str, c_array, _NP_2_DTYPE, _DTYPE_2_NP
 
 class Tensor(object):
     """ The sample record i/o 

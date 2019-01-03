@@ -1,4 +1,4 @@
-""" base for hpps """
+""" base for ddls """
 from __future__ import absolute_import
 
 import sys
@@ -23,7 +23,7 @@ def _load_lib(name):
     return lib
 
 # library instance of xdl
-LIB = _load_lib('hpps')
+LIB = _load_lib('ddls')
 
 _NP_2_DTYPE = {
     np.int32 : 0,

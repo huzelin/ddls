@@ -6,7 +6,7 @@ import ctypes
 import torch
 import numpy as np
 
-from hpps.topi.nn import ModelParamManager 
+from ddls.topi.nn import ModelParamManager 
 
 class TorchParamManager(ModelParamManager):
     """

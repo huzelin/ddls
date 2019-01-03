@@ -2,8 +2,8 @@
 from __future__ import absolute_import
 
 import ctypes
-from hpps.base import check_call, LIB, c_str, c_array
-from hpps.feeder.tensor import Tensor
+from ddls.base import check_call, LIB, c_str, c_array
+from ddls.feeder.tensor import Tensor
 
 class Batch(object):
     """ The BatchIterator
