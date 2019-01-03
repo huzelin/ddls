@@ -11,18 +11,19 @@
 namespace hpps {
 
 TEST(TestKVStore, GetOffset) {
+  bool new_data;
   KVStore<uint64_t, float> kvstore(10000, 10);
   int64_t offset;
-  kvstore.Get(20, &offset);
+  kvstore.Get(20, &offset, false, &new_data);
   EXPECT_EQ(0, offset);
 
-  kvstore.Get(20, &offset);
+  kvstore.Get(20, &offset, false, &new_data);
   EXPECT_EQ(0, offset);
 
-  kvstore.Get(21, &offset);
+  kvstore.Get(21, &offset, false, &new_data);
   EXPECT_EQ(10, offset);
 
-  kvstore.Get(10020, &offset);
+  kvstore.Get(10020, &offset, false, &new_data);
   EXPECT_EQ(20, offset);
 }
 
@@ -34,7 +35,8 @@ TEST(TestKVStore, GetOffsetVectorization) {
   keys.push_back(10020);
 
   std::vector<int64_t> offsets(keys.size());
-  kvstore.Get(keys.data(), keys.size(), const_cast<int64_t*>(offsets.data()));
+  bool new_data;
+  kvstore.Get(keys.data(), keys.size(), const_cast<int64_t*>(offsets.data()), false, &new_data);
 
   EXPECT_EQ(0, offsets[0]);
   EXPECT_EQ(10, offsets[1]);

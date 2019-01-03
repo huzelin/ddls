@@ -37,14 +37,15 @@ KVStore<Key, Val>::~KVStore() {
 }
 
 template <typename Key, typename Val>
-void KVStore<Key, Val>::Get(const Key* key, size_t key_size, int64_t* offset, bool immutable) {
+void KVStore<Key, Val>::Get(const Key* key, size_t key_size, int64_t* offset, bool immutable, bool* new_data) {
   for (auto i = 0; i < key_size; ++i) {
-    Get(key[i], offset + i, immutable);
+    Get(key[i], offset + i, immutable, new_data);
   }
 }
 
 template <typename Key, typename Val>
-void KVStore<Key, Val>::Get(const Key& key, int64_t* offset, bool immutable) {
+void KVStore<Key, Val>::Get(const Key& key, int64_t* offset, bool immutable, bool* new_data) {
+  if (new_data) *new_data = false;
   size_t index = key & (node_capacity_ - 1);
   int probe_num = kMaxProbeNum;
   while (index < node_capacity_ && probe_num--) {
@@ -60,6 +61,7 @@ void KVStore<Key, Val>::Get(const Key& key, int64_t* offset, bool immutable) {
         *offset = data_size_;
         data_size_ += value_len_;
         ++node_size_;
+        if (new_data) *new_data = true;
       }
       return;
     }
@@ -70,9 +72,9 @@ void KVStore<Key, Val>::Get(const Key& key, int64_t* offset, bool immutable) {
 }
 
 template <typename Key, typename Val>
-Val* KVStore<Key, Val>::Get(const Key& key, bool immutable) {
+Val* KVStore<Key, Val>::Get(const Key& key, bool immutable, bool* new_data) {
   int64_t offset;
-  Get(key, &offset, immutable);
+  Get(key, &offset, immutable, new_data);
   if (offset < 0) {
     return nullptr;
   } else {
@@ -90,7 +92,8 @@ void KVStore<Key, Val>::Set(const Key* key, size_t key_size, const Val* val) {
 template <typename Key, typename Val>
 void KVStore<Key, Val>::Set(const Key& key, const Val* val) {
   int64_t offset;
-  Get(key, &offset);
+  bool new_data;
+  Get(key, &offset, false, &new_data);
   memcpy(mutable_data() + offset, val, value_len_ * sizeof(Val));
 }
 

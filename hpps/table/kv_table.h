@@ -35,11 +35,12 @@ class KVWorkerTable : public WorkerTable {
   }
 
   void Add(Key key, Val* value, size_t size) {
+    CHECK(size == store_->value_len());
     WorkerTable::Add(Blob(&key, sizeof(Key)), Blob(value, sizeof(Val) * size));
   }
 
   void Add(std::vector<Key>& keys, std::vector<Val>& vals) {
-    CHECK(keys.size() == vals.size());
+    CHECK(keys.size() * store_->value_len() == vals.size());
     Blob keys_blob(&keys[0], sizeof(Key) * keys.size());
     Blob vals_blob(&vals[0], sizeof(Val) * vals.size());
     WorkerTable::Add(keys_blob, vals_blob);
@@ -103,10 +104,14 @@ class KVServerTable : public ServerTable, ParamInitializer<Val> {
     result->push_back(keys); // also push the key
     result->push_back(Blob(keys.size<Key>() * sizeof(Val) * store_->value_len()));
     Blob& vals = (*result)[1];
+    bool immutable = false;
     for (int i = 0; i < keys.size<Key>(); ++i) {
-      auto addr = store_->Get(keys.As<Key>(i));
+      bool new_data;
+      auto addr = store_->Get(keys.As<Key>(i), immutable, &new_data);
       if (addr != nullptr) {
-        // TODO: We should update init the param
+        if (new_data) {
+          this->random_.Gen(addr, store_->value_len());
+        }
         memcpy(reinterpret_cast<Val*>(vals.data()) + i * store_->value_len(),
                addr, sizeof(Val) * store_->value_len());
       } else {
@@ -117,13 +122,20 @@ class KVServerTable : public ServerTable, ParamInitializer<Val> {
   }
 
   void ProcessAdd(const std::vector<Blob>& data) override {
-    CHECK(data.size() == 2);
+    CHECK(data.size() == 2 || data.size() == 3);
     Blob keys = data[0], vals = data[1];
+    AddOption option;
+    if (data.size() == 3)
+      option.CopyFrom(data[2].data(), data[2].size());
+  
     CHECK(keys.size<Key>() * store_->value_len() == vals.size<Val>());
+    bool immutable = false;
     for (int i = 0; i < keys.size<Key>(); ++i) {
-      auto addr = store_->Get(keys.As<Key>(i));
+      bool new_data;
+      auto addr = store_->Get(keys.As<Key>(i), immutable, &new_data);
       updater_->Update(store_->value_len(), addr,
-                       reinterpret_cast<Val*>(vals.data()) + i * store_->value_len());
+                       reinterpret_cast<Val*>(vals.data()) + i * store_->value_len(),
+                       &option);
     }
   }
 
@@ -137,6 +149,9 @@ class KVServerTable : public ServerTable, ParamInitializer<Val> {
 
 template <typename Key, typename Val>
 struct KVTableOption {
+  explicit KVTableOption(size_t init_capacity, uint32_t value_len)
+      : init_capacity(init_capacity), value_len(value_len) { }
+
   size_t init_capacity;
   uint32_t value_len;
   RandomOption random_option;

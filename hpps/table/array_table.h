@@ -62,7 +62,7 @@ class ArrayServer : public ServerTable, public ParamInitializer<T> {
 
   int32_t server_id_;
   std::vector<T> storage_;
-  Updater<T>* updater_;
+  std::shared_ptr<Updater<T>> updater_;
   size_t size_; // number of element with type T
 };
 

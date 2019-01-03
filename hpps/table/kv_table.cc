@@ -14,6 +14,7 @@ template <typename Key, typename Val>
 KVServerTable<Key, Val>::KVServerTable(const KVTableOption<Key, Val>& kvtable_option) {
   ParamInitializer<Val>::ResetRandomOption(kvtable_option.random_option);
   store_.reset(new KVStore<Key, Val>(kvtable_option.init_capacity, kvtable_option.value_len));
+  updater_.reset(Updater<Val>::GetUpdater(kvtable_option.init_capacity));
 }
 
 template <typename Key, typename Val>

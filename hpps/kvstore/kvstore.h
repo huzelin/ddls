@@ -27,10 +27,10 @@ class KVStore {
   uint32_t value_len() const { return value_len_; }
   const Node* node() const { return node_; }
 
-  void Get(const Key* key, size_t key_size, int64_t* offset, bool immutable = false);
-  void Get(const Key& key, int64_t* offset, bool immutable = false);
+  void Get(const Key* key, size_t key_size, int64_t* offset, bool immutable = false, bool* new_data = nullptr);
+  void Get(const Key& key, int64_t* offset, bool immutable = false, bool* new_data = nullptr);
 
-  Val* Get(const Key& key, bool immutable = false);
+  Val* Get(const Key& key, bool immutable = false, bool* new_data = nullptr);
 
   void Set(const Key* key, size_t key_size, const Val* val);
   void Set(const Key& key, const Val* val);

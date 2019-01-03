@@ -107,7 +107,7 @@ ArrayServer<T>::ArrayServer(size_t size) : ServerTable() {
     size_ += size % Zoo::Get()->num_servers();
   }
   storage_.resize(size_);
-  updater_ = Updater<T>::GetUpdater(size_);
+  updater_.reset(Updater<T>::GetUpdater(size_));
   LOG_DEBUG("server %d create arrayTable with %d elements of %d elements.", 
              server_id_, size_, size);
 }
