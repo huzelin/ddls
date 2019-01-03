@@ -4,7 +4,9 @@
  */
 #include "gtest/gtest.h"
 
+#include <algorithm>
 #include <thread>
+#include <random>
 
 #include "hpps/common/dashboard.h"
 #include "hpps/frame/table_factory.h"
@@ -48,27 +50,26 @@ TEST(Zoo, RegisterTable) {
   auto table = table_factory::CreateTable(kv_table_option);
 
   if (table != nullptr) {
+    std::vector<uint64_t> keys;
+    for (auto i = 0; i < kIdNum; ++i) {
+      keys.push_back(i);
+    }
+    std::vector<float> grads;
+    for (auto i = 0; i < kValueLen * kIdNum; ++i) {
+      grads.push_back(i);
+    }
+
     for (int loop = 0; loop < 10; ++loop) {
+      std::shuffle(keys.begin(), keys.end(), std::default_random_engine(loop));
+
       // Step1: get the parameters
-      std::vector<uint64_t> keys;
-      for (auto i = 0; i < kIdNum; ++i) {
-        keys.push_back(i);
-      }
       table->Get(keys);
 
       // Step2: get the local parameters
       float* data = table->raw().Get(keys[0], true);
       EXPECT_TRUE(data != nullptr);
-      /*
-      for (auto i = 0; i < 16; ++i) {
-        LOG_INFO("data[%d]=%f", i, data[i]);
-      }*/
 
       // Step3: update grad
-      std::vector<float> grads;
-      for (auto i = 0; i < kValueLen * kIdNum; ++i) {
-        grads.push_back(i);
-      }
       table->Add(keys, grads);
     }
   }
