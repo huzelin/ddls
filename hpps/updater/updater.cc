@@ -18,13 +18,10 @@
 namespace hpps {
 
 HPPS_DEFINE_string(updater_type, "sgd", "hpps server updater type");
-HPPS_DEFINE_int(omp_threads, 4 , "#theads used by openMP for updater");
 
 template <typename T>
 void Updater<T>::Update(size_t num_element, T* data, T* delta,
                         AddOption*, size_t offset) {
-  // parallelism with openMP
-  #pragma omp parallel for schedule(static) num_threads(HPPS_CONFIG_omp_threads)
   for (int i = 0; i < num_element; ++i) {
     data[i + offset] += delta[i];
   }

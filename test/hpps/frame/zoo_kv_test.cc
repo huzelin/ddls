@@ -37,16 +37,18 @@ TEST(Zoo, server_rank) {
   EXPECT_EQ(zoo->server_rank(), 0);
 }
 
+int kIdNum = 20000;
+int kValueLen = 16;
+
 TEST(Zoo, RegisterTable) {
-  KVTableOption<uint64_t, float> kv_table_option(10000, 16);
+  KVTableOption<uint64_t, float> kv_table_option(1000000, kValueLen);
   kv_table_option.random_option.set_algorithm(kAssign);
   kv_table_option.random_option.set_assigned_value(2.0);
 
   auto table = table_factory::CreateTable(kv_table_option);
-  int kIdNum = 100;
 
   if (table != nullptr) {
-    for (int loop = 0; loop < 2; ++loop) {
+    for (int loop = 0; loop < 10; ++loop) {
       // Step1: get the parameters
       std::vector<uint64_t> keys;
       for (auto i = 0; i < kIdNum; ++i) {
@@ -57,14 +59,14 @@ TEST(Zoo, RegisterTable) {
       // Step2: get the local parameters
       float* data = table->raw().Get(keys[0], true);
       EXPECT_TRUE(data != nullptr);
+      /*
       for (auto i = 0; i < 16; ++i) {
         LOG_INFO("data[%d]=%f", i, data[i]);
-      }
-      break;
+      }*/
 
       // Step3: update grad
       std::vector<float> grads;
-      for (auto i = 0; i < 16 * kIdNum; ++i) {
+      for (auto i = 0; i < kValueLen * kIdNum; ++i) {
         grads.push_back(i);
       }
       table->Add(keys, grads);
