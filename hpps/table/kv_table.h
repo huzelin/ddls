@@ -12,6 +12,7 @@
 #include <vector>
 
 #include "hpps/kvstore/kvstore.h"
+#include "hpps/updater/updater.h"
 
 namespace hpps {
 
@@ -23,7 +24,9 @@ struct KVTableOption;
 template <typename Key, typename Val>
 class KVWorkerTable : public WorkerTable {
  public:
-  explicit KVWorkerTable(const KVTableOption<Key, Val>&) {}
+  explicit KVWorkerTable(const KVTableOption<Key, Val>& option) {
+    store_.reset(new KVStore<Key, Val>(option.init_capacity, option.value_len));
+  }
 
   void Get(Key key) { WorkerTable::Get(Blob(&key, sizeof(Key))); }
 
@@ -31,8 +34,8 @@ class KVWorkerTable : public WorkerTable {
     WorkerTable::Get(Blob(&keys[0], sizeof(Key) * keys.size()));
   }
 
-  void Add(Key key, Val value) {
-    WorkerTable::Add(Blob(&key, sizeof(Key)), Blob(&value, sizeof(Val)));
+  void Add(Key key, Val* value, size_t size) {
+    WorkerTable::Add(Blob(&key, sizeof(Key)), Blob(value, sizeof(Val) * size));
   }
 
   void Add(std::vector<Key>& keys, std::vector<Val>& vals) {
@@ -42,7 +45,7 @@ class KVWorkerTable : public WorkerTable {
     WorkerTable::Add(keys_blob, vals_blob);
   }
 
-  std::unordered_map<Key, Val>& raw() { return table_; }
+  KVStore<Key, Val>& raw() { return *(store_.get()); }
    
   int Partition(const std::vector<Blob>& kv, 
     MsgType, std::unordered_map<int, std::vector<Blob> >* out) override {
@@ -57,14 +60,17 @@ class KVWorkerTable : public WorkerTable {
     for (auto& it : counts) { // Allocate memory
       std::vector<Blob>& vec = (*out)[it.first];
       vec.push_back(Blob(it.second * sizeof(Key)));
-      if (kv.size() == 2) vec.push_back(Blob(it.second * sizeof(Val)));
+      if (kv.size() == 2) vec.push_back(Blob(it.second * sizeof(Val) * store_->value_len()));
     }
     counts.clear();
     for (int i = 0; i < keys.size<Key>(); ++i) {
       int dst = static_cast<int>(keys.As<Key>(i) % Zoo::Get()->num_servers());
       (*out)[dst][0].As<Key>(counts[dst]) = keys.As<Key>(i);
-      if (kv.size() == 2) 
-        (*out)[dst][1].As<Val>(counts[dst]) = kv[1].As<Val>(i);
+      if (kv.size() == 2) { 
+        memcpy(reinterpret_cast<Val*>((*out)[dst][1].data()) + (counts[dst] * store_->value_len()),
+               reinterpret_cast<Val*>(kv[1].data()) + i * store_->value_len(),
+               store_->value_len() * sizeof(Val));
+      }
       ++counts[dst];
     }
     return static_cast<int>(out->size());
@@ -73,14 +79,15 @@ class KVWorkerTable : public WorkerTable {
   void ProcessReplyGet(std::vector<Blob>& data) override {
     CHECK(data.size() == 2);
     Blob keys = data[0], vals = data[1];
-    CHECK(keys.size<Key>() == vals.size<Val>());
+    CHECK(keys.size<Key>() * store_->value_len() == vals.size<Val>());
     for (int i = 0; i < keys.size<Key>(); ++i) {
-      table_[keys.As<Key>(i)] = vals.As<Val>(i);
+      store_->Set(keys.As<Key>(i),
+                  reinterpret_cast<Val*>(vals.data()) + i * store_->value_len());
     }
   }
  
  private:
-  std::unordered_map<Key, Val> table_;
+  std::shared_ptr<KVStore<Key, Val>> store_;
 };
 
 template <typename Key, typename Val>
@@ -94,19 +101,29 @@ class KVServerTable : public ServerTable, ParamInitializer<Val> {
     CHECK_NOTNULL(result);
     Blob keys = data[0];
     result->push_back(keys); // also push the key
-    result->push_back(Blob(keys.size<Key>() * sizeof(Val)));
+    result->push_back(Blob(keys.size<Key>() * sizeof(Val) * store_->value_len()));
     Blob& vals = (*result)[1];
     for (int i = 0; i < keys.size<Key>(); ++i) {
-      vals.As<Val>(i) = table_[keys.As<Key>(i)];
+      auto addr = store_->Get(keys.As<Key>(i));
+      if (addr != nullptr) {
+        // TODO: We should update init the param
+        memcpy(reinterpret_cast<Val*>(vals.data()) + i * store_->value_len(),
+               addr, sizeof(Val) * store_->value_len());
+      } else {
+        memset(reinterpret_cast<Val*>(vals.data()) + i * store_->value_len(),
+               0, sizeof(Val) * store_->value_len());
+      }
     }
   }
 
   void ProcessAdd(const std::vector<Blob>& data) override {
     CHECK(data.size() == 2);
     Blob keys = data[0], vals = data[1];
-    CHECK(keys.size<Key>() == vals.size<Val>());
+    CHECK(keys.size<Key>() * store_->value_len() == vals.size<Val>());
     for (int i = 0; i < keys.size<Key>(); ++i) {
-      table_[keys.As<Key>(i)] += vals.As<Val>(i);
+      auto addr = store_->Get(keys.As<Key>(i));
+      updater_->Update(store_->value_len(), addr,
+                       reinterpret_cast<Val*>(vals.data()) + i * store_->value_len());
     }
   }
 
@@ -114,14 +131,16 @@ class KVServerTable : public ServerTable, ParamInitializer<Val> {
   void Load(Stream*) override;
  
  private:
-  std::unordered_map<Key, Val> table_;
+  std::shared_ptr<KVStore<Key, Val>> store_;
+  std::shared_ptr<Updater<Val>> updater_;
 };
 
 template <typename Key, typename Val>
 struct KVTableOption {
   size_t init_capacity;
-  uint32_t len;
+  uint32_t value_len;
   RandomOption random_option;
+
   typedef KVWorkerTable<Key, Val> WorkerTableType;
   typedef KVServerTable<Key, Val> ServerTableType;
 };
