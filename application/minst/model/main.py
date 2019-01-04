@@ -117,14 +117,14 @@ if __name__ == "__main__":
     '''
     train iteration and testing
     '''
-    param_manager.save_model('minst.model',
+    param_manager.save_model('minst.onnx',
                              torch.randn(0, 784, device='cpu'),
                              inames=['input'],
                              onames=['output'])
     train(model, param_manager, train_iterator, test_iterator, eval_ploter)
     eval_ploter.draw('plot.png')
 
-    param_manager.save_model('minst.model',
+    param_manager.save_model('minst.onnx',
                              torch.randn(0, 784, device='cpu'),
                              inames=['input'],
                              onames=['output'])
