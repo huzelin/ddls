@@ -46,4 +46,9 @@ std::vector<std::string> Batch::Keys() {
   return ret;
 }
 
+void Batch::Insert(const std::string& name, Tensor* tensor) {
+  index_[name] = tensors_.size();
+  tensors_.push_back(tensor);
+}
+
 }  // namespace hpps

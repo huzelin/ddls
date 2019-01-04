@@ -21,6 +21,9 @@ class Batch {
   void Set(int index, Tensor* tensor);
   std::vector<std::string> Keys();
 
+  // insert new tensor
+  void Insert(const std::string& name, Tensor* tensor);
+
  protected:
   std::unordered_map<std::string, int> index_;
   std::vector<Tensor*> tensors_;
