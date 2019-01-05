@@ -27,9 +27,18 @@ class KVStore {
   uint32_t value_len() const { return value_len_; }
   const Node* node() const { return node_; }
 
+  // Get the key list's offset, if immutable is true, the key's offset of
+  // missing will be -1, otherwise, a new offset will be allocated and new_data
+  // will be true.
   void Get(const Key* key, size_t key_size, int64_t* offset, bool immutable = false, bool* new_data = nullptr);
+
+  // Get the key's offset, if immutable is true, the missing key's offset will
+  // be -1, otherwise, a new offset will be allocated and new_data will be true
   void Get(const Key& key, int64_t* offset, bool immutable = false, bool* new_data = nullptr);
 
+  // Get the key's value, if immutable is true, the missing key's value will
+  // be nullptr, otherwise, a new address will be allocated and new_data will be
+  // true.
   Val* Get(const Key& key, bool immutable = false, bool* new_data = nullptr);
 
   void Set(const Key* key, size_t key_size, const Val* val);

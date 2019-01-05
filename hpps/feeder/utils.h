@@ -60,13 +60,9 @@ inline std::vector<Tensor*> Id2UniqId(Tensor* id) {
   // Step2: calculate uniq id
   for (auto i = 0; i < id->mutable_blob()->size<uint64_t>(); ++i) {
     auto current_id = id->mutable_blob()->As<uint64_t>(i);
-    if (current_id == 0) {
-      local_id_tensor->mutable_blob()->As<uint32_t>(i) = 0;
-      continue;
-    }
     auto iter = uniqid_2_localid.find(current_id);
     if (iter == uniqid_2_localid.end()) {
-      auto new_id = uniq_id.size() + 1;
+      auto new_id = uniq_id.size();
       local_id_tensor->mutable_blob()->As<uint32_t>(i) = new_id;
       uniq_id.push_back(current_id);
       uniqid_2_localid[current_id] = new_id;
