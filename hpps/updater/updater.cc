@@ -4,6 +4,7 @@
  */
 #include "hpps/updater/updater.h"
 
+#include "hpps/updater/adam_updater.h"
 #include "hpps/updater/adagrad_updater.h"
 #include "hpps/updater/momentum_updater.h"
 #ifdef ENABLE_DCASGD
@@ -17,7 +18,7 @@
 
 namespace hpps {
 
-HPPS_DEFINE_string(updater_type, "sgd", "hpps server updater type");
+HPPS_DEFINE_string(updater_type, "adam", "hpps server updater type");
 
 template <typename T>
 void Updater<T>::Update(size_t num_element, T* data, T* delta,
@@ -44,6 +45,7 @@ Updater<int>* Updater<int>::GetUpdater(size_t) {
 template <typename T>
 Updater<T>* Updater<T>::GetUpdater(size_t size) {
   std::string type = HPPS_CONFIG_updater_type;
+  if (type == "adam") return new AdamUpdater<T>(size);
   if (type == "sgd") return new SGDUpdater<T>(size);
   if (type == "adagrad") return new AdaGradUpdater<T>(size);
   if (type == "momentum_sgd") return new MomentumUpdater<T>(size);

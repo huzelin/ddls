@@ -34,16 +34,16 @@ class KVWorkerTable : public WorkerTable {
     WorkerTable::Get(Blob(&keys[0], sizeof(Key) * keys.size()));
   }
 
-  void Add(Key key, Val* value, size_t size) {
+  void Add(Key key, Val* value, size_t size, const AddOption* option = nullptr) {
     CHECK(size == store_->value_len());
-    WorkerTable::Add(Blob(&key, sizeof(Key)), Blob(value, sizeof(Val) * size));
+    WorkerTable::Add(Blob(&key, sizeof(Key)), Blob(value, sizeof(Val) * size), option);
   }
 
-  void Add(std::vector<Key>& keys, std::vector<Val>& vals) {
+  void Add(std::vector<Key>& keys, std::vector<Val>& vals, const AddOption* option = nullptr) {
     CHECK(keys.size() * store_->value_len() == vals.size());
     Blob keys_blob(&keys[0], sizeof(Key) * keys.size());
     Blob vals_blob(&vals[0], sizeof(Val) * vals.size());
-    WorkerTable::Add(keys_blob, vals_blob);
+    WorkerTable::Add(keys_blob, vals_blob, option);
   }
 
   KVStore<Key, Val>& raw() { return *(store_.get()); }

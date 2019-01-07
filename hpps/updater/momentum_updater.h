@@ -13,7 +13,7 @@ template <typename T>
 class MomentumUpdater : public Updater<T> {
  public:
   explicit MomentumUpdater(size_t size) : size_(size) {
-    LOG_DEBUG("[SmoothGradientUpdater] Init with size = %d. \n", size_);
+    LOG_DEBUG("[SmoothGradientUpdater] Init with size = %d.", size_);
     smooth_gradient_.resize(size_);
   }
 

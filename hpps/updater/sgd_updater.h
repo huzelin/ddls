@@ -10,7 +10,7 @@ namespace hpps {
 
 template <typename T>
 class SGDUpdater : public Updater<T> {
-public:
+ public:
   explicit SGDUpdater(size_t){
     LOG_DEBUG("[SGDUpdater] Init. ");
   }

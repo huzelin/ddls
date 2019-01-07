@@ -20,7 +20,8 @@ class AdaGradUpdater : public Updater<T> {
   explicit AdaGradUpdater(size_t size):
     e(1e-6f), size_(size) {  
     historic_g_sqr_.resize(Zoo::Get()->num_workers(), std::vector<T>(size_));
-    LOG_DEBUG("[AdaGradUpdater] Init with size = %d, e = %f. historic_size = %d\n", size_, e, historic_g_sqr_.size());
+    LOG_DEBUG("[AdaGradUpdater] Init with size = %d, e = %f. historic_size = %d",
+              size_, e, historic_g_sqr_.size());
   }
 
   void Update(size_t num_element, T* data, T* delta, 
