@@ -24,6 +24,24 @@ enum TensorDataType {
   kFloat32 = 2,
 };
 
+template <typename DType>
+struct DataType;
+
+template <>
+struct DataType<uint32_t> {
+  static const TensorDataType kFlag = kUInt32;
+};
+
+template <>
+struct DataType<uint64_t> {
+  static const TensorDataType kFlag = kUInt64;
+};
+
+template <>
+struct DataType<float> {
+  static const TensorDataType kFlag = kFloat32;
+};
+
 // Return the data type size.
 inline size_t TensorDataTypeSize(tensor_data_type_t data_type) {
   switch (data_type) {

@@ -7,7 +7,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include "hpps/feeder/tensor.h"
+#include "hpps/common/tensor.h"
 
 namespace hpps {
 

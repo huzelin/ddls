@@ -5,8 +5,8 @@
 
 #include "hpps/api/c_api_error.h"
 #include "hpps/common/random.h"
-#include "hpps/feeder/tensor.h"
-#include "hpps/feeder/types.h"
+#include "hpps/common/tensor.h"
+#include "hpps/common/types.h"
 // the feeder's data types contains all the data types used in parameter server.
 #include "hpps/frame/table_factory.h"
 #include "hpps/table/array_table.h"

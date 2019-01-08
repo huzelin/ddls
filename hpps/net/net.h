@@ -51,12 +51,4 @@ public:
   virtual int thread_level_support() = 0;
 };
 
-namespace net {
-
-// inplace allreduce
-template <typename Typename>
-void Allreduce(Typename* data, size_t elem_count);
-
-}
-
 }  // namespace hpps

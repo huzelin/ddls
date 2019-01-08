@@ -7,6 +7,7 @@
 #include "hpps/frame/table_interface.h"
 #include "hpps/frame/zoo.h"
 #include "hpps/common/log.h"
+#include "hpps/common/tensor.h"
 
 #include <unordered_map>
 #include <vector>
@@ -28,8 +29,13 @@ class KVWorkerTable : public WorkerTable {
     store_.reset(new KVStore<Key, Val>(option.init_capacity, option.value_len));
   }
 
-  void Get(Key key) { WorkerTable::Get(Blob(&key, sizeof(Key))); }
+  void Get(const Key* key, size_t size, Tensor* val);
+  int GetAsync(const Key* key, size_t size);
 
+  void Add(const Key* key, size_t key_size, const Val* val, size_t val_size, const AddOption* option = nullptr);
+  int AddAsync(const Key* key, size_t key_size, const Val* val, size_t val_size, const AddOption* option = nullptr);
+
+  void Get(Key key) { WorkerTable::Get(Blob(&key, sizeof(Key))); }
   void Get(std::vector<Key>& keys) {
     WorkerTable::Get(Blob(&keys[0], sizeof(Key) * keys.size()));
   }
@@ -38,7 +44,6 @@ class KVWorkerTable : public WorkerTable {
     CHECK(size == store_->value_len());
     WorkerTable::Add(Blob(&key, sizeof(Key)), Blob(value, sizeof(Val) * size), option);
   }
-
   void Add(std::vector<Key>& keys, std::vector<Val>& vals, const AddOption* option = nullptr) {
     CHECK(keys.size() * store_->value_len() == vals.size());
     Blob keys_blob(&keys[0], sizeof(Key) * keys.size());

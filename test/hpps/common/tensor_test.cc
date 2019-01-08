@@ -6,7 +6,7 @@
 
 #include <thread>
 
-#include "hpps/feeder/tensor.h"
+#include "hpps/common/tensor.h"
 
 namespace hpps {
 

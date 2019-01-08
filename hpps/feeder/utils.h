@@ -4,8 +4,8 @@
  */
 #pragma once
 
+#include "hpps/common/tensor.h"
 #include "hpps/feeder/batch.h"
-#include "hpps/feeder/tensor.h"
 
 #include <unordered_set>
 

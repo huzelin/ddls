@@ -31,22 +31,4 @@ NetInterface* NetInterface::Get() {
   }
 }
 
-namespace net {
-template <typename Typename>
-void Allreduce(Typename* data, size_t elem_count) {
-#ifdef USE_MPI
-  CHECK(NetInterface::Get()->active());
-  MPINetWrapper::Allreduce(data, elem_count);
-#else
-  LOG_FATAL("Not implemented yet");
-#endif
-}
-
-template void Allreduce<char>(char*, size_t);
-template void Allreduce<int>(int*, size_t);
-template void Allreduce<float>(float*, size_t);
-template void Allreduce<double>(double*, size_t);
-
-}  // namespace net
-
 }  // namespace hpps

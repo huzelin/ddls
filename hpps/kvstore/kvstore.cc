@@ -115,6 +115,7 @@ void KVStore<Key, Val>::PrintDebug() {
   }
 }
 
+template class KVStore<uint32_t, float>;
 template class KVStore<uint64_t, float>;
 
 }  // namespace hpps

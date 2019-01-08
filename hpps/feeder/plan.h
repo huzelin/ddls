@@ -5,7 +5,7 @@
 #pragma once
 
 #include "hpps/common/io/io.h"
-#include "hpps/feeder/types.h"
+#include "hpps/common/types.h"
 #include "hpps/feeder/record_io.h"
 
 #include <memory>

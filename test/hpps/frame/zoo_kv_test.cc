@@ -52,14 +52,19 @@ TEST(Zoo, RegisterTable) {
   if (table != nullptr) {
     std::vector<uint64_t> keys;
     for (auto i = 0; i < kIdNum; ++i) {
-      keys.push_back(i);
+      keys.push_back(rand() % RAND_MAX);
     }
     std::vector<float> grads;
     for (auto i = 0; i < kValueLen * kIdNum; ++i) {
       grads.push_back(i);
     }
 
-    for (int loop = 0; loop < 10; ++loop) {
+    for (int loop = 0; loop < 20; ++loop) {
+      keys.clear();
+      for (auto i = 0; i < kIdNum; ++i) {
+        keys.push_back(rand() % RAND_MAX);
+      }
+
       std::shuffle(keys.begin(), keys.end(), std::default_random_engine(loop));
 
       // Step1: get the parameters

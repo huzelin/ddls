@@ -6,7 +6,7 @@
 
 #include <unordered_map>
 
-#include "hpps/feeder/tensor.h"
+#include "hpps/common/tensor.h"
 #include "hpps/common/io/io.h"
 
 namespace hpps {
