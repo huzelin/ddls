@@ -3,7 +3,8 @@
 Travis CI: [![Build Status](https://travis-ci.org/huzelin/ddls.svg?branch=master)](https://travis-ci.org/huzelin/ddls)
 
 ## Introduction
-**DDLS** is a parameter server(refactored from Multiverso project) based Distributed Deep Learning Studio for training machine learning models on Big Data with a numbers of machines, which also contains a few algorithm solutions on Urban Computing, such as: Traffic Forecasting etc.
+
+***DDLS*** is a parameter server based Distributed Deep Learning Studio for training deep learning models on Big Data with a numbers of machines and deploying high-performance online model service.
 
 ## Installation from source
 
