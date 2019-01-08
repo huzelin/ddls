@@ -10,6 +10,7 @@
 #include <unordered_map>
 
 #include "hpps/common/message.h"
+#include "hpps/frame/scheduler/scheduler.h"
 
 namespace std { class thread; }
 
@@ -59,6 +60,8 @@ class Actor {
 
   Actor(const Actor&) = delete;
   void operator=(const Actor&) = delete;
+
+  friend class Scheduler;
 };
 
 namespace actor {
