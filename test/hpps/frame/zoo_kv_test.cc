@@ -71,7 +71,7 @@ TEST(Zoo, RegisterTable) {
       table->Get(keys);
 
       // Step2: get the local parameters
-      float* data = table->raw().Get(keys[0], true);
+      float* data = table->raw().Get(keys[0]);
       EXPECT_TRUE(data != nullptr);
 
       // Step3: update grad

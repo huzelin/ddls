@@ -37,15 +37,9 @@ KVStore<Key, Val>::~KVStore() {
 }
 
 template <typename Key, typename Val>
-void KVStore<Key, Val>::Get(const Key* key, size_t key_size, int64_t* offset, bool immutable, bool* new_data) {
-  for (auto i = 0; i < key_size; ++i) {
-    Get(key[i], offset + i, immutable, new_data);
-  }
-}
-
-template <typename Key, typename Val>
-void KVStore<Key, Val>::Get(const Key& key, int64_t* offset, bool immutable, bool* new_data) {
-  if (new_data) *new_data = false;
+void KVStore<Key, Val>::Get(const Key& key, size_t* node_index,
+                            int64_t* offset, bool& immutable, bool& new_data) {
+  new_data = false;
   size_t index = key & (node_capacity_ - 1);
   int probe_num = kMaxProbeNum;
   while (index < node_capacity_ && probe_num--) {
@@ -53,16 +47,25 @@ void KVStore<Key, Val>::Get(const Key& key, int64_t* offset, bool immutable, boo
       if (immutable) {
         *offset = -1;
       } else {
+        // Add one new Entry.
         node_[index].key = key;
         node_[index].offset = data_size_;
+        
         *offset = data_size_;
+        *node_index = index;
+        new_data = true;
+        
         data_size_ += value_len_;
         ++node_size_;
-        if (new_data) *new_data = true;
       }
       return;
     } else if (node_[index].key == key) {
       *offset = node_[index].offset;
+      *node_index = index;
+      if ((*offset & kImmutableMask) != 0) {
+        *offset &= ~(kImmutableMask);
+        immutable = true;
+      }
       return;
     }
     index = (index + 1) & (node_capacity_ - 1);
@@ -72,9 +75,10 @@ void KVStore<Key, Val>::Get(const Key& key, int64_t* offset, bool immutable, boo
 }
 
 template <typename Key, typename Val>
-Val* KVStore<Key, Val>::Get(const Key& key, bool immutable, bool* new_data) {
+Val* KVStore<Key, Val>::Get(const Key& key, bool& immutable, bool& new_data) {
   int64_t offset;
-  Get(key, &offset, immutable, new_data);
+  size_t node_index;
+  Get(key, &node_index, &offset, immutable, new_data);
   if (offset < 0) {
     return nullptr;
   } else {
@@ -83,18 +87,26 @@ Val* KVStore<Key, Val>::Get(const Key& key, bool immutable, bool* new_data) {
 }
 
 template <typename Key, typename Val>
-void KVStore<Key, Val>::Set(const Key* key, size_t key_size, const Val* val) {
-  for (auto i = 0; i < key_size; ++i) {
-    Set(key[i], val + value_len_ * i);
-  }
+Val* KVStore<Key, Val>::Get(const Key& key) {
+  bool immutable = true;
+  bool new_data;
+  return Get(key, immutable, new_data);
 }
 
 template <typename Key, typename Val>
-void KVStore<Key, Val>::Set(const Key& key, const Val* val) {
+void KVStore<Key, Val>::Set(const Key& key, const Val* val, bool immutable) {
   int64_t offset;
+  size_t node_index;
   bool new_data;
-  Get(key, &offset, false, &new_data);
+  bool immu = false;
+  Get(key, &node_index, &offset, immu, new_data);
   memcpy(mutable_data() + offset, val, value_len_ * sizeof(Val));
+
+  if (immutable) {
+    node_[node_index].offset |= kImmutableMask;
+  } else {
+    node_[node_index].offset &= ~(kImmutableMask);
+  }
 }
 
 template <typename Key, typename Val>

@@ -88,7 +88,8 @@ class KVWorkerTable : public WorkerTable {
     CHECK(keys.size<Key>() * store_->value_len() == vals.size<Val>());
     for (int i = 0; i < keys.size<Key>(); ++i) {
       store_->Set(keys.As<Key>(i),
-                  reinterpret_cast<Val*>(vals.data()) + i * store_->value_len());
+                  reinterpret_cast<Val*>(vals.data()) + i * store_->value_len(),
+                  false);
     }
   }
  
@@ -109,10 +110,10 @@ class KVServerTable : public ServerTable, ParamInitializer<Val> {
     result->push_back(keys); // also push the key
     result->push_back(Blob(keys.size<Key>() * sizeof(Val) * store_->value_len()));
     Blob& vals = (*result)[1];
-    bool immutable = false;
     for (int i = 0; i < keys.size<Key>(); ++i) {
       bool new_data;
-      auto addr = store_->Get(keys.As<Key>(i), immutable, &new_data);
+      bool immutable = false;
+      auto addr = store_->Get(keys.As<Key>(i), immutable, new_data);
       if (addr != nullptr) {
         if (new_data) {
           this->random_.Gen(addr, store_->value_len());
@@ -134,13 +135,15 @@ class KVServerTable : public ServerTable, ParamInitializer<Val> {
       option.CopyFrom(data[2].data(), data[2].size());
   
     CHECK(keys.size<Key>() * store_->value_len() == vals.size<Val>());
-    bool immutable = false;
     for (int i = 0; i < keys.size<Key>(); ++i) {
       bool new_data;
-      auto addr = store_->Get(keys.As<Key>(i), immutable, &new_data);
-      updater_->Update(store_->value_len(), addr,
-                       reinterpret_cast<Val*>(vals.data()) + i * store_->value_len(),
-                       &option);
+      bool immutable = false;
+      auto addr = store_->Get(keys.As<Key>(i), immutable, new_data);
+      if (!immutable) {  // can update
+        updater_->Update(store_->value_len(), addr,
+                         reinterpret_cast<Val*>(vals.data()) + i * store_->value_len(),
+                         &option);
+      }
     }
   }
 
