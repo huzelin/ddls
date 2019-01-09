@@ -17,6 +17,7 @@
 #include "hpps/common/log.h"
 #include "hpps/common/queue.h"
 #include "hpps/frame/worker.h"
+#include "hpps/frame/table_factory.h"
 
 namespace hpps {
 
@@ -69,6 +70,7 @@ void Zoo::Stop(bool finalize_net) {
   if (finalize_net) net_util_->Finalize();
   for (auto actor : zoo_) delete actor.second;
   zoo_.clear();
+  table_factory::FreeServerTables();
   LOG_INFO("Parameter Server Shutdown successfully");
 }
 
@@ -172,7 +174,6 @@ void Zoo::FinishTrain() {
     SendTo(actor::kCommunicator, msg);
   }
 }
-
 
 void Zoo::Barrier() {
   MessagePtr msg(new Message());

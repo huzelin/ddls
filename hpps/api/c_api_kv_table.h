@@ -18,8 +18,11 @@ int KVTableGetAsync(Handle handle, Handle key, Handle tensor, int* id);
 int KVTableAdd(Handle handle, Handle key, Handle grad);
 int KVTableAddAsync(Handle handle, Handle key, Handle grad, int* id);
 
-int CreateKVTable(size_t size,
-                  int type,
+int CreateKVTable(const char* solver,
+                  size_t capacity,
+                  int value_len,
+                  int key_type,
+                  int value_type,
                   int num,
                   const char** key,
                   const char** value,

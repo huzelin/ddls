@@ -1,6 +1,6 @@
 from ddls.feeder.plan_maker import PlanMaker
 from ddls.feeder.record_io import RecordIO, BinaryWrite
-from ddls.feeder.tensor import Tensor
+from ddls.hpps.tensor import Tensor
 from ddls.feeder.feeder import Feeder
 
 import numpy as np
@@ -16,7 +16,7 @@ print(ad_tensor.asnumpy())
 user_tensor = Tensor([400], np.float32)
 user_tensor.load_numpy(np.random.rand(400))
 
-for x in xrange(1, 1000000):
+for x in xrange(1, 1000):
     record_io.write_sample({ 'ad' : ad_tensor, 'user' : user_tensor })
 record_io.write_finalize()
 

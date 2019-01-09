@@ -28,6 +28,8 @@ KVStore<Key, Val>::KVStore(size_t init_capacity, uint32_t value_len) : value_len
   data_size_ = 0;
   data_capacity_ = node_capacity_ * value_len_;
   data_ = reinterpret_cast<Val*>(AlignMalloc(data_capacity_ * sizeof(Val)));
+
+  AddBlackList();
 }
 
 template <typename Key, typename Val>
@@ -125,6 +127,12 @@ void KVStore<Key, Val>::PrintDebug() {
       LOG_INFO("Key=%u offset=%d", node_[i].key, node_[i].offset);
     }
   }
+}
+
+template <typename Key, typename Val>
+void KVStore<Key, Val>::AddBlackList() {
+  std::vector<Val> zeros(value_len(), 0);
+  Set(0, zeros.data(), true);
 }
 
 template class KVStore<uint32_t, float>;

@@ -44,6 +44,8 @@ class KVStore {
   void PrintDebug();
 
  protected:
+  void AddBlackList();
+
   Node* node_;
   size_t node_size_;
   size_t node_capacity_;

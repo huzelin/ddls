@@ -17,19 +17,19 @@ TEST(TestKVStore, GetOffset) {
   size_t node_index;
   bool immutable = false;
   kvstore.Get(20, &node_index, &offset, immutable, new_data);
-  EXPECT_EQ(0, offset);
+  EXPECT_EQ(10, offset);
   EXPECT_EQ(20, node_index);
 
   kvstore.Get(20, &node_index, &offset, immutable, new_data);
-  EXPECT_EQ(0, offset);
+  EXPECT_EQ(10, offset);
   EXPECT_EQ(20, node_index);
 
   kvstore.Get(21, &node_index, &offset, immutable, new_data);
-  EXPECT_EQ(10, offset);
+  EXPECT_EQ(20, offset);
   EXPECT_EQ(21, node_index);
 
   kvstore.Get(10020, &node_index, &offset, immutable, new_data);
-  EXPECT_EQ(20, offset);
+  EXPECT_EQ(30, offset);
   EXPECT_EQ(10020, node_index);
 
   // Set

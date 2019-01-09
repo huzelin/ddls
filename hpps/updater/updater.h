@@ -147,7 +147,7 @@ class Updater {
                       size_t offset = 0, AddOption* option = nullptr);
 
   // Factory method to get the updater
-  static Updater<T>* GetUpdater(size_t size = 0);
+  static Updater<T>* GetUpdater(size_t size, const std::string& solver);
 };
 
 #define HPPS_INSTANTIATE_CLASS_WITH_REAL_TYPE(classname) \

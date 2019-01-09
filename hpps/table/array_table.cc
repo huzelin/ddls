@@ -100,21 +100,21 @@ void ArrayWorker<T>::ProcessReplyGet(std::vector<Blob>& reply_data) {
 }
 
 template <typename T>
-ArrayServer<T>::ArrayServer(size_t size) : ServerTable() {
-  server_id_ = Zoo::Get()->rank();
+ArrayServer<T>::ArrayServer(size_t size, const std::string& solver) : ServerTable() {
+  server_id_ = Zoo::Get()->server_rank();
   size_ = size / Zoo::Get()->num_servers();
   if (server_id_ == Zoo::Get()->num_servers() - 1) { // last server 
     size_ += size % Zoo::Get()->num_servers();
   }
   storage_.resize(size_);
-  updater_.reset(Updater<T>::GetUpdater(size_));
-  LOG_DEBUG("server %d create arrayTable with %d elements of %d elements.", 
-             server_id_, size_, size);
+  updater_.reset(Updater<T>::GetUpdater(size_, solver));
+  LOG_INFO("server %d create ArrayTable with %d elements of %d elements(solver=%s).", 
+           server_id_, size_, size, solver.c_str());
 }
 
 template <typename T>
 ArrayServer<T>::ArrayServer(const ArrayTableOption<T> &option) :
-    ArrayServer<T>(option.size) {
+    ArrayServer<T>(option.size, option.solver) {
   ParamInitializer<T>::ResetRandomOption(option.random_option);
   this->random_.Gen(const_cast<T*>(storage_.data()), size_);
 }

@@ -1,7 +1,7 @@
 from ddls.feeder.plan_maker import PlanMaker
 from ddls.feeder.record_io import RecordIO, BinaryWrite
-from ddls.feeder.tensor import Tensor
 from ddls.feeder.feeder import Feeder
+from ddls.hpps.tensor import Tensor
 
 ################################################################
 

@@ -5,7 +5,7 @@ import os
 import ctypes
 import numpy as np
 
-from ddls.feeder.tensor import Tensor
+from ddls.hpps.tensor import Tensor
 from ddls.hpps.zoo import *
 from ddls.hpps.array_table import ArrayTable, create_array_table
 

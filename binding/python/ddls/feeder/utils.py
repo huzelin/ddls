@@ -3,7 +3,7 @@ from __future__ import absolute_import
 
 import ctypes
 import numpy as np
-from ddls.feeder.tensor import Tensor
+from ddls.hpps.tensor import Tensor
 
 def Num2Indices(num_tensor):
     """ Convert num tensor to indices.

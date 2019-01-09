@@ -83,7 +83,9 @@ int ArrayTableAddAsync(Handle handle, Handle grad, int* id) {
   return 0;
 }
 
-int CreateArrayTable(size_t size,
+int CreateArrayTable(const char* solver,
+                     const char* ps_mode,
+                     size_t size,
                      int type,
                      int num,
                      const char** key,
@@ -94,7 +96,7 @@ int CreateArrayTable(size_t size,
     kwargs[key[i]] = value[i];
   }
   VALUE_TYPE_SWITCH(type, DType, {
-    ArrayTableOption<DType> array_table_option(size);
+    ArrayTableOption<DType> array_table_option(size, solver, ps_mode);
     array_table_option.random_option = CreateRandomOption(kwargs); 
     *out = table_factory::CreateTable(array_table_option);
   });

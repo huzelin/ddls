@@ -157,11 +157,17 @@ class KVServerTable : public ServerTable, ParamInitializer<Val> {
 
 template <typename Key, typename Val>
 struct KVTableOption {
-  explicit KVTableOption(size_t init_capacity, uint32_t value_len)
-      : init_capacity(init_capacity / Zoo::Get()->num_servers()), value_len(value_len) { }
+  explicit KVTableOption(size_t init_capacity, uint32_t value_len, const char* solver, const char* ps_mode)
+      : init_capacity(init_capacity / Zoo::Get()->num_servers()),
+      value_len(value_len),
+      solver(solver),
+      ps_mode(ps_mode) { }
 
   size_t init_capacity;
   uint32_t value_len;
+  std::string solver;
+  std::string ps_mode;
+
   RandomOption random_option;
 
   typedef KVWorkerTable<Key, Val> WorkerTableType;

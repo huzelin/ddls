@@ -35,16 +35,11 @@ void Updater<T>::Access(size_t num_element, T* data, T* blob_data,
   memcpy(blob_data, data + offset, num_element * sizeof(T));
 }
 
-// Gradient-based updater in only for numerical table
-// For simple int table, just using simple updater
-template<>
-Updater<int>* Updater<int>::GetUpdater(size_t) {
-  return new Updater<int>();
-}
-
 template <typename T>
-Updater<T>* Updater<T>::GetUpdater(size_t size) {
+Updater<T>* Updater<T>::GetUpdater(size_t size, const std::string& solver) {
   std::string type = HPPS_CONFIG_updater_type;
+  if (!solver.empty()) type = solver;  // If user defined is not empty.
+
   if (type == "adam") return new AdamUpdater<T>(size);
   if (type == "sgd") return new SGDUpdater<T>(size);
   if (type == "adagrad") return new AdaGradUpdater<T>(size);

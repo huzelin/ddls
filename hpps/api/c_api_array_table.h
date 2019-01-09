@@ -18,7 +18,9 @@ int ArrayTableGetAsync(Handle handle, Handle tensor, int* id);
 int ArrayTableAdd(Handle handle, Handle grad);
 int ArrayTableAddAsync(Handle handle, Handle grad, int* id);
 
-int CreateArrayTable(size_t size,
+int CreateArrayTable(const char* solver,
+                     const char* ps_mode,
+                     size_t size,
                      int type,
                      int num,
                      const char** key,

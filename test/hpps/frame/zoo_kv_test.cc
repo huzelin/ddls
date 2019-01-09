@@ -43,7 +43,7 @@ int kIdNum = 20000;
 int kValueLen = 16;
 
 TEST(Zoo, RegisterTable) {
-  KVTableOption<uint64_t, float> kv_table_option(1000000, kValueLen);
+  KVTableOption<uint64_t, float> kv_table_option(1000000, kValueLen, "", "sync");
   kv_table_option.random_option.set_algorithm(kAssign);
   kv_table_option.random_option.set_assigned_value(2.0);
 

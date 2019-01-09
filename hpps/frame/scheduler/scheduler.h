@@ -13,6 +13,11 @@ namespace hpps {
 class ServerTable; 
 class Actor;
 
+enum class SchedulerType : uint8_t {
+  kAsync = 0,
+  kSync = 1,
+};
+
 class Scheduler {
  public:
   explicit Scheduler(ServerTable* server_table, Actor* server_actor) :

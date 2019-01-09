@@ -22,7 +22,7 @@ void Bench() {
   
   const int kSize = 1024 * 1024;  // 1 MB model size
   
-  ArrayTableOption<float> array_table_option(kSize);
+  ArrayTableOption<float> array_table_option(kSize, "", "sync");
   array_table_option.random_option.set_algorithm(kAssign);
   array_table_option.random_option.set_assigned_value(2.0);
 

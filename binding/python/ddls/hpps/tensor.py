@@ -1,4 +1,4 @@
-""" RecordIO for sample file production"""
+""" basic tensor operation """
 from __future__ import absolute_import
 
 import ctypes

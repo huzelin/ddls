@@ -38,7 +38,7 @@ TEST(Zoo, server_rank) {
 }
 
 TEST(Zoo, RegisterTable) {
-  ArrayTableOption<float> array_table_option(100);
+  ArrayTableOption<float> array_table_option(100, "", "sync");
   array_table_option.random_option.set_algorithm(kAssign);
   array_table_option.random_option.set_assigned_value(2.0);
 

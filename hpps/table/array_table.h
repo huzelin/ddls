@@ -58,7 +58,7 @@ class ArrayServer : public ServerTable, public ParamInitializer<T> {
   void Load(Stream* s) override;
  
  private:
-  explicit ArrayServer(size_t size);
+  explicit ArrayServer(size_t size, const std::string& solver);
 
   int32_t server_id_;
   std::vector<T> storage_;
@@ -68,8 +68,13 @@ class ArrayServer : public ServerTable, public ParamInitializer<T> {
 
 template<typename T>
 struct ArrayTableOption {
-  explicit ArrayTableOption(size_t s) : size(s) {}
+  explicit ArrayTableOption(size_t s, const char* solver, const char* ps_mode)
+      : size(s), solver(solver), ps_mode(ps_mode) { }
+  
   size_t size;
+  std::string solver;
+  std::string ps_mode;
+  
   RandomOption random_option;
 
   DEFINE_TABLE_TYPE(T, ArrayWorker, ArrayServer);
