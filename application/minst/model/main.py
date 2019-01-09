@@ -6,7 +6,7 @@ import numpy as np
 from ddls.hpps.zoo import *
 from ddls.topi.torch_nn import TorchParamManager
 from ddls.feeder.plan_maker import PlanMaker
-from ddls.feeder.tensor import Tensor
+from ddls.hpps.tensor import Tensor
 from ddls.feeder.feeder import Feeder
 from ddls.utils.log import init_logging
 from ddls.utils.eval import EvalPloter
