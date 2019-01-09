@@ -6,6 +6,7 @@
 
 #include "hpps/updater/adam_updater.h"
 #include "hpps/updater/adagrad_updater.h"
+#include "hpps/updater/avg_updater.h"
 #include "hpps/updater/momentum_updater.h"
 #ifdef ENABLE_DCASGD
 #include "hpps/updater/dcasgd/dcasgd_updater.h"
@@ -41,6 +42,7 @@ Updater<T>* Updater<T>::GetUpdater(size_t size, const std::string& solver) {
   if (!solver.empty()) type = solver;  // If user defined is not empty.
 
   if (type == "adam") return new AdamUpdater<T>(size);
+  if (type == "avg") return new AvgUpdater<T>(size);
   if (type == "sgd") return new SGDUpdater<T>(size);
   if (type == "adagrad") return new AdaGradUpdater<T>(size);
   if (type == "momentum_sgd") return new MomentumUpdater<T>(size);

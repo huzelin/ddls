@@ -100,7 +100,7 @@ void ArrayWorker<T>::ProcessReplyGet(std::vector<Blob>& reply_data) {
 }
 
 template <typename T>
-ArrayServer<T>::ArrayServer(size_t size, const std::string& solver) : ServerTable() {
+ArrayServer<T>::ArrayServer(size_t size, const std::string& solver, const std::string& ps_mode) : ServerTable(ps_mode) {
   server_id_ = Zoo::Get()->server_rank();
   size_ = size / Zoo::Get()->num_servers();
   if (server_id_ == Zoo::Get()->num_servers() - 1) { // last server 
@@ -108,13 +108,13 @@ ArrayServer<T>::ArrayServer(size_t size, const std::string& solver) : ServerTabl
   }
   storage_.resize(size_);
   updater_.reset(Updater<T>::GetUpdater(size_, solver));
-  LOG_INFO("server %d create ArrayTable with %d elements of %d elements(solver=%s).", 
-           server_id_, size_, size, solver.c_str());
+  LOG_INFO("server %d create ArrayTable with %d elements of %d elements(solver=%s ps_mode=%s).", 
+           server_id_, size_, size, solver.c_str(), ps_mode.c_str());
 }
 
 template <typename T>
 ArrayServer<T>::ArrayServer(const ArrayTableOption<T> &option) :
-    ArrayServer<T>(option.size, option.solver) {
+    ArrayServer<T>(option.size, option.solver, option.ps_mode) {
   ParamInitializer<T>::ResetRandomOption(option.random_option);
   this->random_.Gen(const_cast<T*>(storage_.data()), size_);
 }

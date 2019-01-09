@@ -51,12 +51,12 @@ int KVWorkerTable<Key, Val>::AddAsync(const Key* key, size_t key_size,
 }
 
 template <typename Key, typename Val>
-KVServerTable<Key, Val>::KVServerTable(const KVTableOption<Key, Val>& kvtable_option) {
+KVServerTable<Key, Val>::KVServerTable(const KVTableOption<Key, Val>& kvtable_option) : ServerTable(kvtable_option.ps_mode) {
   ParamInitializer<Val>::ResetRandomOption(kvtable_option.random_option);
   store_.reset(new KVStore<Key, Val>(kvtable_option.init_capacity, kvtable_option.value_len));
   updater_.reset(Updater<Val>::GetUpdater(kvtable_option.init_capacity, kvtable_option.solver));
-  LOG_INFO("create KVTable with %u elements(solver=%s).", 
-           kvtable_option.init_capacity, kvtable_option.solver.c_str());
+  LOG_INFO("create KVTable with %u elements(solver=%s ps_mode=%s).", 
+           kvtable_option.init_capacity, kvtable_option.solver.c_str(), kvtable_option.ps_mode.c_str());
 }
 
 template <typename Key, typename Val>

@@ -58,7 +58,7 @@ class ArrayServer : public ServerTable, public ParamInitializer<T> {
   void Load(Stream* s) override;
  
  private:
-  explicit ArrayServer(size_t size, const std::string& solver);
+  explicit ArrayServer(size_t size, const std::string& solver, const std::string& ps_mode);
 
   int32_t server_id_;
   std::vector<T> storage_;

@@ -24,7 +24,7 @@ WorkerTable::~WorkerTable() {
   delete m_;
 }
 
-ServerTable::ServerTable() {
+ServerTable::ServerTable(const std::string& ps_mode) : ps_mode_(ps_mode) {
   Zoo::Get()->RegisterTable(this);
 }
 

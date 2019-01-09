@@ -19,6 +19,7 @@ int KVTableAdd(Handle handle, Handle key, Handle grad);
 int KVTableAddAsync(Handle handle, Handle key, Handle grad, int* id);
 
 int CreateKVTable(const char* solver,
+                  const char* ps_mode,
                   size_t capacity,
                   int value_len,
                   int key_type,

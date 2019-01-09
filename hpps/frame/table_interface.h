@@ -71,11 +71,16 @@ class Serializable {
 // describe the server parameter storage data structure and related method
 class ServerTable : public Serializable {
  public:
-  ServerTable();
+  ServerTable(const std::string& ps_mode);
   virtual ~ServerTable() = default;
   virtual void ProcessAdd(const std::vector<Blob>& data) = 0;
   virtual void ProcessGet(const std::vector<Blob>& data,
                           std::vector<Blob>* result) = 0;
+
+  const std::string& ps_mode() const { return ps_mode_; }
+
+ protected:
+  std::string ps_mode_;
 };
 
 template <typename DType>
