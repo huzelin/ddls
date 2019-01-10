@@ -189,7 +189,7 @@ public class Client {
             env.put("CLASSPATH", cpath.toString());
         }
         for (Map.Entry<String, String> e : System.getenv().entrySet()) {
-            if (e.getKey().startsWith("DMLC_")) {
+            if (e.getKey().startsWith("HPPS_")) {
                 env.put(e.getKey(), e.getValue());
             }
             if (e.getKey().startsWith("AWS_")) {
@@ -297,7 +297,7 @@ public class Client {
         capability.setVirtualCores(1);
         LOG.info("jobname=" + this.jobName + ",username=" + this.userName);
 
-        appContext.setApplicationName(jobName + ":DMLC-YARN");
+        appContext.setApplicationName(jobName + ":HPPS-YARN");
         appContext.setAMContainerSpec(amContainer);
         appContext.setResource(capability);
         appContext.setQueue(queue);
@@ -332,18 +332,21 @@ public class Client {
     class CtrlCHandler implements SignalHandler{
         private ApplicationId appId;
         private YarnClient yarnClient;
-        public CtrlCHandler(ApplicationId appId, YarnClient yarnClient){
+
+        public CtrlCHandler(ApplicationId appId, YarnClient yarnClient) {
             this.appId = appId;
             this.yarnClient = yarnClient;
         }
-        public void handle(Signal signal){
-            try{
+
+        public void handle(Signal signal) {
+            try {
                 yarnClient.killApplication(appId);
-            }catch (Exception e){
+            } catch (Exception e) {
                 System.out.println("yarn client exception");
             }
         }
     }
+
     public static void main(String[] args) throws Exception {
         new Client().run(args);
     }

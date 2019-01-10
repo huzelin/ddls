@@ -202,14 +202,14 @@ public class ApplicationMaster {
             r.setVisibility(LocalResourceVisibility.APPLICATION);
             workerResources.put(e.getKey(), r);
         }
-        workerCores = this.getEnvInteger("DMLC_WORKER_CORES", true, workerCores);
-        serverCores = this.getEnvInteger("DMLC_SERVER_CORES", true, serverCores);
-        workerMemoryMB = this.getEnvInteger("DMLC_WORKER_MEMORY_MB", true, workerMemoryMB);
-        serverMemoryMB = this.getEnvInteger("DMLC_SERVER_MEMORY_MB", true, serverMemoryMB);
-        numWorker = this.getEnvInteger("DMLC_NUM_WORKER", true, numWorker);
-        numServer = this.getEnvInteger("DMLC_NUM_SERVER", true, numServer);
+        workerCores = this.getEnvInteger("HPPS_WORKER_CORES", true, workerCores);
+        serverCores = this.getEnvInteger("HPPS_SERVER_CORES", true, serverCores);
+        workerMemoryMB = this.getEnvInteger("HPPS_WORKER_MEMORY_MB", true, workerMemoryMB);
+        serverMemoryMB = this.getEnvInteger("HPPS_SERVER_MEMORY_MB", true, serverMemoryMB);
+        numWorker = this.getEnvInteger("HPPS_NUM_WORKER", true, numWorker);
+        numServer = this.getEnvInteger("HPPS_NUM_SERVER", true, numServer);
         numTasks = numWorker + numServer;
-        maxNumAttempt = this.getEnvInteger("DMLC_MAX_ATTEMPT", false,
+        maxNumAttempt = this.getEnvInteger("HPPS_MAX_ATTEMPT", false,
                                            maxNumAttempt);
         LOG.info("Try to start " + numServer + " Servers and " + numWorker + " Workers");
     }
@@ -246,27 +246,27 @@ public class ApplicationMaster {
             Resource maxResource = response.getMaximumResourceCapability();
 
             if (maxResource.getMemory() < this.serverMemoryMB) {
-              LOG.warn("[DMLC] memory requested exceed bound "
+              LOG.warn("[HPPS] memory requested exceed bound "
                         + maxResource.getMemory());
-                this.serverMemoryMB = maxResource.getMemory();
+              this.serverMemoryMB = maxResource.getMemory();
             }
             if (maxResource.getMemory() < this.workerMemoryMB) {
-              LOG.warn("[DMLC] memory requested exceed bound "
+              LOG.warn("[HPPS] memory requested exceed bound "
                         + maxResource.getMemory());
-                this.workerMemoryMB = maxResource.getMemory();
+              this.workerMemoryMB = maxResource.getMemory();
             }
             if (maxResource.getVirtualCores() < this.workerCores) {
-               LOG.warn("[DMLC] cores requested exceed bound "
+              LOG.warn("[HPPS] cores requested exceed bound "
                         + maxResource.getVirtualCores());
-               this.workerCores = maxResource.getVirtualCores();
+              this.workerCores = maxResource.getVirtualCores();
             }
             if (maxResource.getVirtualCores() < this.serverCores) {
-              LOG.warn("[DMLC] cores requested exceed bound "
+              LOG.warn("[HPPS] cores requested exceed bound "
                         + maxResource.getVirtualCores());
-                this.serverCores = maxResource.getVirtualCores();
+              this.serverCores = maxResource.getVirtualCores();
             }
             this.submitTasks(tasks);
-            LOG.info("[DMLC] ApplicationMaster started");
+            LOG.info("[HPPS] ApplicationMaster started");
             while (!this.doneAllJobs()) {
                 try {
                     Thread.sleep(100);
@@ -422,17 +422,12 @@ public class ApplicationMaster {
         // setup LD_LIBARY_PATH path for libhdfs
         String oldLD_LIBRARY_PATH = System.getenv("LD_LIBRARY_PATH");
         env.put("LD_LIBRARY_PATH",
-                oldLD_LIBRARY_PATH == null ? "" : oldLD_LIBRARY_PATH + ":$HADOOP_HDFS_HOME/lib/native:$JAVA_HOME/jre/lib/amd64/server");
+                oldLD_LIBRARY_PATH == null ? "" : oldLD_LIBRARY_PATH +
+		":$HADOOP_HDFS_HOME/lib/native:$JAVA_HOME/jre/lib/amd64/server");
         env.put("PYTHONPATH", "${PYTHONPATH}:.");
         // inherit all rabit variables
         for (Map.Entry<String, String> e : System.getenv().entrySet()) {
-            if (e.getKey().startsWith("DMLC_")) {
-                env.put(e.getKey(), e.getValue());
-            }
-            if (e.getKey().startsWith("rabit_")) {
-                env.put(e.getKey(), e.getValue());
-            }
-            if (e.getKey().startsWith("AWS_")) {
+            if (e.getKey().startsWith("HPPS_")) {
                 env.put(e.getKey(), e.getValue());
             }
             if (e.getKey() == "LIBHDFS_OPTS") {
@@ -440,10 +435,10 @@ public class ApplicationMaster {
             }
         }
         String nodeHost = container.getNodeId().getHost();
-        env.put("DMLC_NODE_HOST", nodeHost);
-        env.put("DMLC_TASK_ID", String.valueOf(task.taskId));
-        env.put("DMLC_ROLE", task.taskRole);
-        env.put("DMLC_NUM_ATTEMPT", String.valueOf(task.attemptCounter));
+        env.put("HPPS_NODE_HOST", nodeHost);
+        env.put("HPPS_TASK_ID", String.valueOf(task.taskId));
+        env.put("HPPS_ROLE", task.taskRole);
+        env.put("HPPS_NUM_ATTEMPT", String.valueOf(task.attemptCounter));
         // ctx.setUser(userName);
         ctx.setEnvironment(env);
         LOG.info(env);
@@ -466,11 +461,10 @@ public class ApplicationMaster {
      *
      * @param containers
      */
-    private synchronized void freeUnusedContainers(
-            Collection<Container> containers) {
-        if(containers.size() == 0) return;
-        for(Container c : containers){
-            launchDummyTask(c);
+    private synchronized void freeUnusedContainers(Collection<Container> containers) {
+        if (containers.size() == 0) return;
+        for (Container c : containers) {
+	    launchDummyTask(c);
         }
     }
 
@@ -481,16 +475,15 @@ public class ApplicationMaster {
      */
     private synchronized void onContainersAllocated(List<Container> containers) {
         if (this.startAbort) {
-            this.freeUnusedContainers(containers);
+	    this.freeUnusedContainers(containers);
             return;
         }
         Collection<Container> freelist = new java.util.LinkedList<Container>();
         for (Container c : containers) {
-            if(blackList.contains(c.getNodeHttpAddress())){
-			    launchDummyTask(c);
-                continue;
-		    }
-
+            if (blackList.contains(c.getNodeHttpAddress())) {
+		launchDummyTask(c);
+		continue;
+	    }
             TaskRecord task;
             task = pendingTasks.poll();
             if (task == null) {
@@ -515,7 +508,7 @@ public class ApplicationMaster {
         for (TaskRecord r : this.runningTasks.values()) {
             if (!r.abortRequested) {
                 nmClient.stopContainerAsync(r.container.getId(),
-                        r.container.getNodeId());
+	    		r.container.getNodeId());
                 r.abortRequested = true;
 
                 this.killedTasks.add(r);
@@ -540,7 +533,7 @@ public class ApplicationMaster {
         for (ContainerId cid : failed) {
             TaskRecord r = runningTasks.remove(cid);
             if (r == null) {
-                continue;
+		continue;
             }
             LOG.info("Task "
                     + r.taskId
@@ -559,7 +552,7 @@ public class ApplicationMaster {
             r.container = null;
             tasks.add(r);
             if (r.attemptCounter >= this.maxNumAttempt) {
-                this.abortJob("[DMLC] Task " + r.taskId + " failed more than "
+                this.abortJob("[HPPS] Task " + r.taskId + " failed more than "
                         + r.attemptCounter + "times");
             }
         }
@@ -591,14 +584,14 @@ public class ApplicationMaster {
                 try {
                     if (exstatus == ContainerExitStatus.class.getField(
                             "KILLED_EXCEEDED_PMEM").getInt(null)) {
-                        this.abortJob("[DMLC] Task "
+                        this.abortJob("[HPPS] Task "
                                 + r.taskId
                                 + " killed because of exceeding allocated physical memory");
                         return;
                     }
                     if (exstatus == ContainerExitStatus.class.getField(
                             "KILLED_EXCEEDED_VMEM").getInt(null)) {
-                        this.abortJob("[DMLC] Task "
+                        this.abortJob("[HPPS] Task "
                                 + r.taskId
                                 + " killed because of exceeding allocated virtual memory");
                         return;
@@ -606,7 +599,7 @@ public class ApplicationMaster {
                 } catch (Exception e) {
                     LOG.warn(e.getMessage());
                 }
-                LOG.info("[DMLC] Task " + r.taskId + " exited with status "
+                LOG.info("[HPPS] Task " + r.taskId + " exited with status "
                          + exstatus + " Diagnostics:"+ s.getDiagnostics());
                 failed.add(s.getContainerId());
             }
@@ -635,7 +628,7 @@ public class ApplicationMaster {
 
         @Override
         public void onError(Throwable ex) {
-            ApplicationMaster.this.abortJob("[DMLC] Resource manager Error "
+            ApplicationMaster.this.abortJob("[HPPS] Resource manager Error "
                     + ex.toString());
         }
 
@@ -646,7 +639,7 @@ public class ApplicationMaster {
         @Override
         public void onShutdownRequest() {
             ApplicationMaster.this
-                    .abortJob("[DMLC] Get shutdown request, start to shutdown...");
+                    .abortJob("[HPPS] Get shutdown request, start to shutdown...");
         }
     }
 
