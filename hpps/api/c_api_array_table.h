@@ -15,8 +15,8 @@ typedef void* Handle;
 int ArrayTableGet(Handle handle, Handle tensor);
 int ArrayTableGetAsync(Handle handle, Handle tensor, int* id);
 
-int ArrayTableAdd(Handle handle, Handle grad);
-int ArrayTableAddAsync(Handle handle, Handle grad, int* id);
+int ArrayTableAdd(Handle handle, Handle grad, int num, const char** key, const char** value);
+int ArrayTableAddAsync(Handle handle, Handle grad, int* id, int num, const char** key, const char** value);
 
 int CreateArrayTable(const char* solver,
                      const char* ps_mode,

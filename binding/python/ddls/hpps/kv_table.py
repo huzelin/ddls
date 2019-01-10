@@ -34,7 +34,7 @@ class KVTable(object):
         check_call(LIB.KVTableGetAsync(self,handle, key.handle, value.handle, ctypes.byref(id)))
         return id
 
-    def add(self, key, grad):
+    def add(self, key, grad, option={}):
         """ push grads
 
         Parameters
@@ -42,9 +42,16 @@ class KVTable(object):
           key: the uint32 or uint64 key tensor
           grad: The param grads
         """
-        check_call(LIB.KVTableAdd(self.handle, key.handle, grad.handle))
+        keys = []
+        values = []
+        for key, value in option.iteritems():
+            keys.append(c_str(key))
+            values.append(c_str(value))
+        check_call(LIB.KVTableAdd(self.handle, key.handle, grad.handle,
+                                  c_array(ctypes.c_char_p, keys),
+                                  c_array(ctypes.c_char_p, values)))
 
-    def add_async(self, key, grad):
+    def add_async(self, key, grad, option={}):
         """ push grads
 
         Parameters
@@ -52,8 +59,15 @@ class KVTable(object):
           key: the uint32 or uint64 key tensor
           grad: The param grads
         """
+        keys = []
+        values = []
+        for key, value in option.iteritems():
+            keys.append(c_str(key))
+            values.append(c_str(value))
         id = ctypes.c_int()
-        check_call(LIB.KVTableGetAsync(self.handle, key.handle, grad.handle, ctypes.byref(id)))
+        check_call(LIB.KVTableGetAsync(self.handle, key.handle, grad.handle, ctypes.byref(id),
+                                       c_array(ctypes.c_char_p, keys),
+                                       c_array(ctypes.c_char_p, values)))
         return id
 
     def wait(self, id):

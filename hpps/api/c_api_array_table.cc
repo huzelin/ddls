@@ -10,6 +10,7 @@
 // the feeder's data types contains all the data types used in parameter server.
 #include "hpps/frame/table_factory.h"
 #include "hpps/table/array_table.h"
+#include "hpps/updater/updater.h"
 
 using namespace hpps;
 
@@ -51,14 +52,26 @@ int ArrayTableGetAsync(Handle handle, Handle tensor, int* id) {
   return 0;
 }
 
-int ArrayTableAdd(Handle handle, Handle grad) {
+static AddOption CreateAddOption(int num, const char** key, const char** value) {
+  std::map<std::string, std::string> kwargs;
+  for (auto i = 0; i < num; ++i) {
+    kwargs[key[i]] = value[i];
+  }
+  auto add_option = CreateAddOption(kwargs);
+  return add_option;
+}
+
+int ArrayTableAdd(Handle handle, Handle grad, int num, const char** key, const char** value) {
+  auto add_option = CreateAddOption(num, key, value);
+
   WorkerTable* worker_table = reinterpret_cast<WorkerTable*>(handle);
   if (worker_table != nullptr) {
     Tensor* grad_ = reinterpret_cast<Tensor*>(grad);
     VALUE_TYPE_SWITCH(grad_->data_type(), DType, {
       ArrayWorker<DType>* worker = dynamic_cast<ArrayWorker<DType>*>(worker_table);
       worker->Add(reinterpret_cast<DType*>(grad_->mutable_blob()->data()),
-                  grad_->mutable_blob()->size<DType>());
+                  grad_->mutable_blob()->size<DType>(),
+                  &add_option);
     });
   } else {
     HPPS_SetLastErrorString("Is not a worker node, should not call table add");
@@ -67,14 +80,17 @@ int ArrayTableAdd(Handle handle, Handle grad) {
   return 0;
 }
 
-int ArrayTableAddAsync(Handle handle, Handle grad, int* id) {
+int ArrayTableAddAsync(Handle handle, Handle grad, int* id, int num, const char** key, const char** value) {
+  auto add_option = CreateAddOption(num, key, value);
+
   WorkerTable* worker_table = reinterpret_cast<WorkerTable*>(handle);
   if (worker_table != nullptr) {
     Tensor* grad_ = reinterpret_cast<Tensor*>(grad);
     VALUE_TYPE_SWITCH(grad_->data_type(), DType, {
       ArrayWorker<DType>* worker = dynamic_cast<ArrayWorker<DType>*>(worker_table);
       *id = worker->AddAsync(reinterpret_cast<DType*>(grad_->mutable_blob()->data()),
-                             grad_->mutable_blob()->size<DType>());
+                             grad_->mutable_blob()->size<DType>(),
+                             &add_option);
     });
   } else {
     HPPS_SetLastErrorString("Is not a worker node, should not call table add");

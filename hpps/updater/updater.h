@@ -13,16 +13,12 @@ namespace hpps {
 
 struct AddOption {
  public:
-  static const int kGradUpdateType = 0;
-  static const int kParamUpdateType = 1;
-
   AddOption(){
     data_[0].i = Zoo::Get()->worker_rank(); 
     set_learning_rate(0.001f);
     set_momentum(0.0f);
     set_rho(0.1f);
     set_lambda(0.1f);
-    set_type(kGradUpdateType);
     set_beta1(0.9);
     set_beta2(0.999);
     set_eps(1e-8f);
@@ -36,24 +32,22 @@ struct AddOption {
   void set_worker_id(int worker_id) { data_[0].i = worker_id; }
   float learning_rate() const { return data_[1].f; }
   void set_learning_rate(float lr) { data_[1].f = lr; }
-  int type() const { return data_[2].i; }
-  void set_type(int type) { data_[2].i = type; }
 
-  float momentum() const { return data_[3].f; }
-  void set_momentum(float momentum) { data_[3].f = momentum; }
+  float momentum() const { return data_[2].f; }
+  void set_momentum(float momentum) { data_[2].f = momentum; }
   // rho and lambda are two coefficient used by other algorithms
-  float rho() const { return data_[4].f; }
-  void set_rho(float rho) { data_[4].f = rho; }
-  float lambda() const { return data_[5].f; }
-  void set_lambda(float lambda) { data_[5].f = lambda; }
+  float rho() const { return data_[3].f; }
+  void set_rho(float rho) { data_[3].f = rho; }
+  float lambda() const { return data_[4].f; }
+  void set_lambda(float lambda) { data_[4].f = lambda; }
   
   // adam algorithm
-  float beta1() const { return data_[3].f; }
-  void set_beta1(float beta1) { data_[3].f = beta1; }
-  float beta2() const { return data_[4].f; }
-  void set_beta2(float beta2) { data_[4].f = beta2; }
-  float eps() const { return data_[5].f; }
-  void set_eps(float eps) { data_[5].f = eps; }
+  float beta1() const { return data_[2].f; }
+  void set_beta1(float beta1) { data_[2].f = beta1; }
+  float beta2() const { return data_[3].f; }
+  void set_beta2(float beta2) { data_[3].f = beta2; }
+  float eps() const { return data_[4].f; }
+  void set_eps(float eps) { data_[4].f = eps; }
 
   std::string toString(){
     std::stringstream  ss;
@@ -70,7 +64,7 @@ struct AddOption {
   }
  
  private:
-  static const size_t kSize = 6;
+  static const size_t kSize = 5;
   // Option can be either int type or float, 
   // to make it easy to serialize and deserialize
   union InternalType{
@@ -87,6 +81,8 @@ struct AddOption {
   // ...
   InternalType data_[kSize];
 };
+
+AddOption CreateAddOption(const std::map<std::string, std::string>& kwargs);
 
 struct GetOption {
  public:

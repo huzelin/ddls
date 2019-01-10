@@ -32,24 +32,40 @@ class ArrayTable(object):
         check_call(LIB.ArrayTableGetAsync(self,handle, value.handle, ctypes.byref(id)))
         return id
 
-    def add(self, grad):
+    def add(self, grad, option={}):
         """ push grads
 
         Parameters
         ----------
           tensor: The array-like grads
         """
-        check_call(LIB.ArrayTableAdd(self.handle, grad.handle))
+        keys = []
+        values = []
+        for key, value in option.iteritems():
+            keys.append(c_str(key))
+            values.append(c_str(value))
+        check_call(LIB.ArrayTableAdd(self.handle, grad.handle,
+                                     len(keys),
+                                     c_array(ctypes.c_char_p, keys),
+                                     c_array(ctypes.c_char_p, values)))
 
-    def add_async(self, grad):
+    def add_async(self, grad, option={}):
         """ push grads
 
         Parameters
         ----------
           tensor: The array-like grads
         """
+        keys = []
+        values = []
+        for key, value in option.iteritems():
+            keys.append(c_str(key))
+            values.append(c_str(value))
         id = ctypes.c_int()
-        check_call(LIB.ArrayTableGetAsync(self.handle, grad.handle, ctypes.byref(id)))
+        check_call(LIB.ArrayTableGetAsync(self.handle, grad.handle, ctypes.byref(id),
+                                          len(keys),
+                                          c_array(ctypes.c_char_p, keys),
+                                          c_array(ctypes.c_char_p, values)))
         return id
 
     def wait(self, id):

@@ -10,6 +10,7 @@
 // the feeder's data types contains all the data types used in parameter server.
 #include "hpps/frame/table_factory.h"
 #include "hpps/table/kv_table.h"
+#include "hpps/updater/updater.h"
 
 using namespace hpps;
 
@@ -55,7 +56,18 @@ int KVTableGetAsync(Handle handle, Handle key, Handle tensor, int* id) {
   return 0;
 }
 
-int KVTableAdd(Handle handle, Handle key, Handle grad) {
+static AddOption CreateAddOption(int num, const char** key, const char** value) {
+  std::map<std::string, std::string> kwargs;
+  for (auto i = 0; i < num; ++i) {
+    kwargs[key[i]] = value[i];
+  }
+  auto add_option = CreateAddOption(kwargs);
+  return add_option;
+}
+
+int KVTableAdd(Handle handle, Handle key, Handle grad, int num, const char** option_key, const char** option_value) {
+  auto add_option = CreateAddOption(num, option_key, option_value);
+
   WorkerTable* worker_table = reinterpret_cast<WorkerTable*>(handle);
   if (worker_table != nullptr) {
     Tensor* k = reinterpret_cast<Tensor*>(key);
@@ -66,7 +78,8 @@ int KVTableAdd(Handle handle, Handle key, Handle grad) {
         worker->Add(reinterpret_cast<ID_TYPE*>(k->mutable_blob()->data()),
                     k->size(),
                     reinterpret_cast<VALUE_TYPE*>(v->mutable_blob()->data()),
-                    v->size());        
+                    v->size(),
+                    &add_option);        
       });               
     });
   } else {
@@ -76,7 +89,10 @@ int KVTableAdd(Handle handle, Handle key, Handle grad) {
   return 0;
 }
 
-int KVTableAddAsync(Handle handle, Handle key, Handle grad, int* id) {
+int KVTableAddAsync(Handle handle, Handle key, Handle grad, int* id,
+                    int num, const char** option_key, const char** option_value) {
+  auto add_option = CreateAddOption(num, option_key, option_value);
+
   WorkerTable* worker_table = reinterpret_cast<WorkerTable*>(handle);
   if (worker_table != nullptr) {
     Tensor* k = reinterpret_cast<Tensor*>(key);
@@ -87,7 +103,8 @@ int KVTableAddAsync(Handle handle, Handle key, Handle grad, int* id) {
         *id = worker->AddAsync(reinterpret_cast<ID_TYPE*>(k->mutable_blob()->data()),
                                k->size(),
                                reinterpret_cast<VALUE_TYPE*>(v->mutable_blob()->data()),
-                               v->size());        
+                               v->size(),
+                               &add_option);
       });               
     });
   } else {

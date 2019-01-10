@@ -72,7 +72,7 @@ def train(model, param_manager, train_iterator, test_iterator, eval_plotter):
                     print(value.data)
                     print(value.grad.data)
             '''
-            param_manager.sync_all_param()
+            param_manager.sync_all_param(option={ 'lr' : '0.01' })
 
             if iteration > 0 and iteration % (10000 / batch_size) == 0:
                 eval(model, test_iterator, eval_ploter, total_iteration)
@@ -89,7 +89,7 @@ if __name__ == "__main__":
     model = fc_net().to(device)
     
     # Network param manager
-    param_manager = TorchParamManager(model)
+    param_manager = TorchParamManager(model, solver='sgd')
     
     '''
     Feeder for train and test sample reading and batch generation

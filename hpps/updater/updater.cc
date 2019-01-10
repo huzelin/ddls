@@ -16,8 +16,21 @@
 #include "hpps/common/configure.h"
 #include "hpps/common/log.h"
 
+namespace {
+std::string kStrLr = "lr";
+}  // namespace
 
 namespace hpps {
+
+AddOption CreateAddOption(const std::map<std::string, std::string>& kwargs) {
+  AddOption add_option;
+  auto lr_iter = kwargs.find(kStrLr);
+  if (lr_iter != kwargs.end()) {
+    std::string val = lr_iter->second;
+    add_option.set_learning_rate(std::stof(val.c_str()));
+  }
+  return add_option;
+}
 
 HPPS_DEFINE_string(updater_type, "adam", "hpps server updater type");
 
