@@ -38,6 +38,8 @@ class KVStore {
   Val* Get(const Key& key, bool& immutable, bool& new_data);
   Val* Get(const Key& key);
 
+  // Set the key/value, if immutable is true, the value will be immutable;
+  // otherwise, the value can be mutable. 
   void Set(const Key& key, const Val* val, bool immutable);
   
   void Clear();
