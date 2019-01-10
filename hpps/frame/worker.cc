@@ -44,7 +44,7 @@ void Worker::ProcessGet(MessagePtr& msg) {
   for (auto& it : partitioned_key) {
     MessagePtr new_msg(new Message());
     new_msg->set_src(Zoo::Get()->rank());
-    new_msg->set_dst(it.first);
+    new_msg->set_dst(Zoo::Get()->server_id_to_rank(it.first));
     new_msg->set_type(MsgType::Request_Get);
     new_msg->set_msg_id(msg_id);
     new_msg->set_table_id(table_id);
@@ -68,12 +68,12 @@ void Worker::ProcessAdd(MessagePtr& msg) {
 
   for (auto& it : partitioned_kv) {
     MessagePtr kv_msg(new Message());
-	kv_msg->set_src(Zoo::Get()->rank());
-	kv_msg->set_dst(it.first);
-	kv_msg->set_type(MsgType::Request_Add);
-	kv_msg->set_msg_id(msg_id);
-	kv_msg->set_table_id(table_id);
-	kv_msg->set_data(it.second);
+  	kv_msg->set_src(Zoo::Get()->rank());
+  	kv_msg->set_dst(Zoo::Get()->server_id_to_rank(it.first));
+	  kv_msg->set_type(MsgType::Request_Add);
+	  kv_msg->set_msg_id(msg_id);
+	  kv_msg->set_table_id(table_id);
+	  kv_msg->set_data(it.second);
     SendTo(actor::kCommunicator, kv_msg);
   }
   MONITOR_END(WORKER_PROCESS_ADD)
