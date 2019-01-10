@@ -22,6 +22,15 @@ Worker::Worker() : Actor(actor::kWorker) {
     &Worker::ProcessReplyGet, this, std::placeholders::_1));
   RegisterHandler(MsgType::Reply_Add, std::bind(
     &Worker::ProcessReplyAdd, this, std::placeholders::_1));
+
+  RegisterHandler(MsgType::Load_Model, std::bind(
+    &Worker::ProcessLoadModel, this, std::placeholders::_1));
+  RegisterHandler(MsgType::Store_Model, std::bind(
+    &Worker::ProcessStoreModel, this, std::placeholders::_1));
+  RegisterHandler(MsgType::Reply_Load_Model, std::bind(
+    &Worker::ProcessReplyLoadModel, this, std::placeholders::_1));
+  RegisterHandler(MsgType::Reply_Store_Model, std::bind(
+    &Worker::ProcessReplyStoreModel, this, std::placeholders::_1));
 }
 
 int Worker::RegisterTable(WorkerTable* worker_table) {
@@ -88,6 +97,48 @@ void Worker::ProcessReplyGet(MessagePtr& msg) {
 }
 
 void Worker::ProcessReplyAdd(MessagePtr& msg) {
+  cache_[msg->table_id()]->Notify(msg->msg_id());
+}
+
+void Worker::ProcessLoadModel(MessagePtr& msg) {
+  std::string file = msg->data()[0].data(); 
+  MONITOR_BEGIN(WORKER_PROCESS_LOAD_MODEL)
+  for (auto i = 0; i < Zoo::Get()->num_servers(); ++i) {
+    MessagePtr new_msg(new Message());
+    new_msg->set_src(Zoo::Get()->rank());
+    new_msg->set_dst(Zoo::Get()->server_id_to_rank(i));
+    new_msg->set_type(MsgType::Load_Model);
+    new_msg->set_msg_id(msg->msg_id());
+    new_msg->set_table_id(msg->table_id());
+    std::string new_file = file + "." + std::to_string(i);
+    new_msg->Push(Blob(new_file.c_str(), new_file.length()));
+    SendTo(actor::kCommunicator, new_msg);
+  }
+  MONITOR_END(WORKER_PROCESS_LOAD_MODEL)
+}
+
+void Worker::ProcessStoreModel(MessagePtr& msg) {
+  std::string file = msg->data()[0].data();
+  MONITOR_BEGIN(WORKER_PROCESS_STORE_MODEL)
+  for (auto i = 0; i < Zoo::Get()->num_servers(); ++i) {
+    MessagePtr new_msg(new Message());
+    new_msg->set_src(Zoo::Get()->rank());
+    new_msg->set_dst(Zoo::Get()->server_id_to_rank(i));
+    new_msg->set_type(MsgType::Store_Model);
+    new_msg->set_msg_id(msg->msg_id());
+    new_msg->set_table_id(msg->table_id());
+    std::string new_file = file + "." + std::to_string(i);
+    new_msg->Push(Blob(new_file.c_str(), new_file.length()));
+    SendTo(actor::kCommunicator, new_msg);
+  }
+  MONITOR_END(WORKER_PROCESS_STORE_MODEL)
+}
+
+void Worker::ProcessReplyLoadModel(MessagePtr& msg) {
+  cache_[msg->table_id()]->Notify(msg->msg_id());
+}
+
+void Worker::ProcessReplyStoreModel(MessagePtr& msg) {
   cache_[msg->table_id()]->Notify(msg->msg_id());
 }
 

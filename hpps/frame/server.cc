@@ -25,6 +25,10 @@ Server::Server(int thread_num) : Actor(actor::kServer, thread_num) {
     &Server::ProcessGet, this, std::placeholders::_1));
   RegisterHandler(MsgType::Request_Add, std::bind(
     &Server::ProcessAdd, this, std::placeholders::_1));
+  RegisterHandler(MsgType::Load_Model, std::bind(
+    &Server::ProcessLoadModel, this, std::placeholders::_1));
+  RegisterHandler(MsgType::Store_Model, std::bind(
+    &Server::ProcessStoreModel, this, std::placeholders::_1));
   RegisterHandler(MsgType::Server_Finish_Train, std::bind(
     &Server::ProcessFinishTrain, this, std::placeholders::_1));
 }
@@ -51,6 +55,22 @@ void Server::ProcessAdd(MessagePtr& msg) {
   CHECK(table_id >= 0 && table_id < static_cast<int>(store_.size()));
   scheduler_[table_id]->ProcessAdd(msg);
   MONITOR_END(SERVER_PROCESS_ADD)
+}
+
+void Server::ProcessLoadModel(MessagePtr& msg) {
+  MONITOR_BEGIN(SERVER_LOAD_MODEL)
+  int table_id = msg->table_id();
+  CHECK(table_id >= 0 && table_id < static_cast<int>(store_.size()));
+  scheduler_[table_id]->ProcessLoadModel(msg);
+  MONITOR_END(SERVER_LOAD_MODEL)
+}
+
+void Server::ProcessStoreModel(MessagePtr& msg) {
+  MONITOR_BEGIN(SERVER_STORE_MODEL)
+  int table_id = msg->table_id();
+  CHECK(table_id >= 0 && table_id < static_cast<int>(store_.size()));
+  scheduler_[table_id]->ProcessStoreModel(msg);
+  MONITOR_END(SERVER_STORE_MODEL)
 }
 
 void Server::ProcessFinishTrain(MessagePtr& msg) {

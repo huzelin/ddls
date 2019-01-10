@@ -24,6 +24,11 @@ class Worker : public Actor {
   void ProcessReplyGet(MessagePtr& msg);
   void ProcessReplyAdd(MessagePtr& msg);
 
+  void ProcessLoadModel(MessagePtr& msg);
+  void ProcessStoreModel(MessagePtr& msg);
+  void ProcessReplyLoadModel(MessagePtr& msg);
+  void ProcessReplyStoreModel(MessagePtr& msg);
+
   std::vector<WorkerTable*> cache_;
 };
 

@@ -27,4 +27,7 @@ value = Tensor(shape = [1], type=np.float32)
 kv_table.get(key=id, value=value)
 print value.asnumpy()
 
+kv_table.store('./xxx')
+array_table.store('./yyy')
+
 zoo_stop()

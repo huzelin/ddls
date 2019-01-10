@@ -18,6 +18,10 @@ enum MsgType {
   Request_Add = 2,
   Reply_Get = -1,
   Reply_Add = -2,
+  Load_Model = 29,
+  Store_Model = 30,
+  Reply_Load_Model = -29,
+  Reply_Store_Model = -30,
   Server_Finish_Train = 31,
   Control_Barrier = 33,  // 0x100001
   Control_Reply_Barrier = -33,

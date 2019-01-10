@@ -8,6 +8,7 @@
 #include <sys/types.h>
 
 #include <vector>
+#include "hpps/common/io/io.h"
 
 namespace hpps {
 
@@ -44,6 +45,10 @@ class KVStore {
   
   void Clear();
   void PrintDebug();
+
+  // Load and Save KVStore
+  void Load(Stream* stream);
+  void Store(Stream* stream);
 
  protected:
   void AddBlackList();

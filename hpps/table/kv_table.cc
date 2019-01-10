@@ -61,12 +61,12 @@ KVServerTable<Key, Val>::KVServerTable(const KVTableOption<Key, Val>& kvtable_op
 
 template <typename Key, typename Val>
 void KVServerTable<Key, Val>::Store(Stream* stream) {
-
+  store_->Store(stream);
 }
 
 template <typename Key, typename Val>
-void KVServerTable<Key, Val>::Load(Stream*) {
-
+void KVServerTable<Key, Val>::Load(Stream* stream) {
+  store_->Load(stream);
 }
 
 template class KVWorkerTable<uint32_t, float>;

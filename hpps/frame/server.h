@@ -23,6 +23,8 @@ class Server : public Actor {
  protected:
   virtual void ProcessGet(MessagePtr& msg);
   virtual void ProcessAdd(MessagePtr& msg);
+  virtual void ProcessLoadModel(MessagePtr& msg);
+  virtual void ProcessStoreModel(MessagePtr& msg);
   virtual void ProcessFinishTrain(MessagePtr& msg);
 
   std::vector<ServerTable*> store_;

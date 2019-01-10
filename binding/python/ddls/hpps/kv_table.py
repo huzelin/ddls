@@ -5,13 +5,11 @@ import ctypes
 import numpy as np
 from ddls.base import _NP_2_DTYPE, c_str, c_array, check_call, LIB
 from ddls.hpps.tensor import Tensor
+from ddls.hpps.table import Table
 
-class KVTable(object):
-    """ ArrayTable is used for continuous Parameter. 
+class KVTable(Table):
+    """ KVTable is used for sparse kv Parameter. 
     """
-    def __init__(self, handle):
-        self.handle = handle
-
     def get(self, key, value):
         """ pull parameter
 
@@ -69,15 +67,6 @@ class KVTable(object):
                                        c_array(ctypes.c_char_p, keys),
                                        c_array(ctypes.c_char_p, values)))
         return id
-
-    def wait(self, id):
-        """ wait async pull or push
-
-        Parameters
-        ----------
-          id: The async pull or push's return value
-        """
-        check_call(LIB.TableWait(self.handle, id))
 
 # create kv table
 def create_kv_table(capacity, value_len, key_type, value_type, solver = "", ps_mode = "async", kwargs = { }):

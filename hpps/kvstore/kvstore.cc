@@ -135,6 +135,39 @@ void KVStore<Key, Val>::AddBlackList() {
   Set(0, zeros.data(), true);
 }
 
+template <typename Key, typename Val>
+void KVStore<Key, Val>::Load(Stream* stream) {
+  // read bucket
+  stream->Read(&node_capacity_, sizeof(node_capacity_));
+  stream->Read(&node_size_, sizeof(node_size_));
+  AlignFree(reinterpret_cast<char*>(node_));
+  node_ = reinterpret_cast<Node*>(AlignMalloc(node_capacity_ * sizeof(Node)));
+  for (auto i = 0; i < node_capacity_; ++i) {
+    node_[i].offset = -1;
+  }
+  stream->Read(node_, sizeof(Node) * node_size_);
+  
+  // read data
+  stream->Read(&data_capacity_, sizeof(data_capacity_));
+  stream->Read(&data_size_, sizeof(data_size_));
+  AlignFree(reinterpret_cast<char*>(data_));
+  data_ = reinterpret_cast<Val*>(AlignMalloc(sizeof(Val) * data_capacity_));
+  stream->Read(data_, sizeof(Val) * data_size_);
+}
+
+template <typename Key, typename Val>
+void KVStore<Key, Val>::Store(Stream* stream) {
+  // write bucket
+  stream->Write(&node_capacity_, sizeof(node_capacity_));
+  stream->Write(&node_size_, sizeof(node_size_));
+  stream->Write(node_, sizeof(Node) * node_size_);
+  
+  // write data.
+  stream->Write(&data_capacity_, sizeof(data_capacity_));
+  stream->Write(&data_size_, sizeof(data_size_));
+  stream->Write(data_, sizeof(Val) * data_size_);
+}
+
 template class KVStore<uint32_t, float>;
 template class KVStore<uint64_t, float>;
 

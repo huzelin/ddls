@@ -22,6 +22,9 @@ class Scheduler {
   virtual void ProcessAdd(MessagePtr& msg);
   virtual void ProcessFinishTrain(MessagePtr& msg) { }
 
+  virtual void ProcessLoadModel(MessagePtr& msg);
+  virtual void ProcessStoreModel(MessagePtr& msg);
+
  protected:
   ServerTable* server_table_;
   Actor* server_;

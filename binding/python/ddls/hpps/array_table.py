@@ -5,13 +5,11 @@ import ctypes
 import numpy as np
 from ddls.base import _NP_2_DTYPE, c_str, c_array, check_call, LIB
 from ddls.hpps.tensor import Tensor
+from ddls.hpps.table import Table
 
-class ArrayTable(object):
+class ArrayTable(Table):
     """ ArrayTable is used for continuous Parameter. 
     """
-    def __init__(self, handle):
-        self.handle = handle
-
     def get(self, value):
         """ pull parameter
 
@@ -67,15 +65,6 @@ class ArrayTable(object):
                                           c_array(ctypes.c_char_p, keys),
                                           c_array(ctypes.c_char_p, values)))
         return id
-
-    def wait(self, id):
-        """ wait async pull or push
-
-        Parameters
-        ----------
-          id: The async pull or push's return value
-        """
-        check_call(LIB.TableWait(self.handle, id))
 
 # create array table
 def create_array_table(size, type, solver = "", ps_mode = "sync", kwargs = { }):

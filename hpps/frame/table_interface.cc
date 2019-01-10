@@ -42,6 +42,36 @@ void WorkerTable::Add(Blob keys, Blob values,
   MONITOR_END(WORKER_TABLE_SYNC_ADD)
 }
 
+void WorkerTable::Store(const char* uri) {
+  m_->lock();
+  int id = msg_id_++;
+  waitings_.push_back(new Waiter());
+  m_->unlock();
+  MessagePtr msg(new Message());
+  msg->set_src(Zoo::Get()->rank());
+  msg->set_type(MsgType::Store_Model);
+  msg->set_msg_id(id);
+  msg->set_table_id(table_id_);
+  msg->Push(Blob(uri, strlen(uri) + 1));
+  Zoo::Get()->SendTo(actor::kWorker, msg);
+  Wait(id);
+}
+
+void WorkerTable::Load(const char* uri) {
+  m_->lock();
+  int id = msg_id_++;
+  waitings_.push_back(new Waiter());
+  m_->unlock();
+  MessagePtr msg(new Message());
+  msg->set_src(Zoo::Get()->rank());
+  msg->set_type(MsgType::Load_Model);
+  msg->set_msg_id(id);
+  msg->set_table_id(table_id_);
+  msg->Push(Blob(uri, strlen(uri) + 1));
+  Zoo::Get()->SendTo(actor::kWorker, msg);
+  Wait(id);
+}
+
 int WorkerTable::GetAsync(Blob keys,
                           const GetOption* option) {
   m_->lock();

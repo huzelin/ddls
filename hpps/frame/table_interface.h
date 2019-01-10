@@ -30,6 +30,9 @@ class WorkerTable {
   WorkerTable();
   virtual ~WorkerTable();
 
+  void Store(const char* uri);
+  void Load(const char* uri);
+
   void Get(Blob keys, const GetOption* option = nullptr);
   void Add(Blob keys, Blob values, const AddOption* option = nullptr);
 

@@ -11,6 +11,8 @@ extern "C" {
 typedef void* Handle;
 
 int TableWait(Handle handle, int id);
+int TableLoad(Handle handle, const char* uri);
+int TableStore(Handle handle, const char* uri);
 
 #ifdef __cplusplus
 }
