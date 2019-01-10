@@ -124,10 +124,10 @@ void Feeder::BatchTensor2Batch(std::vector<std::vector<Tensor*>>& batch_tensor,
       offsets.push_back(stride);
       stride += batch_tensor[row][col]->size();
     }
-    Tensor* result = new Tensor(shape, sample_record.record_io->types()[col]);
+    Tensor* result = new Tensor(shape, sample_record.record_io->configs()[col].type);
     memset(result->mutable_blob()->data(), 0, result->mutable_blob()->size());
 
-    auto type_size = TensorDataTypeSize(sample_record.record_io->types()[col]);
+    auto type_size = TensorDataTypeSize(sample_record.record_io->configs()[col].type);
     for (row = 0; row < batch_tensor.size(); ++row) {
       Tensor* src = batch_tensor[row][col];
       Tensor* dst = result;

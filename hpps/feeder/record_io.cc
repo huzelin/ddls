@@ -18,12 +18,11 @@ RecordIO::~RecordIO() {
   delete stream_;
   stream_ = nullptr;
 }
-  
-void RecordIO::WriteHeader(
-    const std::unordered_map<std::string, tensor_data_type_t>& tensor_meta) {
+
+void RecordIO::WriteHeader(const std::unordered_map<std::string, ItemConfig>& tensor_meta) {
   for (const auto& item : tensor_meta) {
     names_.push_back(item.first);
-    types_.push_back(item.second);
+    configs_.push_back(item.second);
   }
   version_ = HPPS_VERSION;
   stream_->Write(&version_, sizeof(version_));
@@ -32,13 +31,22 @@ void RecordIO::WriteHeader(
   stream_->Write(&tensor_count,sizeof(tensor_count));
 
   char buf[kTensorNameLen];
-  tensor_data_type_t data_type;
   for (auto i = 0; i < names_.size(); ++i) {
     snprintf(buf, kTensorNameLen, names_[i].c_str());
-    data_type = types_[i];
     stream_->Write(buf, kTensorNameLen);
-    stream_->Write(&data_type, sizeof(data_type));
+    stream_->Write(&(configs_[i].type), sizeof(configs_[i].type));
+    stream_->Write(&(configs_[i].level), sizeof(configs_[i].level));
+    stream_->Write(&(configs_[i].is_aux_number), sizeof(configs_[i].is_aux_number));
   }
+}
+  
+void RecordIO::WriteHeader(
+    const std::unordered_map<std::string, tensor_data_type_t>& tensor_meta) {
+  std::unordered_map<std::string, ItemConfig> map;
+  for (const auto& item : tensor_meta) {
+    map[item.first] = ItemConfig(item.second);
+  }
+  WriteHeader(map);
 }
 
 void RecordIO::ReadHeader() {
@@ -46,20 +54,27 @@ void RecordIO::ReadHeader() {
   stream_->Read(&sample_count_, sizeof(sample_count_));
   tensor_count_t tensor_count;
   stream_->Read(&tensor_count, sizeof(tensor_count));
-  LOG_DEBUG("version_=%u", version_);
-  LOG_DEBUG("sample_count_=%u", sample_count_);
-  LOG_DEBUG("tensor_count=%u", tensor_count);
+  LOG_INFO("version_=%u", version_);
+  LOG_INFO("sample_count_=%u", sample_count_);
+  LOG_INFO("tensor_count=%u", tensor_count);
 
   names_.clear();
-  types_.clear();
+  configs_.clear();
 
   char buf[kTensorNameLen];
-  tensor_data_type_t data_type;
   for (auto i = 0; i < tensor_count; ++i) {
     stream_->Read(buf, kTensorNameLen);
     names_.push_back(buf);
-    stream_->Read(&data_type, sizeof(data_type));
-    types_.push_back(data_type);
+    ItemConfig config;
+    stream_->Read(&(config.type), sizeof(config.type));
+    stream_->Read(&(config.level), sizeof(config.level));
+    stream_->Read(&(config.is_aux_number), sizeof(config.is_aux_number));
+    configs_.push_back(config);
+    LOG_DEBUG("name=%s type=%d level=%d is_aux_number=%d",
+              names_[i].c_str(),
+              configs_[i].type,
+              configs_[i].level,
+              configs_[i].is_aux_number);
   }
 }
 
@@ -92,8 +107,8 @@ std::vector<Tensor*> RecordIO::ReadSampleAsArray() {
 
   tensor_count_t count;
   stream_->Read(&count, sizeof(count));
+  LOG_DEBUG("count=%u names_.size()=%u", count, names_.size());
   CHECK(count == names_.size());
-  LOG_DEBUG("count=%u names_.size()=%u", names_.size());
 
   for (auto i = 0; i < count; ++i) {
     tensor_dim_count_t dim_count;
@@ -106,7 +121,7 @@ std::vector<Tensor*> RecordIO::ReadSampleAsArray() {
       shape.push_back(dim);
     }
 
-    auto tensor = new Tensor(shape, types_[i]);
+    auto tensor = new Tensor(shape, configs_[i].type);
     auto blob = tensor->mutable_blob();
     stream_->Read(blob->data(), blob->size());
 
@@ -130,7 +145,7 @@ void RecordIO::WriteFinalize() {
 
   LOG_INFO("sample_count=%u tensor_count=%u", sample_count_, names_.size());
   for (auto i = 0; i < names_.size(); ++i) {
-    LOG_INFO("name=%s dtype=%d", names_[i].c_str(), types_[i]);
+    LOG_INFO("name=%s dtype=%d", names_[i].c_str(), configs_[i].type);
   }
 }
 

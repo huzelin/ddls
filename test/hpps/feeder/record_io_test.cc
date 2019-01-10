@@ -26,13 +26,13 @@ TEST(RecordIO, Read) {
   EXPECT_EQ(0, record_io.sample_count());
   EXPECT_EQ((HPPS_VERSION), record_io.version());
   EXPECT_EQ(2, record_io.names().size());
-  EXPECT_EQ(2, record_io.types().size());
-  EXPECT_EQ(kFloat32, record_io.types()[0]);
-  EXPECT_EQ(kFloat32, record_io.types()[1]);
+  EXPECT_EQ(2, record_io.configs().size());
+  EXPECT_EQ(kFloat32, record_io.configs()[0].type);
+  EXPECT_EQ(kFloat32, record_io.configs()[1].type);
 }
 
 TEST(RecordIO, WriteSample) {
-  RecordIO record_io("./record_io.dat", FileOpenMode::BinaryWrite);
+  RecordIO record_io("./record_io.dat2", FileOpenMode::BinaryWrite);
   std::unordered_map<std::string, tensor_data_type_t> meta;
   meta["user_id"] = kFloat32;
   meta["item_id"] = kFloat32;
@@ -56,14 +56,14 @@ TEST(RecordIO, WriteSample) {
 }
 
 TEST(RecordIO, ReadSample) {
-  RecordIO record_io("./record_io.dat", FileOpenMode::BinaryRead);
+  RecordIO record_io("./record_io.dat2", FileOpenMode::BinaryRead);
   record_io.ReadHeader();
   EXPECT_EQ(2, record_io.sample_count());
   EXPECT_EQ((HPPS_VERSION), record_io.version());
   EXPECT_EQ(2, record_io.names().size());
-  EXPECT_EQ(2, record_io.types().size());
-  EXPECT_EQ(kFloat32, record_io.types()[0]);
-  EXPECT_EQ(kFloat32, record_io.types()[1]);
+  EXPECT_EQ(2, record_io.configs().size());
+  EXPECT_EQ(kFloat32, record_io.configs()[0].type);
+  EXPECT_EQ(kFloat32, record_io.configs()[1].type);
 
   auto array = record_io.ReadSampleAsArray();
   EXPECT_EQ(2, array.size());
