@@ -52,7 +52,10 @@ def train(model, param_manager, train_iterator, test_iterator, eval_plotter):
         for iteration in xrange(60000 / batch_size):
             batch = train_iterator.next_batch()
             image, label = batch.get_tensor('image').asnumpy(), batch.get_tensor('label').asnumpy().reshape([-1])
-            prediction = model.forward(torch.from_numpy(image))
+
+            image_input = torch.from_numpy(image)
+            image_input.requires_grad = False
+            prediction = model.forward(image_input)
             #print(label.astype(np.long)) 
             label = Variable(torch.from_numpy(label.astype(np.long)), requires_grad=False)
         
@@ -65,6 +68,8 @@ def train(model, param_manager, train_iterator, test_iterator, eval_plotter):
             loss = loss * delay
             param_manager.zero_grad()
             loss.backward()
+            if image_input.requires_grad:
+                print(image_input.grad.data.numpy())
             ''' 
             for name, value in model.named_parameters():
                 if name == 'fc4.bias':
@@ -78,22 +83,7 @@ def train(model, param_manager, train_iterator, test_iterator, eval_plotter):
                 eval(model, test_iterator, eval_ploter, total_iteration)
         #delay *= 0.9
 
-if __name__ == "__main__":
-    #zoo_set_log_level(0)
-    init_logging()
-    # Start zoo
-    zoo_start()
-    
-    # Network choise
-    device = torch.device('cpu')
-    model = fc_net().to(device)
-    
-    # Network param manager
-    param_manager = TorchParamManager(model, solver='sgd')
-    
-    '''
-    Feeder for train and test sample reading and batch generation
-    '''
+def init_sample():
     plan_maker = PlanMaker()
     plan_maker.set_uri(['/tmp/minst_train'])
     plan_maker.set_batch_size(batch_size)
@@ -113,14 +103,24 @@ if __name__ == "__main__":
     
     feeder.start(thread_num = 1)
 
+    return train_iterator, test_iterator
+
+if __name__ == "__main__":
+    #zoo_set_log_level(0)
+    init_logging()
+    # Start zoo
+    zoo_start()
+    
+    # Network choise
+    device = torch.device('cpu')
+    model = fc_net().to(device)
+    
+    # Network param manager
+    param_manager = TorchParamManager(model, solver='sgd')
+    
+    train_iterator, test_iterator = init_sample()
     eval_ploter = EvalPloter()
-    '''
-    train iteration and testing
-    '''
-    param_manager.save_model('minst.onnx',
-                             torch.randn(0, 784, device='cpu'),
-                             inames=['input'],
-                             onames=['output'])
+    
     train(model, param_manager, train_iterator, test_iterator, eval_ploter)
     eval_ploter.draw('plot.png')
 
@@ -129,9 +129,6 @@ if __name__ == "__main__":
                              inames=['input'],
                              onames=['output'])
     
-    '''
-    finalization
-    '''
     # stop feeder
     feeder.stop()
     # Stop zoo
