@@ -11,8 +11,8 @@ void Feeder::Stop() {
   for (auto i = 0; i < entries_.size(); i++) {
     task_queues_[i]->Exit();
   }
-
   delete thread_pool_;
+  
   for (auto& entry : entries_) {
     delete entry.plan;
     delete entry.blocking_queue;
@@ -37,6 +37,7 @@ void Feeder::AddTask(const Feeder::Entry& entry) {
     Feeder::Task task;
     task.sample_record = entry.plan->sample_record[i];
     task.blocking_queue = entry.blocking_queue;
+    task.cache_batch_tensor = new std::queue<std::vector<Tensor*>>(); 
     task_queues_[task_queues_.size() - 1]->Push(task);
   }
 }
@@ -66,11 +67,16 @@ void Feeder::ProduceBatch(Queue<Task>* queue) {
   
   if (task.curr + task.sample_record.plan->batch_size <=
       task.sample_record.record_io->sample_count()) {
+    LOG_DEBUG("task.curr=%u sample_count=%u cache_batch_tensor=%p",
+              task.curr,
+              task.sample_record.record_io->sample_count(),
+              task.cache_batch_tensor);
+
     // Step1: init batch
     std::unique_ptr<Batch> batch(new Batch(task.sample_record.record_io->names()));
     
     // Step2: merge block and generate batch
-    auto size = AssembleBatch(task.sample_record, batch);
+    auto size = AssembleBatch(task.sample_record, *(task.cache_batch_tensor), batch);
     task.curr += size;
     
     task.blocking_queue->Push(batch);
@@ -80,9 +86,11 @@ void Feeder::ProduceBatch(Queue<Task>* queue) {
   }
 }
 
-int Feeder::AssembleBatch(Plan::SampleRecord& sample_record, std::unique_ptr<Batch>& batch) {
+int Feeder::AssembleBatch(Plan::SampleRecord& sample_record,
+                          std::queue<std::vector<Tensor*>>& cache_batch_tensor,
+                          std::unique_ptr<Batch>& batch) {
   // Step1: Read batch tensor
-  std::vector<std::vector<Tensor*>> batch_tensor = ReadBatchTensor(sample_record);
+  std::vector<std::vector<Tensor*>> batch_tensor = ReadBatchTensor(sample_record, cache_batch_tensor);
 
   // Step2: Batch tensor2 batch
   BatchTensor2Batch(batch_tensor, sample_record, batch);
@@ -93,13 +101,48 @@ int Feeder::AssembleBatch(Plan::SampleRecord& sample_record, std::unique_ptr<Bat
       delete tensor;
     }
   }
-  return sample_record.plan->batch_size;
+  batch_tensor.clear();
+
+  auto batch_size = sample_record.plan->batch_size;
+  return batch_size;
 }
 
-std::vector<std::vector<Tensor*>> Feeder::ReadBatchTensor(Plan::SampleRecord& sample_record) {
+std::vector<std::vector<Tensor*>> Feeder::ReadBatchTensor(Plan::SampleRecord& sample_record,
+                                                          std::queue<std::vector<Tensor*>>& cache_batch_tensor) {
   std::vector<std::vector<Tensor*>> batch_tensor;
-  for (int i = 0; i < sample_record.plan->batch_size; ++i) {
-    batch_tensor.push_back(sample_record.record_io->ReadSampleAsArray());
+  size_t remaining_size = sample_record.plan->batch_size;
+  
+  std::vector<Tensor*> item;
+  size_t curr_batch_size = 0;
+
+  while (remaining_size) {
+    if (!cache_batch_tensor.empty()) {
+      item = cache_batch_tensor.front();
+      cache_batch_tensor.pop();
+    } else {
+      item = sample_record.record_io->ReadSampleAsArray();
+    }
+
+    curr_batch_size = 0;
+    for (auto i = 0; i < item.size(); ++i) {
+      if (sample_record.record_io->IsPrimary(i)) {
+        curr_batch_size = item[i]->shape()[0];
+        break;
+      }
+    }
+    if (remaining_size < curr_batch_size) {
+      break;
+    } else {
+      batch_tensor.push_back(item);
+      remaining_size -= curr_batch_size;
+    }
+  }
+
+  if (remaining_size) {
+    auto splits = sample_record.record_io->Split(item, remaining_size);
+    CHECK(splits.size() == 2);
+    batch_tensor.push_back(splits[0]);
+    cache_batch_tensor.push(splits[1]);
   }
   return batch_tensor;
 }
@@ -133,7 +176,7 @@ void Feeder::BatchTensor2Batch(std::vector<std::vector<Tensor*>>& batch_tensor,
       Tensor* dst = result;
       memcpy(dst->mutable_blob()->data() + offsets[row] * type_size,
              src->mutable_blob()->data(),
-             src->mutable_blob()->size());
+             src->size() * type_size);  // The src tensor will be reshaped.
     }
     batch->Set(col, result);
   }

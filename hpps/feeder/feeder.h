@@ -4,6 +4,8 @@
  */
 #pragma once
 
+#include <queue>
+
 #include "hpps/common/thread_pool.h"
 #include "hpps/feeder/plan.h"
 #include "hpps/feeder/batch.h"
@@ -35,17 +37,23 @@ class Feeder {
   // The task in data source.
   struct Task {
     Task() : curr(0) { }
+
     size_t curr;
     Plan::SampleRecord sample_record;
     BlockingQueue<std::unique_ptr<Batch>>* blocking_queue;
+    // The cached BatchTensor
+    std::queue<std::vector<Tensor*>>* cache_batch_tensor;
   };
   
   // Produce one batch
   void ProduceBatch(Queue<Task>* queue);
   // Assemble tensors into Batch 
-  int AssembleBatch(Plan::SampleRecord& sample_record, std::unique_ptr<Batch>& batch);
+  int AssembleBatch(Plan::SampleRecord& sample_record,
+                    std::queue<std::vector<Tensor*>>& cache_batch_tensor,
+                    std::unique_ptr<Batch>& batch);
   // Read batch tensor
-  std::vector<std::vector<Tensor*>> ReadBatchTensor(Plan::SampleRecord& sample_record);
+  std::vector<std::vector<Tensor*>> ReadBatchTensor(Plan::SampleRecord& sample_record,
+                                                    std::queue<std::vector<Tensor*>>& cache_batch_tensor);
   // Batch tensor to Batch
   void BatchTensor2Batch(std::vector<std::vector<Tensor*>>& batch_tensor,
                          Plan::SampleRecord& sample_record,

@@ -38,8 +38,8 @@ TEST(RecordIO, WriteSample) {
   meta["item_id"] = kFloat32;
   record_io.WriteHeader(meta);
 
-  auto comm_tensor = new Tensor({ 2, 3 }, kFloat32);
-  auto ncomm_tensor = new Tensor({ 3, 2 }, kFloat32);
+  auto comm_tensor = new Tensor({ 3, 4 }, kFloat32);
+  auto ncomm_tensor = new Tensor({ 3, 6 }, kFloat32);
   std::unordered_map<std::string, Tensor*> sample;
   sample["user_id"] = comm_tensor;
   sample["item_id"] = ncomm_tensor;
@@ -58,7 +58,7 @@ TEST(RecordIO, WriteSample) {
 TEST(RecordIO, ReadSample) {
   RecordIO record_io("./record_io.dat2", FileOpenMode::BinaryRead);
   record_io.ReadHeader();
-  EXPECT_EQ(2, record_io.sample_count());
+  EXPECT_EQ(6, record_io.sample_count());
   EXPECT_EQ((HPPS_VERSION), record_io.version());
   EXPECT_EQ(2, record_io.names().size());
   EXPECT_EQ(2, record_io.configs().size());

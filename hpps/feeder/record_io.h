@@ -42,11 +42,17 @@ class RecordIO {
   // Finalize
   void WriteFinalize();
 
+  // Split the batch tensor.
+  std::vector<std::vector<Tensor*>> Split(std::vector<Tensor*>& raw, size_t split_size);
+
   // Return vars
   sample_count_t sample_count() const { return sample_count_; }
   const std::vector<std::string>& names() const { return names_; }
   const std::vector<ItemConfig>& configs() const { return configs_; }
   int version() const { return version_; }
+
+  // The i-th tensor is Primary ?
+  bool IsPrimary(size_t i);
 
  protected:
   Stream* stream_;
@@ -55,5 +61,7 @@ class RecordIO {
   std::vector<ItemConfig> configs_;
   int version_;
 };
+
+bool IsPrimary(const RecordIO::ItemConfig& item_config);
 
 }  // namespace hpps
