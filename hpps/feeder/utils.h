@@ -38,7 +38,7 @@ inline Tensor* Num2Indices(Tensor* num_tensor) {
 }
 
 inline void AddIndicesTensor(Batch* batch, const std::vector<std::string>& names) {
-  static const std::string kSuffix = "_indices";
+  static const std::string kSuffix = ".indices";
   for (const auto& name : names) {
     auto tensor = batch->Get(name);
     auto indices = Num2Indices(tensor);
@@ -54,8 +54,7 @@ inline std::vector<Tensor*> Id2UniqId(Tensor* id) {
   std::vector<uint64_t> uniq_id;
 
   // Step1: create local id tensor
-  tensor_dim_t local_id_size = id->mutable_blob()->size<uint64_t>();
-  Tensor* local_id_tensor = new Tensor({ local_id_size }, kUInt32);
+  Tensor* local_id_tensor = new Tensor(id->shape(), kUInt32);
 
   // Step2: calculate uniq id
   for (auto i = 0; i < id->mutable_blob()->size<uint64_t>(); ++i) {
@@ -82,7 +81,7 @@ inline std::vector<Tensor*> Id2UniqId(Tensor* id) {
 }
 
 inline void AddUniqIdTensor(Batch* batch, const std::vector<std::string>& names) {
-  static const std::vector<std::string> kSuffix = { "_uniqid", "_localid" };
+  static const std::vector<std::string> kSuffix = { ".uniqid", ".localid" };
   for (const auto& name : names) {
     auto tensor = batch->Get(name);
     auto expand_tensors = Id2UniqId(tensor);

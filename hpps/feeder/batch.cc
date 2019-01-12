@@ -8,7 +8,7 @@
 
 namespace hpps {
 
-Batch::Batch(const std::vector<std::string>& names) {
+Batch::Batch(const std::vector<std::string>& names) : names_(names) {
   for (auto i = 0; i < names.size(); ++i) {
     index_[names[i]] = i;
   }
@@ -49,6 +49,7 @@ std::vector<std::string> Batch::Keys() {
 void Batch::Insert(const std::string& name, Tensor* tensor) {
   index_[name] = tensors_.size();
   tensors_.push_back(tensor);
+  names_.push_back(name);
 }
 
 }  // namespace hpps

@@ -36,12 +36,16 @@ int HPPS_PlanMakerMake(Handle plan_maker, Handle* plan);
 int HPPS_BatchIteratorPop(Handle iterator, Handle* batch);
 
 // Batch operation
+int HPPS_BatchGetKeys(Handle batch, int* out_name_size, const char*** out_names);
 int HPPS_BatchGetTensorFromKey(Handle batch, const char* key, Handle* tensor);
 int HPPS_BatchGetTensorFromIndex(Handle batch, int index, Handle* tensor);
 int HPPS_BatchDestroy(Handle batch);
 
 // Utils
 int HPPS_Num2Indices(Handle num_handle, Handle* indices);
+int HPPS_Id2UniqId(Handle id_handle, Handle* local_id_handle, Handle* uniq_id_handle);
+int HPPS_AddIndicesTensor(Handle batch, int num, const char** names);
+int HPPS_AddUniqIdTensor(Handle handle, int num, const char** names);
 
 #ifdef __cplusplus
 }

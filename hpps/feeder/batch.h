@@ -24,9 +24,13 @@ class Batch {
   // insert new tensor
   void Insert(const std::string& name, Tensor* tensor);
 
+  // Return names of Batch
+  const std::vector<std::string>& names() const { return names_; }
+
  protected:
   std::unordered_map<std::string, int> index_;
   std::vector<Tensor*> tensors_;
+  std::vector<std::string> names_;
 };
 
 }  // namespace hpps

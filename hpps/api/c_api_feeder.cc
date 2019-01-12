@@ -8,6 +8,7 @@
 
 #include "hpps/api/c_api_error.h"
 #include "hpps/common/tensor.h"
+#include "hpps/common/thread_local.h"
 #include "hpps/feeder/feeder.h"
 #include "hpps/feeder/record_io.h"
 #include "hpps/feeder/utils.h"
@@ -125,6 +126,30 @@ int HPPS_BatchIteratorPop(Handle handle, Handle* out) {
 }
 
 // Batch operation
+static const int kMaxBufSize = 8192;
+
+struct StringArrayEntry {
+  const char* buf[kMaxBufSize];
+};
+typedef hpps::ThreadLocalStore<StringArrayEntry> ThreadLocalStringArrayStore;
+
+int HPPS_BatchGetKeys(Handle handle, int* out_name_size, const char*** out_names) {
+  Batch* batch = reinterpret_cast<Batch*>(handle);
+  if (batch == nullptr) {
+    HPPS_SetLastErrorString("Batch is null");
+    return -1;
+  }
+  const auto& names = batch->names();
+  auto& buf = ThreadLocalStringArrayStore::Get()->buf;
+  *out_name_size = names.size();
+
+  for (auto i = 0; i < *out_name_size; ++i) {
+    buf[i] = names[i].c_str();
+  }
+  *out_names = buf;
+  return 0;
+}
+
 int HPPS_BatchGetTensorFromKey(Handle handle, const char* key, Handle* tensor) {
   Batch* batch = reinterpret_cast<Batch*>(handle);
   *tensor = batch->Get(key);
@@ -151,8 +176,41 @@ int HPPS_BatchDestroy(Handle handle) {
   return 0;
 }
 
+// Utils operation
 int HPPS_Num2Indices(Handle num_handle, Handle* indices) {
   Tensor* tensor = reinterpret_cast<Tensor*>(num_handle);
   *indices = Num2Indices(tensor);
+  return 0;
+}
+
+int HPPS_Id2UniqId(Handle id_handle, Handle* local_id_handle, Handle* uniq_id_handle) {
+  Tensor* tensor = reinterpret_cast<Tensor*>(id_handle);
+  auto result = Id2UniqId(tensor);
+  *uniq_id_handle = result[0];
+  *local_id_handle = result[1];
+  return 0;
+}
+
+int HPPS_AddIndicesTensor(Handle handle, int num, const char** names) {
+  Batch* batch = reinterpret_cast<Batch*>(handle);
+  if (batch == nullptr) {
+    HPPS_SetLastErrorString("Batch is null");
+    return -1;
+  }
+  std::vector<std::string> vec_names;
+  for (int i = 0; i < num; ++i) vec_names.push_back(names[i]);
+  AddIndicesTensor(batch, vec_names);
+  return 0;
+}
+
+int HPPS_AddUniqIdTensor(Handle handle, int num, const char** names) {
+  Batch* batch = reinterpret_cast<Batch*>(handle);
+  if (batch == nullptr) {
+    HPPS_SetLastErrorString("Batch is null");
+    return -1;
+  }
+  std::vector<std::string> vec_names;
+  for (int i = 0; i < num; ++i) vec_names.push_back(names[i]);
+  AddUniqIdTensor(batch, vec_names);
   return 0;
 }

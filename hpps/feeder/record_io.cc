@@ -55,9 +55,9 @@ void RecordIO::ReadHeader() {
   stream_->Read(&sample_count_, sizeof(sample_count_));
   tensor_count_t tensor_count;
   stream_->Read(&tensor_count, sizeof(tensor_count));
-  LOG_DEBUG("version_=%u", version_);
-  LOG_DEBUG("sample_count_=%u", sample_count_);
-  LOG_DEBUG("tensor_count=%u", tensor_count);
+  LOG_INFO("version_=%u", version_);
+  LOG_INFO("sample_count_=%u", sample_count_);
+  LOG_INFO("tensor_count=%u", tensor_count);
 
   names_.clear();
   configs_.clear();

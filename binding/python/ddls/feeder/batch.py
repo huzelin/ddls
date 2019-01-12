@@ -27,4 +27,29 @@ class Batch(object):
                                                   ctypes.byref(out)))
         return Tensor(handle=out, shape=None, type=None)
 
+    def names(self):
+        """ Return the names of tensor
+        """
+        out_names = ctypes.POINTER(ctypes.c_char_p)()
+        out_size = ctypes.c_int()
+        check_call(LIB.HPPS_BatchGetKeys(self.handle,
+                                         ctypes.byref(out_size),
+                                         ctypes.byref(out_names)))
+        return tuple(out_names[:out_size.value]) 
+
+    def add_indices_tensor(self, names_array):
+        """ add indices tensor
+        """
+        check_call(LIB.HPPS_AddIndicesTensor(self.handle,
+                                             len(names_array),
+                                             c_array(ctypes.c_char_p, names_array)))
+
+    def add_uniqid_tensor(self, names_array):
+        """ add uniqid tensor
+        """
+        check_call(LIB.HPPS_AddUniqIdTensor(self.handle,
+                                            len(names_array),
+                                            c_array(ctypes.c_char_p, names_array)))
+
+
 
