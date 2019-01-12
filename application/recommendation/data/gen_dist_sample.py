@@ -244,8 +244,8 @@ def gen_sample(comm_file, comm_num_index, comm_fea_index, skeleton_file, skeleto
 if __name__ == '__main__':
     line = 0
     # Step1: Read width argv[1]-> common argv[2]->skeleton
-    #gen_fea_width(sys.argv[1], 1, 2)
-    #line = gen_fea_width(sys.argv[2], 4, 5)
+    gen_fea_width(sys.argv[1], 1, 2)
+    line = gen_fea_width(sys.argv[2], 4, 5)
     print(feaWidth)
     # Step2: Generate Sample
     gen_sample(sys.argv[1], 1, 2, sys.argv[2], 4, 5, line)
