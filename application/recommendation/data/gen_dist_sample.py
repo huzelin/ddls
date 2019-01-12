@@ -8,7 +8,7 @@ feaWidth = {'216': 1, '210': 38, '702': 1, '207': 1, '853': 25, '508': 1, '509':
 def get_feature(fd, num_index, fea_index):
     line = fd.readline()
     if line is None or len(line) == 0:
-        return None
+        return None, None, None
     
     segments = line.split(',')
     features = segments[fea_index].split('\001')
