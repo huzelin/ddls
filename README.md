@@ -33,11 +33,7 @@ The default installation directory is /opt/ddls/
 
 ## Applications
 
-  * See [minst](application/minst) for details
-  * See [recommendation](application/recommendation) for details
-  * See [urban computing](application/urban_computing) for details
+  * [recommendation](application/recommendation)
+  * [urban computing](application/urban_computing)
 
-## Benchmark
-
-  * TODO Later
 

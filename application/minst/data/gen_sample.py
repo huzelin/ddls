@@ -33,7 +33,7 @@ def gen_sample(type):
     print(images.shape)
     
     record_io = RecordIO('/tmp/minst_%s' % type, BinaryWrite)
-    record_io.write_header({ 'label' : np.float32, 'image' : np.float32 })
+    record_io.write_header(name= ['label', 'image'], type=[np.float32, np.float32])
     
     for index in xrange(labels.shape[0]):
         label = labels[index : index + 1]

@@ -8,7 +8,7 @@ import numpy as np
 ################################################################
 
 record_io = RecordIO('/tmp/sample1', BinaryWrite)
-record_io.write_header({ 'ad' : np.float32, 'user' : np.float32 })
+record_io.write_header(name=['ad', 'user' ], type=[np.float32, np.float32])
 
 ad_tensor = Tensor([300], np.float32)
 ad_tensor.load_numpy(np.random.rand(300))

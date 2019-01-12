@@ -23,7 +23,7 @@ class RecordIO(object):
         """
         check_call(LIB.HPPS_RecordIODestroy(self.handle))
 
-    def write_header(self, name_type_map):
+    def write_header(self, name, type, level=None, is_aux_number=None):
         """
         write header of record
 
@@ -33,13 +33,19 @@ class RecordIO(object):
         """
         names = []
         types = []
-        for name, type in name_type_map.iteritems():
-            names.append(c_str(name))
-            types.append(_NP_2_DTYPE[type])
+        levels = []
+        is_aux_numbers = []
+        for index in xrange(len(name)):
+            names.append(c_str(name[index]))
+            types.append(_NP_2_DTYPE[type[index]])
+            levels.append(0 if level is None else level[index])
+            is_aux_numbers.append(0 if is_aux_number is None else is_aux_number[index])
         check_call(LIB.HPPS_RecordIOWriteHeader(self.handle,
                                                 len(names),
                                                 c_array(ctypes.c_char_p, names),
-                                                c_array(ctypes.c_int, types)))
+                                                c_array(ctypes.c_int, types),
+                                                c_array(ctypes.c_int, levels),
+                                                c_array(ctypes.c_int, is_aux_numbers)))
 
     def write_sample(self, tensor_map):
         """

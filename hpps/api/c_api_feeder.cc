@@ -25,11 +25,14 @@ int HPPS_RecordIOCreate(const char* uri, int mode, Handle* record_io) {
   return 0;
 }
 
-int HPPS_RecordIOWriteHeader(Handle handle, int num, const char** name, const int* type) {
+int HPPS_RecordIOWriteHeader(Handle handle, int num, const char** name, const int* type, const int* level, const int* is_aux_number) {
   RecordIO* record_io = reinterpret_cast<RecordIO*>(handle);
-  std::unordered_map<std::string, tensor_data_type_t> tensor_meta;
+  std::unordered_map<std::string, RecordIO::ItemConfig> tensor_meta;
   for (auto i = 0; i < num; ++i) {
-    tensor_meta[name[i]] = type[i];
+    RecordIO::ItemConfig item_config(type[i]);
+    item_config.level = level[i];
+    item_config.is_aux_number = is_aux_number[i];
+    tensor_meta[name[i]] = item_config;
   }
   record_io->WriteHeader(tensor_meta);
   return 0;

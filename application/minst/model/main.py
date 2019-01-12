@@ -103,7 +103,7 @@ def init_sample():
     
     feeder.start(thread_num = 1)
 
-    return train_iterator, test_iterator
+    return feeder, train_iterator, test_iterator
 
 if __name__ == "__main__":
     #zoo_set_log_level(0)
@@ -118,7 +118,7 @@ if __name__ == "__main__":
     # Network param manager
     param_manager = TorchParamManager(model, solver='sgd')
     
-    train_iterator, test_iterator = init_sample()
+    feeder, train_iterator, test_iterator = init_sample()
     eval_ploter = EvalPloter()
     
     train(model, param_manager, train_iterator, test_iterator, eval_ploter)

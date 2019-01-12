@@ -35,7 +35,7 @@ def gen_sample(type, partition):
     record_ios = []
     for x in xrange(partition):
         record_io = RecordIO('/tmp/minst_%s_%d' % (type, x), BinaryWrite)
-        record_io.write_header({ 'label' : np.float32, 'image' : np.float32 })
+        record_io.write_header(name= ['label', 'image'], type=[np.float32, np.float32])
         record_ios.append(record_io)
     
     for index in xrange(labels.shape[0]):

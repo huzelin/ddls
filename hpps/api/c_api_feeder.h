@@ -15,7 +15,7 @@ typedef void* Handle;
 
 // Record I/O
 int HPPS_RecordIOCreate(const char* uri, int mode, Handle* record_io);
-int HPPS_RecordIOWriteHeader(Handle record_io, int num, const char** name, const int* type);
+int HPPS_RecordIOWriteHeader(Handle record_io, int num, const char** name, const int* type, const int* level, const int* is_aux_number);
 int HPPS_RecordIOWriteSample(Handle record_io, int num, const char** name, Handle* tensor);
 int HPPS_RecordIOWriteFinalize(Handle record_io);
 int HPPS_RecordIODestroy(Handle handle);
