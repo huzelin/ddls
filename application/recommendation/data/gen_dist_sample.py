@@ -201,7 +201,8 @@ def gen_sample(comm_file, comm_num_index, comm_fea_index, skeleton_file, skeleto
     for key, value in meta.iteritems():
         name.append(key)
         type.append(value)
-        if key in user_feature:
+        splits = key.split('.')
+        if splits[0] in user_feature:
             level.append(1)
         else:
             level.append(0)
