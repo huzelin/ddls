@@ -212,7 +212,11 @@ std::vector<std::vector<Tensor*>> RecordIO::Split(std::vector<Tensor*>& raw, siz
   if (first_top.empty()) {
     first_top.push_back(split_size);
     second_bottom.push_back(split_size + 1);
+  } else {
+    first_top.push_back(1);
+    second_bottom.push_back(1);
   }
+
   std::vector<Tensor*> second;
   for (auto i = 0; i < raw.size(); ++i) {
     if (configs_[i].is_aux_number) {
@@ -226,7 +230,8 @@ std::vector<std::vector<Tensor*>> RecordIO::Split(std::vector<Tensor*>& raw, siz
       auto new_tensor = new Tensor(new_shape, raw[i]->data_type());
       DATA_TYPE_SWITCH(raw[i]->data_type(), DType, {
         memcpy(reinterpret_cast<DType*>(new_tensor->mutable_blob()->data()),
-               reinterpret_cast<DType*>(raw[i]->mutable_blob()->data()) + ((second_bottom[level] - 1) * raw[i]->size()) / shape[0],
+               reinterpret_cast<DType*>(raw[i]->mutable_blob()->data()) + 
+                       ((second_bottom[level] - 1) * raw[i]->size()) / shape[0],
                new_tensor->size() * sizeof(DType));
       });
 
