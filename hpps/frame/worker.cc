@@ -11,9 +11,13 @@
 #include "hpps/common/log.h"
 #include "hpps/frame/zoo.h"
 
+namespace {
+int kWorkerThreadNum = 2;
+}  // namespace
+
 namespace hpps {
 
-Worker::Worker() : Actor(actor::kWorker) {
+Worker::Worker() : Actor(actor::kWorker, kWorkerThreadNum) {
   RegisterHandler(MsgType::Request_Get, std::bind(
     &Worker::ProcessGet, this, std::placeholders::_1));
   RegisterHandler(MsgType::Request_Add, std::bind(
