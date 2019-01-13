@@ -33,7 +33,6 @@ AllreduceEngine::~AllreduceEngine() {
 }
 
 void AllreduceEngine::Allreduce(char* input, int input_size, int type_size, char* output, ReduceFunction reducer) {
-
   int count = input_size / type_size;
   //if small package or small count , do it by all gather.(reduce the communication times.)
   if (count < num_machines_ || input_size < 4096) {
@@ -120,8 +119,8 @@ void AllreduceEngine::Allgather(char* input, int all_size, int* block_start, int
   std::reverse<char*>(output + block_start[rank_], output + all_size);
 }
 
-// REVIEW(feiga): the third argument type_size never used
-void AllreduceEngine::ReduceScatter(char* input, int input_size, int, int* block_start, int* block_len, char* output, ReduceFunction reducer) {
+void AllreduceEngine::ReduceScatter(char* input, int input_size, int type_size,
+                                    int* block_start, int* block_len, char* output, ReduceFunction reducer) {
 
   bool is_powerof_2 = (num_machines_ & (num_machines_ - 1)) == 0 ? true : false;
   if (!is_powerof_2) {

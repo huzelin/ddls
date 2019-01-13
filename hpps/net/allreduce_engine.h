@@ -49,7 +49,7 @@ enum RecursiveHalvingNodeType {
 
 /*! \brief Network structure for recursive halving algorithm */
 class RecursiveHalvingMap {
-public:
+ public:
   /*! \brief Communication times for one recursive halving algorithm  */
   int k;
   /*! \brief Node type */

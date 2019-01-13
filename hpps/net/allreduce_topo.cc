@@ -40,10 +40,10 @@ BruckMap BruckMap::Construct(int rank, int num_machines) {
   return bruckMap;
 }
 
-
 RecursiveHalvingMap::RecursiveHalvingMap() {
   k = 0;
 }
+
 RecursiveHalvingMap::RecursiveHalvingMap(RecursiveHalvingNodeType _type, int n) {
   type = _type;
   k = n;
@@ -90,10 +90,8 @@ RecursiveHalvingMap RecursiveHalvingMap::Construct(int rank, int num_machines) {
       rec_map.send_block_len[i] = distance[i];
     }
     return rec_map;
-  }
-  else {
+  } else {
     // if num_machines != 2^k, need to group machines
-
     int lower_power_of_2 = 1 << k;
 
     int rest = num_machines - lower_power_of_2;
