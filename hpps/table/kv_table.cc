@@ -13,7 +13,11 @@ namespace hpps {
 template <typename Key, typename Val>
 void KVWorkerTable<Key, Val>::Get(const Key* key, size_t size, Tensor* val) {
   WorkerTable::Get(Blob(key, sizeof(Key) * size));
-  
+  GetFromLocal(key, size, val);
+}
+
+template <typename Key, typename Val>
+void KVWorkerTable<Key, Val>::GetFromLocal(const Key* key, size_t size, Tensor* val) {
   CHECK(val->data_type() == DataType<Val>::kFlag);
   tensor_dim_t dim0 = size;
   tensor_dim_t dim1 = store_->value_len();

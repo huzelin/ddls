@@ -14,6 +14,7 @@ typedef void* Handle;
 
 int KVTableGet(Handle handle, Handle key, Handle tensor);
 int KVTableGetAsync(Handle handle, Handle key, Handle tensor, int* id);
+int KVTableGetFromLocal(Handle handle, Handle key, Handle value);
 
 int KVTableAdd(Handle handle, Handle key, Handle grad, int num, const char** option_key, const char** option_value);
 int KVTableAddAsync(Handle handle, Handle key, Handle grad, int* id, int num, const char** option_key,

@@ -20,17 +20,22 @@ class KVTable(Table):
         """
         check_call(LIB.KVTableGet(self.handle, key.handle, value.handle))
 
-    def get_async(self, key, value):
+    def get_async(self, key, value, wait_id=None):
         """ pull parameter
 
         Parameters
         ----------
           key: the uint32 or uint64 key tensor
           value: The params tensor
+          wait_id: The wait id
         """
-        id = ctypes.c_int()
-        check_call(LIB.KVTableGetAsync(self,handle, key.handle, value.handle, ctypes.byref(id)))
-        return id
+        if wait_id is not None:
+            self.wait(wait_id)
+            check_call(LIB.KVTableGetFromLocal(self.handle, key.handle, value.handle))
+        else:
+            id = ctypes.c_int()
+            check_call(LIB.KVTableGetAsync(self.handle, key.handle, value.handle, ctypes.byref(id)))
+            return id
 
     def add(self, key, grad, option={}):
         """ push grads

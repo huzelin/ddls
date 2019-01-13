@@ -30,6 +30,7 @@ class KVWorkerTable : public WorkerTable {
   }
 
   void Get(const Key* key, size_t size, Tensor* val);
+  void GetFromLocal(const Key* key, size_t size, Tensor* val);
   int GetAsync(const Key* key, size_t size);
 
   void Add(const Key* key, size_t key_size, const Val* val, size_t val_size, const AddOption* option = nullptr);

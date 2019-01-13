@@ -56,6 +56,24 @@ int KVTableGetAsync(Handle handle, Handle key, Handle tensor, int* id) {
   return 0;
 }
 
+int KVTableGetFromLocal(Handle handle, Handle key, Handle value) {
+  WorkerTable* worker_table = reinterpret_cast<WorkerTable*>(handle);
+  if (worker_table != nullptr) {
+    Tensor* k = reinterpret_cast<Tensor*>(key);
+    Tensor* v = reinterpret_cast<Tensor*>(value);
+    ID_TYPE_SWITCH(k->data_type(), ID_TYPE, {
+      VALUE_TYPE_SWITCH(v->data_type(), VALUE_TYPE, {
+        KVWorkerTable<ID_TYPE, VALUE_TYPE>* worker = dynamic_cast<KVWorkerTable<ID_TYPE, VALUE_TYPE>*>(worker_table);
+        worker->GetFromLocal(reinterpret_cast<ID_TYPE*>(k->mutable_blob()->data()), k->size(), v);
+      });            
+    });
+  } else {
+    HPPS_SetLastErrorString("Is not a worker node, should not call table get");
+    return -1;
+  }
+  return 0;
+}
+
 static AddOption CreateAddOption(int num, const char** key, const char** value) {
   std::map<std::string, std::string> kwargs;
   for (auto i = 0; i < num; ++i) {

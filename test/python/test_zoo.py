@@ -27,6 +27,12 @@ value = Tensor(shape = [1], type=np.float32)
 kv_table.get(key=id, value=value)
 print value.asnumpy()
 
+id.load_numpy(np.ones([100], np.int64))
+wait_value = Tensor(shape=[1], type=np.float32)
+wait_id = kv_table.get_async(key=id, value=wait_value)
+kv_table.get_async(wait_id=wait_id, key=id, value=wait_value)
+print wait_value.asnumpy()
+
 kv_table.store('./xxx')
 array_table.store('./yyy')
 
