@@ -33,6 +33,8 @@ wait_id = kv_table.get_async(key=id, value=wait_value)
 kv_table.get_async(wait_id=wait_id, key=id, value=wait_value)
 print wait_value.asnumpy()
 
+assert isinstance(wait_value, Tensor)
+
 kv_table.store('./xxx')
 array_table.store('./yyy')
 

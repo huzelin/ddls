@@ -36,6 +36,13 @@ class Tensor(object):
                               shape_info,
                               self.dtype)
 
+    def reshape(self, new_shape):
+        """ Reshape the tensor
+        """
+        check_call(LIB.HPPS_TensorReshape(self.handle,
+                                          len(new_shape),
+                                          c_array(ctypes.c_int, new_shape)))
+
     @property
     def shape(self):
         """ Return the shape of Tensor

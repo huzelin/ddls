@@ -22,6 +22,16 @@ int HPPS_TensorCreate(uint32_t dim, const uint32_t* shape, uint32_t type, Handle
   return 0;
 }
 
+int HPPS_TensorReshape(Handle handle, int dim, int* dims) {
+  std::vector<tensor_dim_t> shp;
+  for (auto i = 0; i < dim; ++i) {
+    shp.push_back(dims[i]);
+  }
+  Tensor* tensor = reinterpret_cast<Tensor*>(handle);
+  tensor->Reshape(shp);
+  return 0;
+}
+
 int HPPS_TensorShape(Handle handle, uint32_t* out_dim, const uint32_t** out_data) {
   Tensor* tensor = reinterpret_cast<Tensor*>(handle);
   const auto& shape = tensor->shape();
