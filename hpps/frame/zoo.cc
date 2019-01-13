@@ -27,7 +27,6 @@ Zoo::~Zoo() { }
 
 HPPS_DEFINE_string(ps_role, "default", "none / worker / server / default");
 HPPS_DEFINE_bool(ma, false, "model average, will not start server if true");
-HPPS_DECLARE_bool(sync);
 
 namespace {
 
@@ -117,9 +116,7 @@ void Zoo::StartPS() {
 }
 
 void Zoo::StopPS() {
-  if (HPPS_CONFIG_sync) {
-    FinishTrain();
-  }
+  //FinishTrain();
   Barrier();
 
   // Stop all actors
