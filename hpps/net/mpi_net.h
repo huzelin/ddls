@@ -9,6 +9,7 @@
 #include <limits>
 #include <mutex>
 #include <queue>
+#include <list>
 
 #include "hpps/common/message.h"
 #include "hpps/common/dashboard.h"
@@ -59,42 +60,27 @@ static void dlopen_libmpi() {
 class MPINetWrapper : public NetInterface {
  public:
   MPINetWrapper() : /* more_(std::numeric_limits<char>::max()) */ 
-   kover_(std::numeric_limits<size_t>::max()) {
+      kover_(std::numeric_limits<size_t>::max()) {
   }
   
-  class MPIMsgHandle {
-   public:
-    void add_handle(MPI_Request handle) {
-      handles_.push_back(handle);
-    }
-
-    void set_msg(MessagePtr& msg) { msg_ = std::move(msg); }
-    const MessagePtr& msg() const { return msg_; }
-    void set_size(size_t size) { size_ = size; }
-    size_t size() const { return size_; }
+  struct MPIMsgHandle {
+    MPIMsgHandle() : send_buffer(nullptr), send_size(0) { }
 
     void Wait() {
-      // CHECK_NOTNULL(msg_.get());
-      int count = static_cast<int>(handles_.size());
-      MPI_Status* status = new MPI_Status[count];
-      HPPS_MPI_CALL(MPI_Waitall(count, handles_.data(), status));
-      delete[] status;
+      MPI_Status status;
+      HPPS_MPI_CALL(MPI_Wait(&handle, &status));
     }
 
     int Test() {
-      // CHECK_NOTNULL(msg_.get());
-      int count = static_cast<int>(handles_.size());
-      MPI_Status* status = new MPI_Status[count];
+      MPI_Status status;
       int flag;
-      HPPS_MPI_CALL(MPI_Testall(count, handles_.data(), &flag, status));
-      delete[] status;
+      HPPS_MPI_CALL(MPI_Test(&handle, &flag, &status));
       return flag;
     }
    
-   private:
-    std::vector<MPI_Request> handles_;
-    MessagePtr msg_;
-    size_t size_;
+    char* send_buffer;
+    long long send_size;
+    MPI_Request handle;
   };
   
   void Init(int* argc, char** argv) override {
@@ -153,25 +139,24 @@ class MPINetWrapper : public NetInterface {
   }
 
   int Send(MessagePtr& msg) override {
-    if (msg.get()) { send_queue_.Push(msg); }
-    
-    if (last_handle_.get() != nullptr && !last_handle_->Test()) {
-      // Last msg is still on the air
-      return 0;
+    if (msg.get() == nullptr) return 0;
+
+    MPIMsgHandle* handle = nullptr;
+    if (!handles_.empty()) {
+      handle = handles_.front();
+      if (!handle->Test()) {
+        handle = nullptr;
+      } else {
+        handle->Wait();
+        handles_.pop_front();
+      }
     }
-
-    // send over, free the last msg
-    last_handle_.reset();
-
-    // if there is more msg to send
-    if (send_queue_.Empty()) return 0;
-    
-    // Send a front msg of send queue
-    last_handle_.reset(new MPIMsgHandle()); 
-    MessagePtr sending_msg;
-    CHECK(send_queue_.TryPop(sending_msg));
-
-    int size = SerializeAndSend(sending_msg, last_handle_.get());
+    if (handle == nullptr) {
+      handle = new MPIMsgHandle;
+    }
+    MessagePtr curr_msg = std::move(msg);
+    int size = SerializeAndSend(curr_msg, handle);
+    handles_.push_back(handle);
     return size;
   }
 
@@ -240,12 +225,12 @@ class MPINetWrapper : public NetInterface {
     int size = sizeof(size_t) + Message::kHeaderSize;
     for (auto& data : msg->data()) 
       size += static_cast<int>(sizeof(size_t) + data.size());
-    if (size > send_size_) {
-      send_buffer_ = (char*)realloc(send_buffer_, size);
-      send_size_ = size;
+    if (size > msg_handle->send_size) {
+      msg_handle->send_buffer = (char*)realloc(msg_handle->send_buffer, size);
+      msg_handle->send_size = size;
     }
-    memcpy(send_buffer_, msg->header(), Message::kHeaderSize);
-    char* p = send_buffer_ + Message::kHeaderSize;
+    memcpy(msg_handle->send_buffer, msg->header(), Message::kHeaderSize);
+    char* p = msg_handle->send_buffer + Message::kHeaderSize;
     for (auto& data : msg->data()) {
       size_t s = data.size();
       memcpy(p, &s, sizeof(size_t));
@@ -258,8 +243,8 @@ class MPINetWrapper : public NetInterface {
     MONITOR_END(MPI_NET_SEND_SERIALIZE);
 
     MPI_Request handle;
-    HPPS_MPI_CALL(MPI_Isend(send_buffer_, static_cast<int>(size), MPI_BYTE, msg->dst(), 0, MPI_COMM_WORLD, &handle));
-    msg_handle->add_handle(handle);
+    HPPS_MPI_CALL(MPI_Isend(msg_handle->send_buffer, static_cast<int>(size), MPI_BYTE, msg->dst(), 0, MPI_COMM_WORLD, &handle));
+    msg_handle->handle = handle;
     return size;
   }
 
@@ -304,11 +289,8 @@ class MPINetWrapper : public NetInterface {
   int inited_;
   int rank_;
   int size_;
-  // std::queue<MPIMsgHandle *> msg_handles_;
-  std::unique_ptr<MPIMsgHandle> last_handle_;
-  Queue<MessagePtr> send_queue_;
-  char* send_buffer_;
-  long long send_size_;
+  
+  std::list<MPIMsgHandle*> handles_;
   char* recv_buffer_;
   long long recv_size_;
 };
